@@ -1,4 +1,4 @@
-shinyServer(function(input, output) {
+function(input, output) {
 
   bins <- reactive({
     x = faithful[, 2]
@@ -8,4 +8,4 @@ shinyServer(function(input, output) {
   output$distPlot <- renderPlot({
     hist(faithful[, 2], breaks = bins(), col = input$color, border = 'white')
   })
-})
+}

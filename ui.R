@@ -1,7 +1,7 @@
 library(shiny)
 
-shinyUI(fluidPage(
-  titlePanel("Old Faithful Geyser Data"),
+fluidPage(
+titlePanel("Old Faithful Geyser Data"),
 
   sidebarLayout(
     sidebarPanel(
@@ -18,4 +18,4 @@ shinyUI(fluidPage(
       plotOutput("distPlot")
     )
   )
-))
+)
