@@ -9,23 +9,16 @@ function(input, output) {
 
 
   output$table <- renderDataTable({
-    read_delim(input$file$datapath)
+    df <- read_delim(input$file$datapath)
+    df
   })
-
 
   output$clustering <- renderPlot({
-    input$cl_c_method
-    input$cl_d_method
-
+    df <- read_delim(input$file$datapath)
+    tbl <- df2table(df, st = "stand", sp = "species", ab = "cover")
+    cl <- clustering(tbl, c_method = input$cl_c_method, d_method = input$cl_d_method)
+    plot(cl)
   })
 
-  #   bins <- reactive({
-  #     x = faithful[, 2]
-  #     return (seq(min(x), max(x), length.out = input$bins + 1))
-  #   })
-  # 
-  #   output$distPlot <- renderPlot({
-  #     hist(faithful[, 2], breaks = bins(), col =  input$color, border = 'white')
-  #   })
 
 }

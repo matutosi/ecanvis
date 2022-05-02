@@ -1,5 +1,5 @@
   # fluidPage(
-navbarPage("ecan", 
+navbarPage("ecan",
   #   titlePanel("Sample data (dune and dune.env from vegan)"),
 
   tabPanel("Sample data",
@@ -23,29 +23,28 @@ navbarPage("ecan",
         dataTableOutput("table")
       )
     )
-  )
+  ),
 
   tabPanel("Clustering",
     sidebarLayout(
       sidebarPanel(
-        selectInput("cl_c_method", "clustering method", 
-          choices = c("average", "ward.D", "ward.D2", "single", 
+        selectInput("cl_c_method", "clustering method",
+          choices = c("average", "ward.D", "ward.D2", "single",
                       "complete", "mcquitty", "median", "centroid", "diana")
         ),
-
-        selectInput("cl_d_method", "distance method", 
-          choices = c("bray", "euclidean", "correlation", "manhattan", "canberra", 
-                      "clark", "kulczynski", "jaccard", "gower", "altGower", "morisita", 
-                      "horn", "mountford", "raup", "binomial", "chao", "cao", 
-                      "mahalanobis", "chisq", "chord", "aitchison", "robust.aitchison")
+        selectInput("cl_d_method", "distance method",
+          choices = c("bray", "euclidean", "correlation", "manhattan",
+                      "canberra", "clark", "kulczynski", "jaccard",
+                      "gower", "altGower", "morisita", "horn",
+                      "mountford", "raup", "binomial", "chao", "cao",
+                      "mahalanobis", "chisq", "chord", "aitchison",
+                      "robust.aitchison")
         ),
-      )
-
+      ),
       mainPanel(
-        dataTableOutput("table")
+        plotOutput("clustering"),
       )
     )
-  )
-
+  ),
 
 )
