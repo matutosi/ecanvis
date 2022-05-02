@@ -18,6 +18,11 @@ navbarPage("ecan",
     sidebarLayout(
       sidebarPanel(
         fileInput("file", "choose file"),
+
+        uiOutput("st"), 
+        uiOutput("sp"), 
+        uiOutput("ab"), 
+
       ),
       mainPanel(
         dataTableOutput("table")
@@ -28,6 +33,7 @@ navbarPage("ecan",
   tabPanel("Clustering",
     sidebarLayout(
       sidebarPanel(
+
         selectInput("cl_c_method", "clustering method",
           choices = c("average", "ward.D", "ward.D2", "single",
                       "complete", "mcquitty", "median", "centroid", "diana")

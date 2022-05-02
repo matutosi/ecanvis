@@ -1,4 +1,10 @@
+
 function(input, output) {
+
+  data_file <- reactive({ 
+    if(is_null(input$file)) { return(NULL) }
+    else                    { read_delim(input$file$datapath) }
+  })
 
   output$sccater_plot <- renderPlot({
     df_sample %>%
@@ -7,17 +13,29 @@ function(input, output) {
       theme_bw()
   })
 
-
   output$table <- renderDataTable({
-    df <- read_delim(input$file$datapath)
-    df
+    data_file()
   })
 
   output$clustering <- renderPlot({
-    df <- read_delim(input$file$datapath)
-    tbl <- df2table(df, st = "stand", sp = "species", ab = "cover")
-    cl <- clustering(tbl, c_method = input$cl_c_method, d_method = input$cl_d_method)
-    plot(cl)
+    if(!is.null(data_file())){
+      data_file() %>%
+        df2table(st = "stand", sp = "species", ab = "cover") %>%
+        clustering(c_method = input$cl_c_method, d_method = input$cl_d_method) %>%
+        plot()
+    }
+  })
+
+  output$st <- renderUI({
+    varSelectInput("st", "stand: " , data = data_file())
+  })
+
+  output$sp <- renderUI({
+    varSelectInput("sp", "species: " , data = data_file())
+  })
+
+  output$ab <- renderUI({
+    varSelectInput("ab", "abandance: " , data = data_file())
   })
 
 
