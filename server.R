@@ -17,10 +17,19 @@ function(input, output) {
     data_file()
   })
 
+  #   # For debug
+  #   output$table <- renderDataTable({
+  #      data_file() %>% dplyr::select(input$st, input$sp, input$ab)
+  #   })
+  #   output$stand <- renderText(input$st)
+
+
   output$clustering <- renderPlot({
     if(!is.null(data_file())){
       data_file() %>%
-        df2table(st = "stand", sp = "species", ab = "cover") %>%
+  # need obserb() ?
+        df2table(st = input$st, sp = input$sp, ab = input$ab) %>%
+  #         df2table(st = "stand", sp = "species", ab = "cover") %>%
         clustering(c_method = input$cl_c_method, d_method = input$cl_d_method) %>%
         plot()
     }

@@ -25,7 +25,8 @@ navbarPage("ecan",
 
       ),
       mainPanel(
-        dataTableOutput("table")
+  #         textOutput("stand"),
+        dataTableOutput("table"),
       )
     )
   ),
