@@ -1,40 +1,41 @@
   # fluidPage(
 navbarPage("ecan",
-  #   titlePanel("Sample data (dune and dune.env from vegan)"),
 
-  tabPanel("Sample data",
-    sidebarLayout(
-      sidebarPanel(
-        varSelectInput("var_1", "x: ", df_sample),
-        varSelectInput("var_2", "y: ", df_sample),
-      ),
-      mainPanel(
-        plotOutput("sccater_plot"),
-      )
-    )
-  ),
+  # # # Sample data # # # 
+  #   tabPanel("Sample data",
+  #     sidebarLayout(
+  #       sidebarPanel(
+  #         varSelectInput("var_1", "x: ", df_sample),
+  #         varSelectInput("var_2", "y: ", df_sample),
+  #       ),
+  #       mainPanel(
+  #         plotOutput("sccater_plot"),
+  #       )
+  #     )
+  #   ),
 
+  # # # Input data # # # 
   tabPanel("Read file",
     sidebarLayout(
       sidebarPanel(
         fileInput("file", "choose file"),
-
         uiOutput("st"), 
         uiOutput("sp"), 
         uiOutput("ab"), 
-
+        uiOutput("st_gr"), 
+        uiOutput("sp_gr"), 
       ),
       mainPanel(
-  #         textOutput("stand"),
         dataTableOutput("table"),
       )
     )
   ),
 
+  # # # Clustering # # # 
   tabPanel("Clustering",
     sidebarLayout(
       sidebarPanel(
-
+        # method
         selectInput("cl_c_method", "clustering method",
           choices = c("average", "ward.D", "ward.D2", "single",
                       "complete", "mcquitty", "median", "centroid", "diana")
@@ -47,9 +48,47 @@ navbarPage("ecan",
                       "mahalanobis", "chisq", "chord", "aitchison",
                       "robust.aitchison")
         ),
+        # 
+        checkboxInput("st_or_sp", "check when cluster with species", value = FALSE),
       ),
       mainPanel(
         plotOutput("clustering"),
+      )
+    )
+  ),
+
+  # # # Ordination # # # 
+  tabPanel("Ordination",
+    sidebarLayout(
+      sidebarPanel(
+        # method
+        selectInput("or_o_method", "ordination method",
+          choices = c("pca", "ca", "dca", 
+                      "pcoa", "fspa", "nmds")
+        ),
+        selectInput("or_d_method", "distance method",
+          choices = c("bray", "euclidean", "correlation", "manhattan",
+                      "canberra", "clark", "kulczynski", "jaccard",
+                      "gower", "altGower", "morisita", "horn",
+                      "mountford", "raup", "binomial", "chao", "cao",
+                      "mahalanobis", "chisq", "chord", "aitchison",
+                      "robust.aitchison")
+        ),
+        # stand or species, x and y axis
+        radioButtons("or_score", "scores for plot", 
+          choiceNames  = c("unit (stand)", "item (species)", "both"),
+          choiceValues = c("st_scores",    "sp_scores",      "both")
+        ),
+        numericInput("or_x", "x axis component", 
+          value = 1, min = 1, max = 10, step = 1,
+        ),
+        numericInput("or_y", "y axis component", 
+          value = 2, min = 1, max = 10, step = 1,
+        ),
+      
+      ),
+      mainPanel(
+        plotOutput("ordination"),
       )
     )
   ),
