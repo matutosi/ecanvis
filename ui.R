@@ -18,6 +18,8 @@ navbarPage("ecan",
   tabPanel("Read file",
     sidebarLayout(
       sidebarPanel(
+        actionButton("use_sample_data", "use sample data")
+
         fileInput("file", "choose file"),
         uiOutput("st"),
         uiOutput("sp"),
