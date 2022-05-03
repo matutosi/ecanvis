@@ -1,31 +1,20 @@
-  # fluidPage(
+  # https://matutosi.shinyapps.io/ecanvis/
 navbarPage("ecan",
-
-  # # # Sample data # # #
-  #   tabPanel("Sample data",
-  #     sidebarLayout(
-  #       sidebarPanel(
-  #         varSelectInput("var_1", "x: ", df_sample),
-  #         varSelectInput("var_2", "y: ", df_sample),
-  #       ),
-  #       mainPanel(
-  #         plotOutput("sccater_plot"),
-  #       )
-  #     )
-  #   ),
-
   # # # Input data # # #
   tabPanel("Read file",
     sidebarLayout(
       sidebarPanel(
-        actionButton("use_sample_data", "use sample data")
-
+  #         actionButton("use_sample_data", "use sample data"),
         fileInput("file", "choose file"),
         uiOutput("st"),
         uiOutput("sp"),
         uiOutput("ab"),
         uiOutput("st_gr"),
         uiOutput("sp_gr"),
+
+        htmlOutput("please_download"),
+
+        downloadButton("dl_sample_data", "downlaod sample data"),
       ),
       mainPanel(
         dataTableOutput("table"),

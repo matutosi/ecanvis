@@ -1,17 +1,17 @@
 function(input, output) {
 
   # # # Sample data # # # 
-  output$sccater_plot <- renderPlot({
-    df_sample %>%
-      ggplot(aes(x = !!input$var_1, y = !!input$var_2)) + 
-      geom_point() + 
-      theme_bw()
-  })
+  #   output$sccater_plot <- renderPlot({
+  #     df_sample %>%
+  #       ggplot(aes(x = !!input$var_1, y = !!input$var_2)) + 
+  #       geom_point() + 
+  #       theme_bw()
+  #   })
 
   # # # Input data # # # 
   data_file <- reactive({ 
     if(is_null(input$file)) { return(NULL) }
-    else                    { read_delim(input$file$datapath) }
+    else                    { readr::read_delim(input$file$datapath) }
   })
 
   output$table <- renderDataTable({
@@ -23,6 +23,17 @@ function(input, output) {
   output$ab    <- renderUI({ varSelectInput("ab",    "value (abandance): ", data = data_file()) })
   #   output$st_gr <- renderUI({ varSelectInput("st_gr", "unit group (opt): " , data = data_file()) })
   #   output$sp_gr <- renderUI({ varSelectInput("sp_gr", "item group:(opt): ",  data = data_file()) })
+
+  # sample data
+  #   observeEvent(input$use_sample_data, {
+  #     readr::read_delim("df_sample.tsv")
+  #   })
+  output$please_download <- renderUI("First time to use, please download a sample file and upload it, The sample file is generated with data dune and dune.env in library vegan.")
+
+  output$dl_sample_data = downloadHandler(
+    filename = "sample_data.tsv",
+    content  = function(file) { readr::write_tsv(sample_data, file) }
+  )
 
   # # # Clustering # # # 
   output$clustering <- renderPlot({
