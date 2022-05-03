@@ -1,7 +1,7 @@
   # fluidPage(
 navbarPage("ecan",
 
-  # # # Sample data # # # 
+  # # # Sample data # # #
   #   tabPanel("Sample data",
   #     sidebarLayout(
   #       sidebarPanel(
@@ -14,16 +14,16 @@ navbarPage("ecan",
   #     )
   #   ),
 
-  # # # Input data # # # 
+  # # # Input data # # #
   tabPanel("Read file",
     sidebarLayout(
       sidebarPanel(
         fileInput("file", "choose file"),
-        uiOutput("st"), 
-        uiOutput("sp"), 
-        uiOutput("ab"), 
-        uiOutput("st_gr"), 
-        uiOutput("sp_gr"), 
+        uiOutput("st"),
+        uiOutput("sp"),
+        uiOutput("ab"),
+        uiOutput("st_gr"),
+        uiOutput("sp_gr"),
       ),
       mainPanel(
         dataTableOutput("table"),
@@ -31,7 +31,7 @@ navbarPage("ecan",
     )
   ),
 
-  # # # Clustering # # # 
+  # # # Clustering # # #
   tabPanel("Clustering",
     sidebarLayout(
       sidebarPanel(
@@ -48,7 +48,7 @@ navbarPage("ecan",
                       "mahalanobis", "chisq", "chord", "aitchison",
                       "robust.aitchison")
         ),
-        # 
+        #
         checkboxInput("st_or_sp", "check when cluster with species", value = FALSE),
       ),
       mainPanel(
@@ -57,13 +57,13 @@ navbarPage("ecan",
     )
   ),
 
-  # # # Ordination # # # 
+  # # # Ordination # # #
   tabPanel("Ordination",
     sidebarLayout(
       sidebarPanel(
         # method
         selectInput("or_o_method", "ordination method",
-          choices = c("pca", "ca", "dca", 
+          choices = c("pca", "ca", "dca",
                       "pcoa", "fspa", "nmds")
         ),
         selectInput("or_d_method", "distance method",
@@ -75,17 +75,19 @@ navbarPage("ecan",
                       "robust.aitchison")
         ),
         # stand or species, x and y axis
-        radioButtons("or_score", "scores for plot", 
-          choiceNames  = c("unit (stand)", "item (species)", "both"),
-          choiceValues = c("st_scores",    "sp_scores",      "both")
+        radioButtons("or_score", "scores for plot",
+          choiceNames  = c("unit (stand)", "item (species)"),
+          choiceValues = c("st_scores",    "sp_scores")
+  #           choiceNames  = c("unit (stand)", "item (species)", "both"),
+  #           choiceValues = c("st_scores",    "sp_scores",      "both")
         ),
-        numericInput("or_x", "x axis component", 
+        numericInput("or_x", "x axis component",
           value = 1, min = 1, max = 10, step = 1,
         ),
-        numericInput("or_y", "y axis component", 
+        numericInput("or_y", "y axis component",
           value = 2, min = 1, max = 10, step = 1,
         ),
-      
+
       ),
       mainPanel(
         plotOutput("ordination"),

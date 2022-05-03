@@ -21,8 +21,8 @@ function(input, output) {
   output$st    <- renderUI({ varSelectInput("st",    "unit (stand): " ,     data = data_file()) })
   output$sp    <- renderUI({ varSelectInput("sp",    "item (species): ",    data = data_file()) })
   output$ab    <- renderUI({ varSelectInput("ab",    "value (abandance): ", data = data_file()) })
-  output$st_gr <- renderUI({ varSelectInput("st_gr", "unit group (opt): " , data = data_file()) })
-  output$sp_gr <- renderUI({ varSelectInput("sp_gr", "item group:(opt): ",  data = data_file()) })
+  #   output$st_gr <- renderUI({ varSelectInput("st_gr", "unit group (opt): " , data = data_file()) })
+  #   output$sp_gr <- renderUI({ varSelectInput("sp_gr", "item group:(opt): ",  data = data_file()) })
 
   # # # Clustering # # # 
   output$clustering <- renderPlot({

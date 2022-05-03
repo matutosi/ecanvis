@@ -1,0 +1,13 @@
+name: ecanvis
+title: ecanvis
+username:
+account: matutosi
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6222039
+bundleId: 5864191
+url: https://matutosi.shinyapps.io/ecanvis/
+when: 1651580138.43266
+lastSyncTime: 1651580138.43266
+asMultiple: FALSE
+asStatic: FALSE
