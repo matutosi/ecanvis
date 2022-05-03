@@ -1,4 +1,6 @@
-devtools::load_all("D:/matu/work/ToDo/ecan")
+if(!require("ecan")) devtools::install_github("matutosi/ecan")
+
+library(ecan)
 library(vegan)
 library(tidyverse)
 library(shiny)
