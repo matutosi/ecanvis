@@ -41,29 +41,37 @@ function(input, output) {
 
   # # # Clustering # # # 
   output$clustering <- renderPlot({
-    if(!is.null(data_file())){
-      cls <- 
-        data_file() %>%
-        df2table(st = as.character(input$st), 
-                 sp = as.character(input$sp), 
-                 ab = as.character(input$ab)) %>%
-        t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
-        clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
+    res <- try(
+      if(!is.null(data_file())){
+        cls <- 
+          data_file() %>%
+          df2table(st = as.character(input$st), 
+                   sp = as.character(input$sp), 
+                   ab = as.character(input$ab)) %>%
+          t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
+          clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
         ggdendro::ggdendrogram(cls)
-    }
+      }
+    )
+    if(class(res) == "try-error") res <- NULL
+    res
   })
 
   # # # Ordination # # # 
   output$ordination <- renderPlot({
-    if(!is.null(data_file())){
-      ord <- 
-        data_file() %>%
-        df2table(st = as.character(input$st), 
-                 sp = as.character(input$sp), 
-                 ab = as.character(input$ab)) %>%
-        ordination(o_method = input$or_o_method, d_method = input$or_d_method)
+    res <- try(
+      if(!is.null(data_file())){
+        ord <- 
+          data_file() %>%
+          df2table(st = as.character(input$st), 
+                   sp = as.character(input$sp), 
+                   ab = as.character(input$ab)) %>%
+          ordination(o_method = input$or_o_method, d_method = input$or_d_method)
         ord_plot(ord, score = input$or_score, x = input$or_x,  y = input$or_y)
-    }
+      }
+    )
+    if(class(res) == "try-error") res <- NULL
+    res
   })
 
 }
