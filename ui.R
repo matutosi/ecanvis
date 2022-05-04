@@ -26,8 +26,10 @@ navbarPage("ecan",
 
   # # # Clustering # # #
   tabPanel("Clustering",
-    clusterPlotUI("cls_1"),
-    clusterPlotUI("cls_2")
+    clusterUI("cls_1"),
+    clusterUI("cls_2"),
+    clusterUI("cls_3"),
+    clusterUI("cls_4")
   #     sidebarLayout(
   #       sidebarPanel(
   #         # method
@@ -91,9 +93,7 @@ navbarPage("ecan",
   ),
 
   tabPanel("hist",
-    histPlotUI("bins1"),
-    histPlotUI("bins2")
+    histUI("bins1"),
+    histUI("bins2")
   )
-
-
 )

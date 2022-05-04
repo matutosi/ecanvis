@@ -1,4 +1,4 @@
-function(input, output){
+function(input, output, session){
 
   # # # Sample data # # # 
   #   output$sccater_plot <- renderPlot({
@@ -40,8 +40,10 @@ function(input, output){
   )
 
   # # # Clustering # # # 
-  callModule(clusterPlot, "cls_1")
-  callModule(clusterPlot, "cls_2")
+  clusterSever("cls_1", data_file(), input$st, input$sp, input$ab)
+  clusterSever("cls_2", data_file(), input$st, input$sp, input$ab)
+  clusterSever("cls_3", data_file(), input$st, input$sp, input$ab)
+  clusterSever("cls_4", data_file(), input$st, input$sp, input$ab)
   #   output$clustering <- renderPlot({
   #     res <- try(silent = TRUE,
   #       if(!is.null(data_file())){
@@ -77,7 +79,6 @@ function(input, output){
     res
   })
 
-  callModule(histPlot, "bins1")
-  callModule(histPlot, "bins2")
-
+  histServer("bins1")
+  histServer("bins2")
 }
