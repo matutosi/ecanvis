@@ -41,7 +41,7 @@ function(input, output) {
 
   # # # Clustering # # # 
   output$clustering <- renderPlot({
-    res <- try(
+    res <- try(silent = TRUE,
       if(!is.null(data_file())){
         cls <- 
           data_file() %>%
@@ -53,13 +53,13 @@ function(input, output) {
         ggdendro::ggdendrogram(cls)
       }
     )
-    if(class(res) == "try-error") res <- NULL
+    if(length(res) == 1) if(class(res) == "try-error") res <- NULL
     res
   })
 
   # # # Ordination # # # 
   output$ordination <- renderPlot({
-    res <- try(
+    res <- try(silent = TRUE,
       if(!is.null(data_file())){
         ord <- 
           data_file() %>%
@@ -70,7 +70,7 @@ function(input, output) {
         ord_plot(ord, score = input$or_score, x = input$or_x,  y = input$or_y)
       }
     )
-    if(class(res) == "try-error") res <- NULL
+    if(length(res) == 1) if(class(res) == "try-error") res <- NULL
     res
   })
 
