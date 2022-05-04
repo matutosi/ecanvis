@@ -26,28 +26,30 @@ navbarPage("ecan",
 
   # # # Clustering # # #
   tabPanel("Clustering",
-    sidebarLayout(
-      sidebarPanel(
-        # method
-        selectInput("cl_c_method", "clustering method",
-          choices = c("average", "ward.D", "ward.D2", "single",
-                      "complete", "mcquitty", "median", "centroid", "diana")
-        ),
-        selectInput("cl_d_method", "distance method",
-          choices = c("bray", "euclidean", "correlation", "manhattan",
-                      "canberra", "clark", "kulczynski", "jaccard",
-                      "gower", "altGower", "morisita", "horn",
-                      "mountford", "raup", "binomial", "chao", "cao",
-                      "mahalanobis", "chisq", "chord", "aitchison",
-                      "robust.aitchison")
-        ),
-        #
-        checkboxInput("st_or_sp", "check when cluster with species", value = FALSE),
-      ),
-      mainPanel(
-        plotOutput("clustering"),
-      )
-    )
+    clusterPlotUI("cls_1"),
+    clusterPlotUI("cls_2")
+  #     sidebarLayout(
+  #       sidebarPanel(
+  #         # method
+  #         selectInput("cl_c_method", "clustering method",
+  #           choices = c("average", "ward.D", "ward.D2", "single",
+  #                       "complete", "mcquitty", "median", "centroid", "diana")
+  #         ),
+  #         selectInput("cl_d_method", "distance method",
+  #           choices = c("bray", "euclidean", "correlation", "manhattan",
+  #                       "canberra", "clark", "kulczynski", "jaccard",
+  #                       "gower", "altGower", "morisita", "horn",
+  #                       "mountford", "raup", "binomial", "chao", "cao",
+  #                       "mahalanobis", "chisq", "chord", "aitchison",
+  #                       "robust.aitchison")
+  #         ),
+  #         #
+  #         checkboxInput("st_or_sp", "check when cluster with species", value = FALSE),
+  #       ),
+  #       mainPanel(
+  #         plotOutput("clustering"),
+  #       )
+  #     )
   ),
 
   # # # Ordination # # #
@@ -87,5 +89,11 @@ navbarPage("ecan",
       )
     )
   ),
+
+  tabPanel("hist",
+    histPlotUI("bins1"),
+    histPlotUI("bins2")
+  )
+
 
 )

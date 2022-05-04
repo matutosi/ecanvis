@@ -1,4 +1,4 @@
-function(input, output) {
+function(input, output){
 
   # # # Sample data # # # 
   #   output$sccater_plot <- renderPlot({
@@ -40,22 +40,25 @@ function(input, output) {
   )
 
   # # # Clustering # # # 
-  output$clustering <- renderPlot({
-    res <- try(silent = TRUE,
-      if(!is.null(data_file())){
-        cls <- 
-          data_file() %>%
-          df2table(st = as.character(input$st), 
-                   sp = as.character(input$sp), 
-                   ab = as.character(input$ab)) %>%
-          t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
-          clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
-        ggdendro::ggdendrogram(cls)
-      }
-    )
-    if(length(res) == 1) if(class(res) == "try-error") res <- NULL
-    res
-  })
+  callModule(clusterPlot, "cls_1")
+  callModule(clusterPlot, "cls_2")
+  #   output$clustering <- renderPlot({
+  #     res <- try(silent = TRUE,
+  #       if(!is.null(data_file())){
+  #         cls <- 
+  #           data_file() %>%
+  #           df2table(st = as.character(input$st), 
+  #                    sp = as.character(input$sp), 
+  #                    ab = as.character(input$ab)) %>%
+  #           # stand or species
+  #           t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
+  #           clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
+  #         ggdendro::ggdendrogram(cls)
+  #       }
+  #     )
+  #     if(length(res) == 1) if(class(res) == "try-error") res <- NULL
+  #     res
+  #   })
 
   # # # Ordination # # # 
   output$ordination <- renderPlot({
@@ -73,5 +76,8 @@ function(input, output) {
     if(length(res) == 1) if(class(res) == "try-error") res <- NULL
     res
   })
+
+  callModule(histPlot, "bins1")
+  callModule(histPlot, "bins2")
 
 }
