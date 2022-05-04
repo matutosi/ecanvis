@@ -11,8 +11,12 @@ function(input, output) {
   # # # Input data # # # 
   data_file <- reactive({ 
     if(is_null(input$file)) { return(NULL) }
-    else                    { readr::read_delim(input$file$datapath) }
+    else                    { 
+      locale <- if(input$file_s_jis) locale(encoding = "CP932") else default_locale()
+      readr::read_delim(input$file$datapath, locale = locale) 
+    }
   })
+
 
   output$table <- renderDataTable({
     data_file()
