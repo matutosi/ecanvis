@@ -1,0 +1,13 @@
+Package: ecanvis
+Title: Ecological Analysis Visualization
+Version: 0.1.1.9000
+Authors@R: 
+    person("Toshikazu", "Matsumura", , "matutosi@gmail.com", role = c("aut", "cre"))
+Description: Supports ecological analysis and its visualization with shiny.
+License: MIT + file LICENSE
+Depends: 
+    R (>= 3.5.0)
+URL: https://matutosi.shinyapps.io/ecanvis (app)
+     https://github.com/matutosi/ecanvis (devel)
+BugReports: https://github.com/matutosi/ecanvis/issues
+Encoding: UTF-8
