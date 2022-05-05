@@ -5,10 +5,10 @@ account: matutosi
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6222039
-bundleId: 5867051
+bundleId: 5871735
 url: https://matutosi.shinyapps.io/ecanvis/
-when: 1651630826.24765
-lastSyncTime: 1651630826.24765
+when: 1651718255.46976
+lastSyncTime: 1651718255.46976
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: df_sample.tsv
