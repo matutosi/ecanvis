@@ -1,6 +1,7 @@
   # https://matutosi.shinyapps.io/ecanvis/
 if(!require("ecan"))            devtools::install_github("matutosi/ecan")
 if(!require("ggdendro"))        install.packages("ggdendro")
+if(!require("reactable"))       install.packages("reactable")
 if(!require("shinycssloaders")) install.packages("shinycssloaders")
 
 library(ecan)
@@ -50,7 +51,7 @@ clusterUI <- function(id){
   # server module for cluster
 clusterSever <- function(id, df, st, sp, ab){
   moduleServer(id, function(input, output, session){
-    output$clustering <- renderPlot({
+    output$clustering <- renderPlot(res = 96, {
       res <- try(silent = TRUE,
         if(!is.null(df)){
           cls <- 
@@ -113,7 +114,7 @@ ordinationUI <- function(id){
   # server module for ordination
 ordinationSever <- function(id, df, st, sp, ab){
   moduleServer(id, function(input, output, session){
-    output$ordination <- renderPlot({
+    output$ordination <- renderPlot(res = 96, {
       res <- try(silent = TRUE,
         if(!is.null(df)){
           ord <- 

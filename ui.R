@@ -11,15 +11,15 @@ navbarPage("ecan",
         uiOutput("st"),
         uiOutput("sp"),
         uiOutput("ab"),
-        uiOutput("st_gr"),
-        uiOutput("sp_gr"),
+  #         uiOutput("st_gr"),
+  #         uiOutput("sp_gr"),
 
         htmlOutput("download_sample"),
 
         downloadButton("dl_sample_data", "Downlaod sample data"),
       ),
       mainPanel(
-        dataTableOutput("table"),
+        reactableOutput("table"),
       )
     )
   ),

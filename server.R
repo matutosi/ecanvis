@@ -10,9 +10,10 @@ function(input, output, session){
     }
   })
 
-
-  output$table <- renderDataTable({
-    data_file()
+  # package reactable: https://glin.github.io/reactable/index.html
+  output$table <- renderReactable({
+    if(!is_null(data_file()))
+      reactable::reactable(data_file(),  resizable = TRUE, filterable = TRUE, searchable = TRUE,)
   })
 
   output$st    <- renderUI({ varSelectInput("st",    "unit (stand): " ,     data = data_file()) })
@@ -29,7 +30,7 @@ function(input, output, session){
   )
 
   # # # Clustering # # # 
-  output$clustering <- renderPlot({
+  output$clustering <- renderPlot(res = 96, {
     res <- try(silent = TRUE,
       if(!is.null(data_file())){
         cls <- 
@@ -48,7 +49,7 @@ function(input, output, session){
   })
 
   # # # Ordination # # # 
-  output$ordination <- renderPlot({
+  output$ordination <- renderPlot(res = 96, {
     res <- try(silent = TRUE,
       if(!is.null(data_file())){
         ord <- 
