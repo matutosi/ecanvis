@@ -45,7 +45,9 @@ navbarPage("ecan",
         checkboxInput("st_or_sp", "clustering with species", value = FALSE),
       ),
       mainPanel(
-        plotOutput("clustering"),
+        shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
+          plotOutput("clustering")
+        )
       )
     )
   ),
@@ -83,7 +85,9 @@ navbarPage("ecan",
 
       ),
       mainPanel(
-        plotOutput("ordination"),
+        shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
+          plotOutput("ordination")
+        )
       )
     )
   ),
