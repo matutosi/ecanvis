@@ -1,5 +1,7 @@
   # https://matutosi.shinyapps.io/ecanvis/
-if(!require("ecan")) devtools::install_github("matutosi/ecan")
+if(!require("ecan"))            devtools::install_github("matutosi/ecan")
+if(!require("ggdendro"))        install.packages("ggdendro")
+if(!require("shinycssloaders")) install.packages("shinycssloaders")
 
 library(ecan)
 library(vegan)
@@ -38,7 +40,9 @@ clusterUI <- function(id){
         checkboxInput(ns("st_or_sp"), "clustering with species", value = FALSE)
       ),
       mainPanel(
-        plotOutput(ns("clustering"))
+        shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
+          plotOutput(ns("clustering"))
+        )
       )
     )
   )
