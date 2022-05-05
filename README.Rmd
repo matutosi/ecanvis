@@ -17,7 +17,7 @@ The goal of ecanvis is to support ecological analysis and its visualization with
 
 ## How to use
 
-Run on web (Shinyapps.io). 
+Run on web (shinyapps.io). 
 
 https://matutosi.shinyapps.io/ecanvis/
 
@@ -34,6 +34,17 @@ if(!require("ecan"))      devtools::install_github("matutosi/ecan")
   # Run app
 shiny::runGitHub("matutosi/ecanvis")
 ```
+
+## Make your shiny app
+
+
+Home: https://shiny.rstudio.com/
+
+Gallery: https://shiny.rstudio.com/gallery/
+
+Tutorial: https://shiny.rstudio.com/tutorial/
+
+shinyapps.io: https://www.shinyapps.io/
 
 ## Citation
 
