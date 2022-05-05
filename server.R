@@ -70,4 +70,10 @@ function(input, output, session){
   clusterSever("cls_3", data_file(), input$st, input$sp, input$ab)
   clusterSever("cls_4", data_file(), input$st, input$sp, input$ab)
 
+  # # # Ordination (comparison) # # # 
+  ordinationSever("ord_1", data_file(), input$st, input$sp, input$ab)
+  ordinationSever("ord_2", data_file(), input$st, input$sp, input$ab)
+  ordinationSever("ord_3", data_file(), input$st, input$sp, input$ab)
+  ordinationSever("ord_4", data_file(), input$st, input$sp, input$ab)
+
 }
