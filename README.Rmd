@@ -35,7 +35,12 @@ if(!require("ecan"))      devtools::install_github("matutosi/ecan")
 shiny::runGitHub("matutosi/ecanvis")
 ```
 
-## Make your shiny app
+## Citation
+
+Toshikazu Matsumura (2021) Morphological analysis for Japanese with R and shiny.  https://matutosi.shinyapps.io/ecanvis/.
+
+
+# Make your shiny app
 
 
 Home: https://shiny.rstudio.com/
@@ -46,6 +51,6 @@ Tutorial: https://shiny.rstudio.com/tutorial/
 
 shinyapps.io: https://www.shinyapps.io/
 
-## Citation
+Book: https://mastering-shiny.org/
 
-Toshikazu Matsumura (2021) Morphological analysis for Japanese with R and shiny.  https://matutosi.shinyapps.io/ecanvis/.
+Book (in Japanese): https://www.amazon.co.jp/dp/4863542577/
