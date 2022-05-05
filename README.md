@@ -14,11 +14,11 @@ Run on your local PC.
 
 ``` r
   # Install packages (need only once)
-if(!require("shiny")) install.packages("shiny")
-if(!require("devtools")) install.packages("devtools")
+if(!require("shiny"))     install.packages("shiny")
 if(!require("tidyverse")) install.packages("tidyverse")
-if(!require("ggdendro")) install.packages("ggdendro")
-if(!require("ecan")) devtools::install_github("matutosi/ecan")
+if(!require("devtools"))  install.packages("devtools")
+if(!require("ggdendro"))  install.packages("ggdendro")
+if(!require("ecan"))      devtools::install_github("matutosi/ecan")
 
   # Run app
 shiny::runGitHub("matutosi/ecanvis")
