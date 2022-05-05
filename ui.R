@@ -94,11 +94,11 @@ navbarPage("ecan",
 
   # # # Clustering (comparison) # # #
   tabPanel("Clustering (comparison)",
-    HTML(r'(If not working, 
-      <ol> 
-        <li> reload app 
-        <li> read a file 
-        <li> specify "unit", "item" and "value" in "Read file" tab 
+    HTML(r'(If not working,
+      <ol>
+        <li> reload app
+        <li> read a file
+        <li> specify "unit", "item" and "value" in "Read file" tab
         <li>  select "Clustering (comparison)" tab.
       </ol>)'),
     clusterUI("cls_1"),
@@ -109,11 +109,11 @@ navbarPage("ecan",
 
   # # # Ordination (comparison) # # #
   tabPanel("Ordination (comparison)",
-    HTML(r'(If not working, 
-      <ol> 
-        <li> reload app 
-        <li> read a file 
-        <li> specify "unit", "item" and "value" in "Read file" tab 
+    HTML(r'(If not working,
+      <ol>
+        <li> reload app
+        <li> read a file
+        <li> specify "unit", "item" and "value" in "Read file" tab
         <li>  select "Clustering (comparison)" tab.
       </ol>)'),
     ordinationUI("ord_1"),
