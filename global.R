@@ -1,3 +1,4 @@
+  # https://matutosi.shinyapps.io/ecanvis/
 if(!require("ecan")) devtools::install_github("matutosi/ecan")
 
 library(ecan)
@@ -13,31 +14,6 @@ sample_data <-
   table2df(st = "stand", sp = "species", ab = "cover") %>%
   dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
 
-  # ui module (sample)
-histUI <- function(id){
-  ns <- NS(id)
-  tagList(
-    sidebarLayout(
-      sidebarPanel(
-        sliderInput(ns("bins"), "Number of bins: ", min = 1, max = 50, value = 30)
-      ),
-      mainPanel(
-        plotOutput(ns("plot"))
-      )
-    )
-  )
-}
-  # server module (sample)
-histServer <- function(id){
-  moduleServer(id, function(input, output, session){
-    output$plot <- renderPlot({
-      x <- faithful[, 2]
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
-      hist(x, breaks = bins)
-    })
-  })
-}
-
   # ui module for cluster
 clusterUI <- function(id){
   ns <- NS(id)
@@ -45,6 +21,7 @@ clusterUI <- function(id){
     sidebarLayout(
       sidebarPanel(
         # method
+        
         selectInput(ns("cl_c_method"), "clustering method",
           choices = c("average", "ward.D", "ward.D2", "single",
                       "complete", "mcquitty", "median", "centroid", "diana")
@@ -58,7 +35,7 @@ clusterUI <- function(id){
                       "robust.aitchison")
         ),
         # stand or species
-        checkboxInput(ns("st_or_sp"), "check when cluster with species", value = FALSE)
+        checkboxInput(ns("st_or_sp"), "clustering with species", value = FALSE)
       ),
       mainPanel(
         plotOutput(ns("clustering"))
@@ -67,14 +44,6 @@ clusterUI <- function(id){
   )
 }
   # server module for cluster
-  # histogramServer <- function(id) {
-  #   moduleServer(id, function(input, output, session) {
-  #     data <- reactive(mtcars[[input$var]])
-  #     output$hist <- renderPlot({
-  #       hist(data(), breaks = input$bins, main = input$var)
-  #     })
-  #   })
-  # }
 clusterSever <- function(id, df, st, sp, ab){
   moduleServer(id, function(input, output, session){
     output$clustering <- renderPlot({

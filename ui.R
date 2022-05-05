@@ -14,9 +14,9 @@ navbarPage("ecan",
         uiOutput("st_gr"),
         uiOutput("sp_gr"),
 
-        htmlOutput("please_download"),
+        htmlOutput("download_sample"),
 
-        downloadButton("dl_sample_data", "downlaod sample data"),
+        downloadButton("dl_sample_data", "Downlaod sample data"),
       ),
       mainPanel(
         dataTableOutput("table"),
@@ -26,32 +26,28 @@ navbarPage("ecan",
 
   # # # Clustering # # #
   tabPanel("Clustering",
-    clusterUI("cls_1"),
-    clusterUI("cls_2"),
-    clusterUI("cls_3"),
-    clusterUI("cls_4")
-  #     sidebarLayout(
-  #       sidebarPanel(
-  #         # method
-  #         selectInput("cl_c_method", "clustering method",
-  #           choices = c("average", "ward.D", "ward.D2", "single",
-  #                       "complete", "mcquitty", "median", "centroid", "diana")
-  #         ),
-  #         selectInput("cl_d_method", "distance method",
-  #           choices = c("bray", "euclidean", "correlation", "manhattan",
-  #                       "canberra", "clark", "kulczynski", "jaccard",
-  #                       "gower", "altGower", "morisita", "horn",
-  #                       "mountford", "raup", "binomial", "chao", "cao",
-  #                       "mahalanobis", "chisq", "chord", "aitchison",
-  #                       "robust.aitchison")
-  #         ),
-  #         #
-  #         checkboxInput("st_or_sp", "check when cluster with species", value = FALSE),
-  #       ),
-  #       mainPanel(
-  #         plotOutput("clustering"),
-  #       )
-  #     )
+    sidebarLayout(
+      sidebarPanel(
+        # method
+        selectInput("cl_c_method", "clustering method",
+          choices = c("average", "ward.D", "ward.D2", "single",
+                      "complete", "mcquitty", "median", "centroid", "diana")
+        ),
+        selectInput("cl_d_method", "distance method",
+          choices = c("bray", "euclidean", "correlation", "manhattan",
+                      "canberra", "clark", "kulczynski", "jaccard",
+                      "gower", "altGower", "morisita", "horn",
+                      "mountford", "raup", "binomial", "chao", "cao",
+                      "mahalanobis", "chisq", "chord", "aitchison",
+                      "robust.aitchison")
+        ),
+        #
+        checkboxInput("st_or_sp", "clustering with species", value = FALSE),
+      ),
+      mainPanel(
+        plotOutput("clustering"),
+      )
+    )
   ),
 
   # # # Ordination # # #
@@ -92,8 +88,12 @@ navbarPage("ecan",
     )
   ),
 
-  tabPanel("hist",
-    histUI("bins1"),
-    histUI("bins2")
-  )
+  # # # Clustering (comparison) # # #
+  tabPanel("Clustering (comparison)",
+    HTML(r'(If not working, <ol> <li> reload app <li> read a file <li> specify "unit", "item" and "value" in "Read file" tab <li>  select "Clustering (comparison)" tab.</ol>)'),
+    clusterUI("cls_1"),
+    clusterUI("cls_2"),
+    clusterUI("cls_3"),
+    clusterUI("cls_4")
+  ),
 )
