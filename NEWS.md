@@ -4,13 +4,16 @@
 # ecanvis 0.1.1.9000
 
 * Todo
-    * 
-    * 
+    * compute and plot diversity index
+    * add unit / item groups, their color in ordination, and their naming in dendrogram
+    * download the result of analyses and plots
 * Done
+    * 
 
 # ecanvis 0.1.1
 
 * Clustering (comparison)
+* Ordination (comparison)
 
 # ecanvis 0.1.0
 
