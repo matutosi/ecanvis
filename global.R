@@ -24,7 +24,6 @@ clusterUI <- function(id){
     sidebarLayout(
       sidebarPanel(
         # method
-        
         selectInput(ns("cl_c_method"), "clustering method",
           choices = c("average", "ward.D", "ward.D2", "single",
                       "complete", "mcquitty", "median", "centroid", "diana")

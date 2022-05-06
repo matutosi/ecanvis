@@ -5,7 +5,7 @@ navbarPage("ecan",
     sidebarLayout(
       sidebarPanel(
   #         actionButton("use_sample_data", "use sample data"),
-        fileInput("file", "choose file"),
+        fileInput("file", "choose file", accept = c(".csv", ".tsv", ".txt")),
         checkboxInput("file_s_jis", "Encoding: S-JIS (CP932) JP Windows", value = FALSE),
 
         uiOutput("st"),
