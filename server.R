@@ -1,8 +1,7 @@
   # https://matutosi.shinyapps.io/ecanvis/
 function(input, output, session){
-
   # # # Input data # # # 
-  data_file <- reactive({ 
+  data_in <- reactive({ 
     req(input$file)
     locale <- if(input$file_s_jis) locale(encoding = "CP932") else default_locale()
     readr::read_delim(input$file$datapath, locale = locale, show_col_types = FALSE)
@@ -10,14 +9,31 @@ function(input, output, session){
 
   # package reactable: https://glin.github.io/reactable/index.html
   output$table <- renderReactable({
-    reactable::reactable(data_file(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
+    reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
   })
 
-  output$st    <- renderUI({ varSelectInput("st",    "unit (stand): " ,     data = data_file()) })
-  output$sp    <- renderUI({ varSelectInput("sp",    "item (species): ",    data = data_file()) })
-  output$ab    <- renderUI({ varSelectInput("ab",    "value (abandance): ", data = data_file()) })
-  #   output$st_gr <- renderUI({ varSelectInput("st_gr", "unit group (opt): " , data = data_file()) })
-  #   output$sp_gr <- renderUI({ varSelectInput("sp_gr", "item group:(opt): ",  data = data_file()) })
+
+  output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
+  output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
+  output$ab    <- renderUI({varSelectInput("ab",    "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
+  #   output$st_gr <- renderUI({varSelectInput("st_gr", "unit group (opt): " , data = data_in())})
+  #   output$sp_gr <- renderUI({varSelectInput("sp_gr", "item group:(opt): ",  data = data_in())})
+
+
+  #   # In progress 
+  #   #   error: Warning in is.data.frame(x) : restarting interrupted promise evaluation 
+  # render_varSelectUI <- function(inputId, label, data, col_no){
+  #   renderUI({ 
+  #     varSelectInput(inputId, label,
+  #                    data = data, selected = colnames(data)[col_no]) 
+  #   })
+  # }
+  #   ids    <- c("st", "sp", "ab")
+  #   labs   <- c("unit (stand): " , "item (species): ", "value (abandance):")
+  #   col_no <- seq_along(ids)
+  #   output$st    <- render_varSelectUI(ids[1], labs[1], data = data_in(), col_no = 1)
+  #   output$sp    <- render_varSelectUI(ids[2], labs[2], data = data_in(), col_no = 2)
+  #   output$ab    <- render_varSelectUI(ids[3], labs[3], data = data_in(), col_no = 3)
 
   output$download_sample <- renderUI("First time to use, please download a sample file and upload it, The sample file is generated with data dune and dune.env in library vegan.")
 
@@ -29,7 +45,7 @@ function(input, output, session){
   # # # Clustering # # # 
   output$clustering <- renderPlot(res = 96, {
     cls <- 
-      data_file() %>%
+      data_in() %>%
       df2table(st = as.character(input$st), 
                sp = as.character(input$sp), 
                ab = as.character(input$ab)) %>%
@@ -42,7 +58,7 @@ function(input, output, session){
   # # # Ordination # # # 
   output$ordination <- renderPlot(res = 96, {
     ord <- 
-      data_file() %>%
+      data_in() %>%
       df2table(st = as.character(input$st), 
                sp = as.character(input$sp), 
                ab = as.character(input$ab)) %>%
@@ -51,15 +67,15 @@ function(input, output, session){
   })
 
   # # # Clustering (comparison) # # # 
-  clusterSever("cls_1", data_file(), input$st, input$sp, input$ab)
-  clusterSever("cls_2", data_file(), input$st, input$sp, input$ab)
-  clusterSever("cls_3", data_file(), input$st, input$sp, input$ab)
-  clusterSever("cls_4", data_file(), input$st, input$sp, input$ab)
+  clusterSever("cls_1", data_in(), input$st, input$sp, input$ab)
+  clusterSever("cls_2", data_in(), input$st, input$sp, input$ab)
+  clusterSever("cls_3", data_in(), input$st, input$sp, input$ab)
+  clusterSever("cls_4", data_in(), input$st, input$sp, input$ab)
 
   # # # Ordination (comparison) # # # 
-  ordinationSever("ord_1", data_file(), input$st, input$sp, input$ab)
-  ordinationSever("ord_2", data_file(), input$st, input$sp, input$ab)
-  ordinationSever("ord_3", data_file(), input$st, input$sp, input$ab)
-  ordinationSever("ord_4", data_file(), input$st, input$sp, input$ab)
+  ordinationSever("ord_1", data_in(), input$st, input$sp, input$ab)
+  ordinationSever("ord_2", data_in(), input$st, input$sp, input$ab)
+  ordinationSever("ord_3", data_in(), input$st, input$sp, input$ab)
+  ordinationSever("ord_4", data_in(), input$st, input$sp, input$ab)
 
 }
