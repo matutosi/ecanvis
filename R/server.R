@@ -11,7 +11,7 @@ function(input, output, session){
     })
   })
 
-  data_in <- datasetServer("data")
+  data_in <- data_loadServer("data")
 
   # package reactable: https://glin.github.io/reactable/index.html
   output$table <- renderReactable({

@@ -1,4 +1,4 @@
-datasetInput <- function(id) {
+data_loadInput <- function(id) {
   ns <- NS(id)
   tagList(
     fileInput(ns("file"), "choose file", accept = c(".csv", ".tsv", ".txt")),
@@ -6,7 +6,7 @@ datasetInput <- function(id) {
   )
 }
 
-datasetServer <- function(id) {
+data_loadServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     reactive({ 
       locale <- if(input$file_s_jis) locale(encoding = "CP932") else default_locale()

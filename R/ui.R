@@ -6,7 +6,7 @@ navbarPage("ecan",
     sidebarLayout(
       sidebarPanel(
 
-        datasetInput("data"),
+        data_loadInput("data"),
         actionButton("use_sample_data", "Use sample data"),
 
         uiOutput("st"),
