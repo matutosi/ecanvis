@@ -7,6 +7,7 @@ navbarPage("ecan",
       sidebarPanel(
 
         datasetInput("data"),
+        actionButton("use_sample_data", "Use sample data"),
 
         uiOutput("st"),
         uiOutput("sp"),

@@ -2,20 +2,16 @@
 function(input, output, session){
 
   # # # Input data # # # 
-  data_in <- datasetServer("data")
-
 
   #   # IN PROGRESS # # # # # # # # # # # # # # # # 
-  # use sample data
-  #   observe(input$use_sample_data, {
-  #     data_in <- gen_sample_data
-  #     output$table <- renderReactable({
-  #       reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
-  #     })
-  #     output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
-  #     output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
-  #     output$ab    <- renderUI({varSelectInput("ab",    "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
-  #   })
+  observeEvent(input$use_sample_data, {
+    data_in <- gen_sample_data
+    output$table <- renderReactable({
+      reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
+    })
+  })
+
+  data_in <- datasetServer("data")
 
   # package reactable: https://glin.github.io/reactable/index.html
   output$table <- renderReactable({
