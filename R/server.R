@@ -1,11 +1,9 @@
   # https://matutosi.shinyapps.io/ecanvis/
 function(input, output, session){
+
   # # # Input data # # # 
-  data_in <- reactive({ 
-    req(input$file)
-    locale <- if(input$file_s_jis) locale(encoding = "CP932") else default_locale()
-    readr::read_delim(input$file$datapath, locale = locale, show_col_types = FALSE)
-  })
+  data_in <- datasetServer("data")
+
 
   #   # IN PROGRESS # # # # # # # # # # # # # # # # 
   # use sample data

@@ -1,11 +1,12 @@
   # https://matutosi.shinyapps.io/ecanvis/
 navbarPage("ecan",
+
   # # # Input data # # #
   tabPanel("Read file",
     sidebarLayout(
       sidebarPanel(
-        fileInput("file", "choose file", accept = c(".csv", ".tsv", ".txt")),
-        checkboxInput("file_s_jis", "Encoding: S-JIS (CP932) JP Windows", value = FALSE),
+
+        datasetInput("data"),
 
         uiOutput("st"),
         uiOutput("sp"),
