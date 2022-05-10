@@ -4,7 +4,6 @@ navbarPage("ecan",
   tabPanel("Read file",
     sidebarLayout(
       sidebarPanel(
-  #         actionButton("use_sample_data", "use sample data"),
         fileInput("file", "choose file", accept = c(".csv", ".tsv", ".txt")),
         checkboxInput("file_s_jis", "Encoding: S-JIS (CP932) JP Windows", value = FALSE),
 
@@ -14,8 +13,9 @@ navbarPage("ecan",
   #         uiOutput("st_gr"),
   #         uiOutput("sp_gr"),
 
-        htmlOutput("download_sample"),
+  #         actionButton("use_sample_data", "Use sample data"),
 
+        htmlOutput("download_sample"),
         downloadButton("dl_sample_data", "Downlaod sample data"),
       ),
       mainPanel(

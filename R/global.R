@@ -8,14 +8,16 @@ library(ecan)
 library(vegan)
 library(tidyverse)
 library(shiny)
+  # runApp("d:/matu/work/todo/ecanvis")
 
   # generate sample data for download
-data(dune)
-data(dune.env)
-sample_data <-
+gen_sample_data <- function(){
+  data(dune)
+  data(dune.env)
   dune %>%
-  table2df(st = "stand", sp = "species", ab = "cover") %>%
-  dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
+    table2df(st = "stand", sp = "species", ab = "cover") %>%
+    dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
+}
 
   # ui module for cluster
 clusterUI <- function(id){

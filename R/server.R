@@ -7,11 +7,22 @@ function(input, output, session){
     readr::read_delim(input$file$datapath, locale = locale, show_col_types = FALSE)
   })
 
+  #   # IN PROGRESS # # # # # # # # # # # # # # # # 
+  # use sample data
+  #   observe(input$use_sample_data, {
+  #     data_in <- gen_sample_data
+  #     output$table <- renderReactable({
+  #       reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
+  #     })
+  #     output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
+  #     output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
+  #     output$ab    <- renderUI({varSelectInput("ab",    "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
+  #   })
+
   # package reactable: https://glin.github.io/reactable/index.html
   output$table <- renderReactable({
     reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
   })
-
 
   output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
   output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
@@ -20,7 +31,7 @@ function(input, output, session){
   #   output$sp_gr <- renderUI({varSelectInput("sp_gr", "item group:(opt): ",  data = data_in())})
 
 
-  #   # In progress 
+  #   # IN PROGRESS # # # # # # # # # # # # # # # # 
   #   #   error: Warning in is.data.frame(x) : restarting interrupted promise evaluation 
   # render_varSelectUI <- function(inputId, label, data, col_no){
   #   renderUI({ 
@@ -39,7 +50,7 @@ function(input, output, session){
 
   output$dl_sample_data = downloadHandler(
     filename = "sample_data.tsv",
-    content  = function(file) { readr::write_tsv(sample_data, file) }
+    content  = function(file) { readr::write_tsv(gen_sample_data(), file) }
   )
 
   # # # Clustering # # # 
