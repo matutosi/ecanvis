@@ -4,14 +4,17 @@ function(input, output, session){
   # # # Input data # # # 
 
   #   # IN PROGRESS # # # # # # # # # # # # # # # # 
-  observeEvent(input$use_sample_data, {
-    data_in <- gen_sample_data
-    output$table <- renderReactable({
-      reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
-    })
+
+  #   uploaded <- data_loadServer("upload_data")
+
+  data_in <- eventReactive(input$show_data, {
+    if(input$use_sample_data){
+      gen_sample_data()
+    } else {
+      data_loadServer("upload_data")()
+    }
   })
 
-  data_in <- data_loadServer("data")
 
   # package reactable: https://glin.github.io/reactable/index.html
   output$table <- renderReactable({

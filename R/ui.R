@@ -6,8 +6,10 @@ navbarPage("ecan",
     sidebarLayout(
       sidebarPanel(
 
-        data_loadInput("data"),
-        actionButton("use_sample_data", "Use sample data"),
+        checkboxInput("use_sample_data", "Use sample data", value = FALSE),
+        data_loadInput("upload_data"),
+
+        actionButton("show_data", "Show data"),
 
         uiOutput("st"),
         uiOutput("sp"),
