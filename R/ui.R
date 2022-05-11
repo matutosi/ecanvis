@@ -5,7 +5,17 @@ ui <- navbarPage("ecan",
   tabPanel("Read file",
     sidebarLayout(
       sidebarPanel(
-        data_up_show(),  # data_up_show.R
+
+        tags$p(
+          instructions,   # global.R
+          tags$hr(),
+          checkboxInput("use_sample_data", "Use sample data", value = FALSE),
+          tags$hr(),
+          data_loadInput("upload_data"),
+          tags$hr(),
+          actionButton("show_data", "Show data"),
+          tags$hr()
+        ),
 
         uiOutput("st"),
         uiOutput("sp"),
