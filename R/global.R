@@ -20,8 +20,7 @@ gen_sample_data <- function(){
 }
 
 ## data_load
-  # runApp("d:/matu/work/todo/ecanvis")
-data_loadInput <- function(id) {
+data_loadUI <- function(id) {
   ns <- NS(id)
   tagList(
     fileInput(ns("file"), "Upload file", accept = c(".csv", ".tsv", ".txt")),
