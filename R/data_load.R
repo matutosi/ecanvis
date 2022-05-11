@@ -1,7 +1,7 @@
 data_loadInput <- function(id) {
   ns <- NS(id)
   tagList(
-    fileInput(ns("file"), "choose file", accept = c(".csv", ".tsv", ".txt")),
+    fileInput(ns("file"), "Upload file", accept = c(".csv", ".tsv", ".txt")),
     checkboxInput(ns("file_s_jis"), "Encoding: S-JIS (CP932) JP Windows", value = FALSE),
   )
 }

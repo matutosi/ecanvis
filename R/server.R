@@ -5,8 +5,6 @@ function(input, output, session){
 
   #   # IN PROGRESS # # # # # # # # # # # # # # # # 
 
-  #   uploaded <- data_loadServer("upload_data")
-
   data_in <- eventReactive(input$show_data, {
     if(input$use_sample_data){
       gen_sample_data()
@@ -28,20 +26,6 @@ function(input, output, session){
   #   output$sp_gr <- renderUI({varSelectInput("sp_gr", "item group:(opt): ",  data = data_in())})
 
 
-  #   # IN PROGRESS # # # # # # # # # # # # # # # # 
-  #   #   error: Warning in is.data.frame(x) : restarting interrupted promise evaluation 
-  # render_varSelectUI <- function(inputId, label, data, col_no){
-  #   renderUI({ 
-  #     varSelectInput(inputId, label,
-  #                    data = data, selected = colnames(data)[col_no]) 
-  #   })
-  # }
-  #   ids    <- c("st", "sp", "ab")
-  #   labs   <- c("unit (stand): " , "item (species): ", "value (abandance):")
-  #   col_no <- seq_along(ids)
-  #   output$st    <- render_varSelectUI(ids[1], labs[1], data = data_in(), col_no = 1)
-  #   output$sp    <- render_varSelectUI(ids[2], labs[2], data = data_in(), col_no = 2)
-  #   output$ab    <- render_varSelectUI(ids[3], labs[3], data = data_in(), col_no = 3)
 
   output$download_sample <- renderUI("First time to use, please download a sample file and upload it, The sample file is generated with data dune and dune.env in library vegan.")
 

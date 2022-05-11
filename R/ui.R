@@ -6,19 +6,30 @@ navbarPage("ecan",
     sidebarLayout(
       sidebarPanel(
 
+    tags$ol(
+      tags$h3('Instruction'),
+      tags$li('Select "Use sample data" or "Upload file"'), 
+      tags$li('Show data'),
+      tags$li('Specify vars as inputs')
+    ),
+
+    tags$hr(),
         checkboxInput("use_sample_data", "Use sample data", value = FALSE),
+
+    tags$hr(),
         data_loadInput("upload_data"),
 
+    tags$hr(),
         actionButton("show_data", "Show data"),
 
+    tags$hr(),
         uiOutput("st"),
         uiOutput("sp"),
         uiOutput("ab"),
   #         uiOutput("st_gr"),
   #         uiOutput("sp_gr"),
 
-  #         actionButton("use_sample_data", "Use sample data"),
-
+    tags$hr(),
         htmlOutput("download_sample"),
         downloadButton("dl_sample_data", "Downlaod sample data"),
       ),
