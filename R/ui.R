@@ -1,5 +1,5 @@
   # https://matutosi.shinyapps.io/ecanvis/
-navbarPage("ecan",
+ui <- navbarPage("ecan",
 
   # # # Input data # # #
   tabPanel("Read file",

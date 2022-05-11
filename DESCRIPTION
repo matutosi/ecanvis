@@ -11,3 +11,6 @@ URL: https://matutosi.shinyapps.io/ecanvis (app)
      https://github.com/matutosi/ecanvis (devel)
 BugReports: https://github.com/matutosi/ecanvis/issues
 Encoding: UTF-8
+Imports: 
+    pkgload,
+    shiny
