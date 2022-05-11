@@ -6,16 +6,20 @@ ui <- navbarPage("ecan",
     sidebarLayout(
       sidebarPanel(
 
-        tags$p(
-          instructions,   # global.R
-          tags$hr(),
-          checkboxInput("use_sample_data", "Use sample data", value = FALSE),
-          tags$hr(),
-          data_loadInput("upload_data"),
-          tags$hr(),
-          actionButton("show_data", "Show data"),
-          tags$hr()
+        tags$ol(
+          tags$h3('Instruction'),
+          tags$li('Select "Use sample data" or "Upload file"'),
+          tags$li('Show data'),
+          tags$li('Specify vars as inputs')
         ),
+
+        tags$hr(),
+        checkboxInput("use_sample_data", "Use sample data", value = FALSE),
+        tags$hr(),
+        data_loadInput("upload_data"),
+        tags$hr(),
+        actionButton("show_data", "Show data"),
+        tags$hr(),
 
         uiOutput("st"),
         uiOutput("sp"),
