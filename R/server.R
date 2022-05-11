@@ -23,8 +23,8 @@ function(input, output, session){
   #   output$sp_gr <- renderUI({varSelectInput("sp_gr", "item group:(opt): ",  data = data_in())})
 
 
-
-  output$download_sample <- renderUI("First time to use, please download a sample file and upload it, The sample file is generated with data dune and dune.env in library vegan.")
+  output$download_sample <- 
+    renderUI("First time to use, please download a sample file and upload it, The sample file is generated with data dune and dune.env in library vegan.")
 
   output$dl_sample_data = downloadHandler(
     filename = "sample_data.tsv",

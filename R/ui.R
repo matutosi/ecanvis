@@ -5,8 +5,7 @@ navbarPage("ecan",
   tabPanel("Read file",
     sidebarLayout(
       sidebarPanel(
-
-        data_up_show(),
+        data_up_show(),  # data_up_show.R
 
         uiOutput("st"),
         uiOutput("sp"),
@@ -18,6 +17,7 @@ navbarPage("ecan",
         htmlOutput("download_sample"),
         downloadButton("dl_sample_data", "Downlaod sample data"),
       ),
+    
       mainPanel(
         reactableOutput("table"),
       )
