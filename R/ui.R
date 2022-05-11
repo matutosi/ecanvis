@@ -21,6 +21,7 @@ navbarPage("ecan",
         actionButton("show_data", "Show data"),
         tags$hr(),
 
+
         uiOutput("st"),
         uiOutput("sp"),
         uiOutput("ab"),
