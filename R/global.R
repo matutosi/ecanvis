@@ -9,7 +9,17 @@ library(vegan)
 library(tidyverse)
 library(shiny)
 
-##
+## gen_sample_data
+  # generate sample data for download
+gen_sample_data <- function(){
+  data(dune)
+  data(dune.env)
+  dune %>%
+    table2df(st = "stand", sp = "species", ab = "cover") %>%
+    dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
+}
+
+## data_load
   # runApp("d:/matu/work/todo/ecanvis")
 data_loadInput <- function(id) {
   ns <- NS(id)
@@ -29,7 +39,7 @@ data_loadServer <- function(id) {
   })
 }
 
-##
+## cluster
   # ui module for cluster
 clusterUI <- function(id){
   ns <- NS(id)
@@ -82,7 +92,7 @@ clusterSever <- function(id, df, st, sp, ab){
   })
 }
 
-##
+## ordination
   # ui module for ordination
 ordinationUI <- function(id){
   ns <- NS(id)
@@ -143,29 +153,4 @@ ordinationSever <- function(id, df, st, sp, ab){
       res
     })
   })
-}
-
-##
-data_sampleInput <- function(id) {
-  ns <- NS(id)
-  tagList(
-    actionButton(ns("use_sample_data"), "Use sample data")
-  )
-}
-
-data_sampleServer <- function(id) {
-  moduleServer(id, function(input, output, session) {
-    eventReactive(input$use_sample_data,
-      gen_sample_data()
-    )
-  })
-}
-
-  # generate sample data for download
-gen_sample_data <- function(){
-  data(dune)
-  data(dune.env)
-  dune %>%
-    table2df(st = "stand", sp = "species", ab = "cover") %>%
-    dplyr::left_join(tibble::rownames_to_column(dune.env, "stand"))
 }
