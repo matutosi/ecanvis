@@ -2,7 +2,6 @@
 function(input, output, session){
 
   # # # Input data # # # 
-
   data_in <- eventReactive(input$show_data, {
     if(input$use_sample_data){
       gen_sample_data()
