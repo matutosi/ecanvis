@@ -16,6 +16,7 @@ function(input, output, session){
     reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
   })
 
+
   output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
   output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
   output$ab    <- renderUI({varSelectInput("ab",    "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })

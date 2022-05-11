@@ -16,10 +16,11 @@ navbarPage("ecan",
         tags$hr(),
         checkboxInput("use_sample_data", "Use sample data", value = FALSE),
         tags$hr(),
-        data_loadInput("upload_data"),
+        data_loadUI("upload_data"),
         tags$hr(),
         actionButton("show_data", "Show data"),
         tags$hr(),
+
 
         uiOutput("st"),
         uiOutput("sp"),
@@ -134,6 +135,5 @@ navbarPage("ecan",
     ordinationUI("ord_2"),
     ordinationUI("ord_3"),
     ordinationUI("ord_4")
-  ),
-
+  )
 )
