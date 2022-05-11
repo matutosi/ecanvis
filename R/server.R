@@ -1,5 +1,5 @@
   # https://matutosi.shinyapps.io/ecanvis/
-server <- function(input, output, session){
+function(input, output, session){
 
   # # # Input data # # #
   data_in <- eventReactive(input$show_data, {
