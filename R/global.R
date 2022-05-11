@@ -9,7 +9,7 @@ library(vegan)
 library(tidyverse)
 library(shiny)
 
-## 
+##
   # runApp("d:/matu/work/todo/ecanvis")
 data_loadInput <- function(id) {
   ns <- NS(id)
@@ -21,7 +21,7 @@ data_loadInput <- function(id) {
 
 data_loadServer <- function(id) {
   moduleServer(id, function(input, output, session) {
-    reactive({ 
+    reactive({
       locale <- if(input$file_s_jis) locale(encoding = "CP932") else default_locale()
       req(input$file)
       readr::read_delim(input$file$datapath, locale = locale, show_col_types = FALSE)
@@ -29,7 +29,7 @@ data_loadServer <- function(id) {
   })
 }
 
-## 
+##
   # ui module for cluster
 clusterUI <- function(id){
   ns <- NS(id)
@@ -66,10 +66,10 @@ clusterSever <- function(id, df, st, sp, ab){
     output$clustering <- renderPlot(res = 96, {
       res <- try(silent = TRUE,
         if(!is.null(df)){
-          cls <- 
+          cls <-
             df %>%
-            df2table(st = as.character(st), 
-                     sp = as.character(sp), 
+            df2table(st = as.character(st),
+                     sp = as.character(sp),
                      ab = as.character(ab)) %>%
             t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
             clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
@@ -82,7 +82,7 @@ clusterSever <- function(id, df, st, sp, ab){
   })
 }
 
-## 
+##
   # ui module for ordination
 ordinationUI <- function(id){
   ns <- NS(id)
@@ -130,10 +130,10 @@ ordinationSever <- function(id, df, st, sp, ab){
     output$ordination <- renderPlot(res = 96, {
       res <- try(silent = TRUE,
         if(!is.null(df)){
-          ord <- 
+          ord <-
             df %>%
-            df2table(st = as.character(st), 
-                     sp = as.character(sp), 
+            df2table(st = as.character(st),
+                     sp = as.character(sp),
                      ab = as.character(ab)) %>%
             ordination(o_method = input$or_o_method, d_method = input$or_d_method)
           ord_plot(ord, score = input$or_score, x = input$or_x,  y = input$or_y)
@@ -145,7 +145,7 @@ ordinationSever <- function(id, df, st, sp, ab){
   })
 }
 
-## 
+##
 data_sampleInput <- function(id) {
   ns <- NS(id)
   tagList(
@@ -156,7 +156,7 @@ data_sampleInput <- function(id) {
 data_sampleServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     eventReactive(input$use_sample_data,
-      gen_sample_data() 
+      gen_sample_data()
     )
   })
 }
