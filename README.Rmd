@@ -32,7 +32,7 @@ if(!require("ggdendro"))  install.packages("ggdendro")
 if(!require("ecan"))      devtools::install_github("matutosi/ecan")
 
   # Run app
-shiny::runGitHub("matutosi/ecanvis")
+shiny::runGitHub("matutosi/ecanvis", subdir = "R")
 ```
 
 ## Citation

@@ -17,7 +17,7 @@ navbarPage("ecan",
         htmlOutput("download_sample"),
         downloadButton("dl_sample_data", "Downlaod sample data"),
       ),
-    
+
       mainPanel(
         reactableOutput("table"),
       )
