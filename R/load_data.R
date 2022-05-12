@@ -1,0 +1,36 @@
+  # UI module
+load_fileInput <- function(id, label = "Upload file") {
+  ns <- NS(id)
+  tagList(
+    fileInput(ns("file"), label),
+    checkboxInput(ns("file_s_jis"), "Encoding: S-JIS (CP932) JP Windows", value = FALSE),
+    tags$hr(),
+    checkboxInput(ns("use_example"), "Use example data")
+  )
+}
+
+  # Server module
+load_fileSever <- function(id){
+  moduleServer(id, function(input, output, session){
+    uploaded_file <- reactive({
+      validate(need(input$file,  # No file selected, do nothing
+        message = 'Upload a file from your PC or check "Use example data"')
+      )
+      input$file
+    })
+
+    reactive({
+      locale <- 
+        if(input$file_s_jis) {
+          locale(encoding = "CP932")
+        } else {
+          default_locale()
+        }
+      if(input$use_example){
+         gen_sample_data() # global.R
+      } else {
+        readr::read_delim(uploaded_file()$datapath, locale = locale, show_col_types = FALSE)
+      }
+    })
+  })
+}
