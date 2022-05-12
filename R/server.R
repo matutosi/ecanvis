@@ -2,14 +2,7 @@
 function(input, output, session){
 
   # # # Input data # # #
-  data_in <- eventReactive(input$show_data, {
-    if(input$use_sample_data){
-      gen_sample_data()
-    } else {
-      data_loadServer("upload_data")()
-    }
-  })
-
+  data_in <- load_fileSever("load_file")
 
   # package reactable: https://glin.github.io/reactable/index.html
   output$table <- renderReactable({
