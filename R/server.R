@@ -4,18 +4,19 @@ function(input, output, session){
   # # # Input data # # #
   data_in <- load_fileSever("load_file")
 
-  # package reactable: https://glin.github.io/reactable/index.html
-  output$table <- renderReactable({
-    reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
-  })
-
-
   output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
   output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
   output$ab    <- renderUI({varSelectInput("ab",    "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
   #   output$st_gr <- renderUI({varSelectInput("st_gr", "unit group (opt): " , data = data_in())})
   #   output$sp_gr <- renderUI({varSelectInput("sp_gr", "item group:(opt): ",  data = data_in())})
+  #   output$st    <- select_varServer("test1", data=data_in())
+  #   output$sp    <- select_varServer("test2", data=data_in())
+  #   output$ab    <- select_varServer("test3", data=data_in())
 
+  # package reactable: https://glin.github.io/reactable/index.html
+  output$table <- renderReactable({
+    reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
+  })
 
   output$download_sample <-
     renderUI("Sample data is generated with data dune and dune.env in library vegan.")
