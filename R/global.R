@@ -10,7 +10,6 @@ library(tidyverse)
 library(shiny)
 
 source("load_data.R")
-  # source("data_load.R")
 source("cluster.R")
 source("data_sample.R")
 source("ordination.R")
