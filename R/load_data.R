@@ -13,9 +13,7 @@ load_fileInput <- function(id, label = "Upload file") {
 load_fileSever <- function(id){
   moduleServer(id, function(input, output, session){
     uploaded_file <- reactive({
-      validate(need(input$file,  # No file selected, do nothing
-        message = 'Upload a file from your PC or check "Use example data"')
-      )
+      req(input$file)
       input$file
     })
 
