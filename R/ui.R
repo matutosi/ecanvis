@@ -109,9 +109,9 @@ navbarPage("ecan",
         <li> specify "unit", "item" and "value" in "Read file" tab
         <li>  select "Clustering (comparison)" tab.
       </ol>)'),
-    clusterUI("cls_1"),
-    clusterUI("cls_2"),
-    clusterUI("cls_3"),
+  #     clusterUI("cls_1"),
+  #     clusterUI("cls_2"),
+  #     clusterUI("cls_3"),
     clusterUI("cls_4")
   ),
 

@@ -7,6 +7,7 @@ function(input, output, session){
   output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
   output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
   output$ab    <- renderUI({varSelectInput("ab",    "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
+
   #   output$st_gr <- renderUI({varSelectInput("st_gr", "unit group (opt): " , data = data_in())})
   #   output$sp_gr <- renderUI({varSelectInput("sp_gr", "item group:(opt): ",  data = data_in())})
   #   output$st    <- select_varServer("test1", data=data_in())
@@ -51,10 +52,10 @@ function(input, output, session){
   })
 
   # # # Clustering (comparison) # # #
-  clusterSever("cls_1", data_in(), input$st, input$sp, input$ab)
-  clusterSever("cls_2", data_in(), input$st, input$sp, input$ab)
-  clusterSever("cls_3", data_in(), input$st, input$sp, input$ab)
-  clusterSever("cls_4", data_in(), input$st, input$sp, input$ab)
+  #   clusterSever("cls_1", data_in(), input$st, input$sp, input$ab)
+  #   clusterSever("cls_2", data_in(), input$st, input$sp, input$ab)
+  #   clusterSever("cls_3", data_in(), input$st, input$sp, input$ab)
+  clusterSever("cls_4", reactive(data_in), reactive(input$st), reactive(input$sp), reactive(input$ab))
 
   # # # Ordination (comparison) # # #
   ordinationSever("ord_1", data_in(), input$st, input$sp, input$ab)
