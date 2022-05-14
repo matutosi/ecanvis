@@ -14,11 +14,6 @@ function(input, output, session){
   #   output$sp    <- select_varServer("test2", data=data_in())
   #   output$ab    <- select_varServer("test3", data=data_in())
 
-  # package reactable: https://glin.github.io/reactable/index.html
-  output$table <- renderReactable({
-    reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
-  })
-
   # Download example
   output$download_example <-
     renderUI("Example data is generated with data dune and dune.env in library vegan.")
@@ -27,14 +22,23 @@ function(input, output, session){
     content  = function(file) { readr::write_tsv(gen_example_data(), file) }
   )
 
+  # package reactable: https://glin.github.io/reactable/index.html
+  output$table <- renderReactable({
+    reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
+  })
+
+  # # # Community table # # #
+  com_table <- reactive({
+    df2table(data_in(), 
+             st = as.character(input$st),
+             sp = as.character(input$sp),
+             ab = as.character(input$ab))
+  })
 
   # # # Clustering # # #
   output$clustering <- renderPlot(res = 96, {
     cls <-
-      data_in() %>%
-      df2table(st = as.character(input$st),
-               sp = as.character(input$sp),
-               ab = as.character(input$ab)) %>%
+      com_table() %>%
       # stand or species
       t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
       clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
@@ -44,10 +48,7 @@ function(input, output, session){
   # # # Ordination # # #
   output$ordination <- renderPlot(res = 96, {
     ord <-
-      data_in() %>%
-      df2table(st = as.character(input$st),
-               sp = as.character(input$sp),
-               ab = as.character(input$ab)) %>%
+      com_table() %>%
       ordination(o_method = input$or_o_method, d_method = input$or_d_method)
     ord_plot(ord, score = input$or_score, x = input$or_x,  y = input$or_y)
   })
