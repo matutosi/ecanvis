@@ -2,7 +2,7 @@
 navbarPage("ecan",
 
   # # # Input data # # #
-  tabPanel("Read file",
+  tabPanel("Read data",
     sidebarLayout(
       sidebarPanel(
 
@@ -17,9 +17,6 @@ navbarPage("ecan",
         uiOutput("ab"),
   #         uiOutput("st_gr"),
   #         uiOutput("sp_gr"),
-  #         select_varInput("test1"),
-  #         select_varInput("test2"),
-  #         select_varInput("test3"),
 
     tags$hr(),
         htmlOutput("download_example"),
@@ -102,28 +99,14 @@ navbarPage("ecan",
 
   # # # Clustering (comparison) # # #
   tabPanel("Clustering (comparison)",
-    HTML(r'(If not working,
-      <ol>
-        <li> reload app
-        <li> read a file
-        <li> specify "unit", "item" and "value" in "Read file" tab
-        <li>  select "Clustering (comparison)" tab.
-      </ol>)'),
-  #     clusterUI("cls_1"),
-  #     clusterUI("cls_2"),
-  #     clusterUI("cls_3"),
+    clusterUI("cls_1"),
+    clusterUI("cls_2"),
+    clusterUI("cls_3"),
     clusterUI("cls_4")
   ),
 
   # # # Ordination (comparison) # # #
   tabPanel("Ordination (comparison)",
-    HTML(r'(If not working,
-      <ol>
-        <li> reload app
-        <li> read a file
-        <li> specify "unit", "item" and "value" in "Read file" tab
-        <li>  select "Clustering (comparison)" tab.
-      </ol>)'),
     ordinationUI("ord_1"),
     ordinationUI("ord_2"),
     ordinationUI("ord_3"),
