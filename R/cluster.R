@@ -33,20 +33,16 @@ clusterUI <- function(id){
 clusterSever <- function(id, df, st, sp, ab){
   moduleServer(id, function(input, output, session){
     output$clustering <- renderPlot(res = 96, {
-      res <- try(silent = TRUE,
-        if(!is.null(df)){
-          cls <-
-            df %>%
-            df2table(st = as.character(st),
-                     sp = as.character(sp),
-                     ab = as.character(ab)) %>%
-            t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
-            clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
-          ggdendro::ggdendrogram(cls)
-        }
-      )
-      if(length(res) == 1) if(class(res) == "try-error") res <- NULL
-      res
+      cls <- reactive({
+        req(df)
+        df %>%
+        df2table(st = as.character(st),
+                 sp = as.character(sp),
+                 ab = as.character(ab)) %>%
+        t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
+        clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
+      })
+      ggdendro::ggdendrogram(cls())
     })
   })
 }
