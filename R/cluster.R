@@ -30,19 +30,15 @@ clusterUI <- function(id){
 }
 
   # Sever module
-clusterSever <- function(id, df, st, sp, ab){
+clusterSever <- function(id, tbl){
   moduleServer(id, function(input, output, session){
     output$clustering <- renderPlot(res = 96, {
-      cls <- reactive({
-        req(df()())
-        df()() %>%
-        df2table(st = as.character(st()),
-                 sp = as.character(sp()),
-                 ab = as.character(ab())) %>%
+      req(tbl())
+      cls <- 
+        tbl() %>%
         t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
         clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
-      })
-      ggdendro::ggdendrogram(cls())
+      ggdendro::ggdendrogram(cls)
     })
   })
 }

@@ -41,17 +41,14 @@ ordinationUI <- function(id){
 }
 
   # Server module
-ordinationSever <- function(id, df, st, sp, ab){
+ordinationSever <- function(id, tbl){
   moduleServer(id, function(input, output, session){
     output$ordination <- renderPlot(res = 96, {
-    req(df)
-          ord <-
-            df %>%
-            df2table(st = as.character(st),
-                     sp = as.character(sp),
-                     ab = as.character(ab)) %>%
-            ordination(o_method = input$or_o_method, d_method = input$or_d_method)
-          ord_plot(ord, score = input$or_score, x = input$or_x,  y = input$or_y)
+    req(tbl())
+    ord <-
+      tbl() %>%
+      ordination(o_method = input$or_o_method, d_method = input$or_d_method)
+    ord_plot(ord, score = input$or_score, x = input$or_x,  y = input$or_y)
     })
   })
 }
