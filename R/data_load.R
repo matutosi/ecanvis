@@ -25,7 +25,7 @@ load_fileSever <- function(id){
           readr::default_locale()
         }
       if(input$use_example){
-         gen_sample_data() # global.R
+         gen_example_data() # global.R
       } else {
         readr::read_delim(uploaded_file()$datapath, locale = locale, show_col_types = FALSE)
       }

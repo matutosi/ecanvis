@@ -9,9 +9,8 @@ library(vegan)
 library(tidyverse)
 library(shiny)
 
-source("load_data.R")
-source("data_sample.R")
-source("select_var.R")
+source("data_load.R")
+source("data_example.R")
 
 source("cluster.R")
 source("ordination.R")
