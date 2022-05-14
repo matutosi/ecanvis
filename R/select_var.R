@@ -11,4 +11,3 @@ select_varServer <- function(id, data) {
     reactive(data()[[input$var]])
   })
 }
-

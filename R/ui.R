@@ -7,30 +7,23 @@ navbarPage("ecan",
       sidebarPanel(
 
         tags$ol(
-          tags$h3('Instruction'),
-          tags$li('Select "Use sample data" or "Upload file"'),
-          tags$li('Show data'),
+          tags$li('Select "Use example data" or "Upload file"'),
           tags$li('Specify vars as inputs')
         ),
-
-        tags$hr(),
-        checkboxInput("use_sample_data", "Use sample data", value = FALSE),
-        tags$hr(),
-        data_loadUI("upload_data"),
-        tags$hr(),
-        actionButton("show_data", "Show data"),
-        tags$hr(),
-
+        load_fileInput("load_file"),
 
         uiOutput("st"),
         uiOutput("sp"),
         uiOutput("ab"),
   #         uiOutput("st_gr"),
   #         uiOutput("sp_gr"),
+  #         select_varInput("test1"),
+  #         select_varInput("test2"),
+  #         select_varInput("test3"),
 
     tags$hr(),
-        htmlOutput("download_sample"),
-        downloadButton("dl_sample_data", "Downlaod sample data"),
+        htmlOutput("download_example"),
+        downloadButton("dl_example_data", "Downlaod example data"),
       ),
 
       mainPanel(
@@ -116,9 +109,9 @@ navbarPage("ecan",
         <li> specify "unit", "item" and "value" in "Read file" tab
         <li>  select "Clustering (comparison)" tab.
       </ol>)'),
-    clusterUI("cls_1"),
-    clusterUI("cls_2"),
-    clusterUI("cls_3"),
+  #     clusterUI("cls_1"),
+  #     clusterUI("cls_2"),
+  #     clusterUI("cls_3"),
     clusterUI("cls_4")
   ),
 
