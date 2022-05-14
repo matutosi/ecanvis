@@ -44,8 +44,7 @@ ordinationUI <- function(id){
 ordinationSever <- function(id, df, st, sp, ab){
   moduleServer(id, function(input, output, session){
     output$ordination <- renderPlot(res = 96, {
-      res <- try(silent = TRUE,
-        if(!is.null(df)){
+    req(df)
           ord <-
             df %>%
             df2table(st = as.character(st),
@@ -53,11 +52,6 @@ ordinationSever <- function(id, df, st, sp, ab){
                      ab = as.character(ab)) %>%
             ordination(o_method = input$or_o_method, d_method = input$or_d_method)
           ord_plot(ord, score = input$or_score, x = input$or_x,  y = input$or_y)
-        }
-      )
-      if(length(res) == 1) if(class(res) == "try-error") res <- NULL
-      res
     })
   })
 }
-
