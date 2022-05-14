@@ -20,9 +20,9 @@ load_fileSever <- function(id){
     reactive({
       locale <- 
         if(input$file_s_jis) {
-          locale(encoding = "CP932")
+          readr::locale(encoding = "CP932")
         } else {
-          default_locale()
+          readr::default_locale()
         }
       if(input$use_example){
          gen_sample_data() # global.R

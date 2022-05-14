@@ -19,13 +19,14 @@ function(input, output, session){
     reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
   })
 
-  output$download_sample <-
-    renderUI("Sample data is generated with data dune and dune.env in library vegan.")
-
-  output$dl_sample_data = downloadHandler(
-    filename = "sample_data.tsv",
-    content  = function(file) { readr::write_tsv(gen_sample_data(), file) }
+  # Download example
+  output$download_example <-
+    renderUI("Example data is generated with data dune and dune.env in library vegan.")
+  output$dl_example_data = downloadHandler(
+    filename = "example_data.tsv",
+    content  = function(file) { readr::write_tsv(gen_example_data(), file) }
   )
+
 
   # # # Clustering # # #
   output$clustering <- renderPlot(res = 96, {

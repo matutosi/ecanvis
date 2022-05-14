@@ -22,8 +22,8 @@ navbarPage("ecan",
   #         select_varInput("test3"),
 
     tags$hr(),
-        htmlOutput("download_sample"),
-        downloadButton("dl_sample_data", "Downlaod sample data"),
+        htmlOutput("download_example"),
+        downloadButton("dl_example_data", "Downlaod example data"),
       ),
 
       mainPanel(

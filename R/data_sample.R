@@ -1,22 +1,22 @@
   # UI module
-data_sampleInput <- function(id) {
+data_exampleInput <- function(id) {
   ns <- NS(id)
   tagList(
-    actionButton(ns("use_sample_data"), "Use sample data")
+    actionButton(ns("use_example_data"), "Use example data")
   )
 }
 
   # Sever module
-data_sampleServer <- function(id) {
+data_exampleServer <- function(id) {
   moduleServer(id, function(input, output, session) {
-    eventReactive(input$use_sample_data,
-      gen_sample_data()
+    eventReactive(input$use_example_data,
+      gen_example_data()
     )
   })
 }
 
-  # Generate sample data
-gen_sample_data <- function(){
+  # Generate example data
+gen_example_data <- function(){
   data(dune)
   data(dune.env)
   dune %>%

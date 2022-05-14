@@ -29,14 +29,6 @@ clusterUI <- function(id){
   )
 }
 
-df2table <- function (df, st = "stand", sp = "species", ab = "abundonce") {
-    df %>% 
-    print() %>%
-    dplyr::select(dplyr::all_of(c(st, sp, ab))) %>% 
-    tidyr::pivot_wider(names_from = sp, values_from = ab, values_fill = 0) %>% 
-    tibble::column_to_rownames(var = st)
-}
-
   # Sever module
 clusterSever <- function(id, df, st, sp, ab){
   moduleServer(id, function(input, output, session){
