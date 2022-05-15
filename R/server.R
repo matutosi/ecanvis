@@ -4,11 +4,27 @@ function(input, output, session){
   # # # Input data # # #
   data_in <- load_fileSever("load_file")
 
-  output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
-  output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
-  output$ab    <- renderUI({varSelectInput("ab",    "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
-  output$st_gr <- renderUI({varSelectInput("st_gr", "unit group (opt): " , data = data_in())})
-  output$sp_gr <- renderUI({varSelectInput("sp_gr", "item group:(opt): ",  data = data_in())})
+
+  # https://mastering-shiny.org/scaling-functions.html#ui-as-data
+  make_var_select_ui <- function(inputId, label, i, data, ...){
+    renderUI({ varSelectInput(inputId, label, data = data(), selected = colnames(data())[i]) })
+  }
+  c(output$st, output$sp, output$ab, output$st_gr, output$sp_gr) %<-% 
+    tibble::tribble(
+      ~inputId,  ~label,                 ~i,  ~data, 
+      "st"     , "unit (stand): "      ,  1,   data_in, 
+      "sp"     , "item (species): "    ,  2,   data_in, 
+      "ab"     , "value (abandance): " ,  3,   data_in, 
+      "st_gr"  , "unit group (opt): "  ,  4,   data_in, 
+      "sp_gr"  , "item group:(opt): "  ,  5,   data_in, 
+    ) %>%
+    pmap(make_var_select_ui)
+
+  #   output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
+  #   output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
+  #   output$ab    <- renderUI({varSelectInput("ab",    "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
+  #   output$st_gr <- renderUI({varSelectInput("st_gr", "unit group (opt): " , data = data_in())})
+  #   output$sp_gr <- renderUI({varSelectInput("sp_gr", "item group:(opt): ",  data = data_in())})
 
   # Download example
   output$download_example <-

@@ -8,6 +8,7 @@ library(ecan)
 library(vegan)
 library(tidyverse)
 library(shiny)
+library(zeallot)
 
 source("data_load.R")
 source("data_example.R")
