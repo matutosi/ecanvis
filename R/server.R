@@ -10,22 +10,22 @@ function(input, output, session){
   # stand group
   output$use_st_gr <- renderUI({ 
     req(data_in())
-    checkboxInput("use_st_group", "Use unit group") 
+    checkboxInput("use_st_group", "Use unit group (not work yet)") 
   })
   output$st_gr <- renderUI({
     req(data_in(), input$use_st_group)
     if(input$use_st_group)
-      varSelectInput("st_gr", "unit group: ", data = data_in(), selected = colnames(data_in())[1])
+      varSelectInput("st_gr", "unit group: (not work yet)", data = data_in(), selected = colnames(data_in())[1])
   }) 
   # species group
   output$use_sp_gr <- renderUI({ 
     req(data_in())
-    checkboxInput("use_sp_group", "Use item group") 
+    checkboxInput("use_sp_group", "Use item group (not work yet)") 
   })
   output$sp_gr <- renderUI({
     req(data_in(), input$use_sp_group)
     if(input$use_sp_group)
-      varSelectInput("sp_gr", "item group: ", data = data_in(), selected = colnames(data_in())[2])
+      varSelectInput("sp_gr", "item group: (not work yet)", data = data_in(), selected = colnames(data_in())[2])
   }) 
 
 
