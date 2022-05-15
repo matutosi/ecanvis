@@ -12,10 +12,13 @@ navbarPage("ecan",
         ),
         load_fileInput("load_file"),
 
+        # stand, species, cover, stand group, species group, 
         uiOutput("st"),
         uiOutput("sp"),
         uiOutput("ab"),
+        uiOutput("use_st_gr"),
         uiOutput("st_gr"),
+        uiOutput("use_sp_gr"),
         uiOutput("sp_gr"),
 
     tags$hr(),

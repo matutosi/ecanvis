@@ -3,12 +3,31 @@ function(input, output, session){
 
   # # # Input data # # #
   data_in <- load_fileSever("load_file")
+  # stand, species, cover
+  output$st <- renderUI({varSelectInput("st", "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1]) })
+  output$sp <- renderUI({varSelectInput("sp", "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
+  output$ab <- renderUI({varSelectInput("ab", "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
+  # stand group
+  output$use_st_gr <- renderUI({ 
+    req(data_in())
+    checkboxInput("use_st_group", "Use unit group") 
+  })
+  output$st_gr <- renderUI({
+    req(data_in(), input$use_st_group)
+    if(input$use_st_group)
+      varSelectInput("st_gr", "unit group: ", data = data_in(), selected = colnames(data_in())[1])
+  }) 
+  # species group
+  output$use_sp_gr <- renderUI({ 
+    req(data_in())
+    checkboxInput("use_sp_group", "Use item group") 
+  })
+  output$sp_gr <- renderUI({
+    req(data_in(), input$use_sp_group)
+    if(input$use_sp_group)
+      varSelectInput("sp_gr", "item group: ", data = data_in(), selected = colnames(data_in())[2])
+  }) 
 
-  output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
-  output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
-  output$ab    <- renderUI({varSelectInput("ab",    "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
-  output$st_gr <- renderUI({varSelectInput("st_gr", "unit group (opt): " , data = data_in())})
-  output$sp_gr <- renderUI({varSelectInput("sp_gr", "item group:(opt): ",  data = data_in())})
 
   # Download example
   output$download_example <-
