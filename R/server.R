@@ -4,27 +4,6 @@ function(input, output, session){
   # # # Input data # # #
   data_in <- load_fileSever("load_file")
 
-
-  # https://mastering-shiny.org/scaling-functions.html#ui-as-data
-  #   make_var_select_ui <- function(inputId, label, i, data, ...){
-  #     renderUI({ varSelectInput(inputId, label, data = data(), selected = colnames(data())[i]) })
-  #   }
-  #   c(output$st, output$sp, output$ab, output$st_gr, output$sp_gr) %<-% 
-  #     tibble::tribble(
-  #       ~inputId,  ~label,                 ~i,  ~data, 
-  #       "st"     , "unit (stand): "      ,  1,   data_in, 
-  #       "sp"     , "item (species): "    ,  2,   data_in, 
-  #       "ab"     , "value (abandance): " ,  3,   data_in, 
-  #       "st_gr"  , "unit group (opt): "  ,  4,   data_in, 
-  #       "sp_gr"  , "item group:(opt): "  ,  5,   data_in, 
-  #     ) %>%
-  #     pmap(make_var_select_ui)
-  #   output$st    <- make_var_select_ui("st",    "unit (stand): " , i = 1, data = data_in())
-  #   output$sp    <- make_var_select_ui("sp",    "unit (stand): " , i = 2, data = data_in())
-  #   output$ab    <- make_var_select_ui("ab",    "unit (stand): " , i = 3, data = data_in())
-  #   output$st_gr    <- make_var_select_ui("st_gr",    "unit (stand): " , i = 4, data = data_in())
-  #   output$sp_gr    <- make_var_select_ui("st_gr",    "unit (stand): " , i = 5, data = data_in())
-
   output$st    <- renderUI({varSelectInput("st",    "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1])})
   output$sp    <- renderUI({varSelectInput("sp",    "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
   output$ab    <- renderUI({varSelectInput("ab",    "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
