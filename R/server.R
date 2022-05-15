@@ -31,43 +31,22 @@ function(input, output, session){
              ab = as.character(input$ab))
   })
 
+  # # # Clustering (Dynamic) # # #
+  # IN PROGRESS (not work as expected)
+  #   output$clusters <- renderUI({
+  #     no_cls <- paste0("cls_", seq_len(input$no_cls))
+  #     print(no_cls) # for debug
+  #     map(no_cls, clusterUI)
+  #     map(no_cls, clusterSever, com_table)
+  #   })
 
-  # editing now
-  output$clusters <- renderUI({
-    no_cls <- paste0("cls_", seq_len(input$no_cls))
-  #     print(no_cls)   # for debug
-    print(no_cls) # for debug
-    map(no_cls, clusterSever, com_table)
-    map(no_cls, clusterUI)
-  })
+  # # # Clusterings # # #
+  clusterSever("cls_1", com_table)
+  clusterSever("cls_2", com_table)
+  clusterSever("cls_3", com_table)
+  clusterSever("cls_4", com_table)
 
-
-
-  # # # Clustering # # #
-  output$clustering <- renderPlot(res = 96, {
-    cls <-
-      com_table() %>%
-      # stand or species
-      t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
-      clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
-    ggdendro::ggdendrogram(cls)
-  })
-
-  # # # Ordination # # #
-  output$ordination <- renderPlot(res = 96, {
-    ord <-
-      com_table() %>%
-      ordination(o_method = input$or_o_method, d_method = input$or_d_method)
-    ord_plot(ord, score = input$or_score, x = input$or_x,  y = input$or_y)
-  })
-
-  # # # Clustering (comparison) # # #
-  #   clusterSever("cls_1", com_table)
-  #   clusterSever("cls_2", com_table)
-  #   clusterSever("cls_3", com_table)
-  #   clusterSever("cls_4", com_table)
-
-  # # # Ordination (comparison) # # #
+  # # # Ordinations # # #
   ordinationSever("ord_1", com_table)
   ordinationSever("ord_2", com_table)
   ordinationSever("ord_3", com_table)
