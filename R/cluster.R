@@ -18,7 +18,7 @@ clusterUI <- function(id){
                       "robust.aitchison")
         ),
         # stand or species
-        checkboxInput(ns("st_or_sp"), "clustering with species", value = FALSE)
+        checkboxInput(ns("st_or_sp"), "clustering with item (species)", value = FALSE)
       ),
       mainPanel(
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
