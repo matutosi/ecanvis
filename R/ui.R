@@ -16,9 +16,9 @@ navbarPage("ecan",
         uiOutput("st"),
         uiOutput("sp"),
         uiOutput("ab"),
-        uiOutput("use_st_gr"),
+        uiOutput("use_st_gr"),   # checkbox
         uiOutput("st_gr"),
-        uiOutput("use_sp_gr"),
+        uiOutput("use_sp_gr"),   # checkbox 
         uiOutput("sp_gr"),
 
     tags$hr(),
