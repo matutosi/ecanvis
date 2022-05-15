@@ -31,6 +31,18 @@ function(input, output, session){
              ab = as.character(input$ab))
   })
 
+
+  # editing now
+  output$clusters <- renderUI({
+    no_cls <- paste0("cls_", seq_len(input$no_cls))
+  #     print(no_cls)   # for debug
+    print(no_cls) # for debug
+    map(no_cls, clusterSever, com_table)
+    map(no_cls, clusterUI)
+  })
+
+
+
   # # # Clustering # # #
   output$clustering <- renderPlot(res = 96, {
     cls <-
@@ -50,10 +62,10 @@ function(input, output, session){
   })
 
   # # # Clustering (comparison) # # #
-  clusterSever("cls_1", com_table)
-  clusterSever("cls_2", com_table)
-  clusterSever("cls_3", com_table)
-  clusterSever("cls_4", com_table)
+  #   clusterSever("cls_1", com_table)
+  #   clusterSever("cls_2", com_table)
+  #   clusterSever("cls_3", com_table)
+  #   clusterSever("cls_4", com_table)
 
   # # # Ordination (comparison) # # #
   ordinationSever("ord_1", com_table)

@@ -29,6 +29,16 @@ navbarPage("ecan",
     )
   ),
 
+
+  # editing now
+  # # # Clustering (Dynamic) # # #
+  tabPanel("Cluster",
+    numericInput("no_cls", "No. of clustering ( < 5 )",
+                 value = 2, min = 1, max = 5, step = 1,),
+    uiOutput("clusters")
+  ),
+
+
   # # # Clustering # # #
   tabPanel("Clustering",
     sidebarLayout(
