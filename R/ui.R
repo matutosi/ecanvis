@@ -32,6 +32,10 @@ navbarPage("ecan",
     )
   ),
 
+  tabPanel("Diversity",
+    diversityUI("diversity")
+  ),
+
   # # # Clustering (Dynamic) # # #
   # IN PROGRESS (not work as expected)
   #   tabPanel("Cluster",
@@ -42,17 +46,17 @@ navbarPage("ecan",
 
   # # # Clusterings # # #
   tabPanel("Clusterings",
-    clusterUI("cls_1"),
-    clusterUI("cls_2"),
-    clusterUI("cls_3"),
+  #     clusterUI("cls_1"),
+  #     clusterUI("cls_2"),
+  #     clusterUI("cls_3"),
     clusterUI("cls_4")
   ),
 
   # # # Ordinations # # #
   tabPanel("Ordinations",
-    ordinationUI("ord_1"),
-    ordinationUI("ord_2"),
-    ordinationUI("ord_3"),
+  #     ordinationUI("ord_1"),
+  #     ordinationUI("ord_2"),
+  #     ordinationUI("ord_3"),
     ordinationUI("ord_4")
   )
 )

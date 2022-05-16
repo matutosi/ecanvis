@@ -13,5 +13,7 @@ library(zeallot)
 source("data_load.R")
 source("data_example.R")
 
+source("diversity.R")
+
 source("cluster.R")
 source("ordination.R")

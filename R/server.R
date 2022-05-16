@@ -10,12 +10,12 @@ function(input, output, session){
   # stand group
   output$use_st_gr <- renderUI({ 
     req(data_in())
-    checkboxInput("use_st_group", "Use unit group (not work yet)") 
+    checkboxInput("use_st_group", "Use unit group (not work yet)", value = TRUE)
   })
   output$st_gr <- renderUI({
     req(data_in(), input$use_st_group)
     if(input$use_st_group)
-      varSelectInput("st_gr", "unit group: (not work yet)", data = data_in(), selected = colnames(data_in())[1])
+      varSelectInput("st_gr", "unit group: (not work yet)", data = data_in(), selected = colnames(data_in())[6])
   }) 
   # species group
   output$use_sp_gr <- renderUI({ 
@@ -50,6 +50,21 @@ function(input, output, session){
              ab = as.character(input$ab))
   })
 
+
+  # # # Diversity # # #
+  #   diversity <- reactive({
+  #     req(data_in())
+  #     data_in() %>%
+  #       shdi(stand = input$stand, 
+  #            species = input$species, 
+  #            abundance = input$abundance) %>%
+  #       dplyr::left_join(
+  #         dplyr::distinct(data_in(), .data[[input$stand]], .data[[input$group]])
+  #       )
+  #   })
+
+  diversitySever("diversity", data_in(), input$st, input$sp, input$ab, input$st_gr)
+
   # # # Clustering (Dynamic) # # #
   # IN PROGRESS (not work as expected)
   #   output$clusters <- renderUI({
@@ -60,15 +75,15 @@ function(input, output, session){
   #   })
 
   # # # Clusterings # # #
-  clusterSever("cls_1", com_table)
-  clusterSever("cls_2", com_table)
-  clusterSever("cls_3", com_table)
+  #   clusterSever("cls_1", com_table)
+  #   clusterSever("cls_2", com_table)
+  #   clusterSever("cls_3", com_table)
   clusterSever("cls_4", com_table)
 
   # # # Ordinations # # #
-  ordinationSever("ord_1", com_table)
-  ordinationSever("ord_2", com_table)
-  ordinationSever("ord_3", com_table)
+  #   ordinationSever("ord_1", com_table)
+  #   ordinationSever("ord_2", com_table)
+  #   ordinationSever("ord_3", com_table)
   ordinationSever("ord_4", com_table)
 
 }
