@@ -5,7 +5,7 @@ load_fileInput <- function(id, label = "Upload file") {
     fileInput(ns("file"), label),
     checkboxInput(ns("file_s_jis"), "Encoding: S-JIS (CP932) JP Windows", value = FALSE),
     tags$hr(),
-    checkboxInput(ns("use_example"), "Use example data")
+    checkboxInput(ns("use_example"), "Use example data", value = TRUE)
   )
 }
 
