@@ -52,18 +52,15 @@ function(input, output, session){
 
 
   # # # Diversity # # #
-  #   diversity <- reactive({
-  #     req(data_in())
-  #     data_in() %>%
-  #       shdi(stand = input$stand, 
-  #            species = input$species, 
-  #            abundance = input$abundance) %>%
-  #       dplyr::left_join(
-  #         dplyr::distinct(data_in(), .data[[input$stand]], .data[[input$group]])
-  #       )
-  #   })
+  diversity <- 
+    calculate_diversity(data_in(), input$st, input$sp, input$ab, input$st_gr)
 
-  diversitySever("diversity", data_in(), input$st, input$sp, input$ab, input$st_gr)
+  output$diversity_table <- renderReactable({
+    reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
+  })
+
+
+  diversitySever("diversity", diversity(), input$st_gr)
 
   # # # Clustering (Dynamic) # # #
   # IN PROGRESS (not work as expected)

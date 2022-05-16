@@ -33,7 +33,8 @@ navbarPage("ecan",
   ),
 
   tabPanel("Diversity",
-    diversityUI("diversity")
+    diversityUI("diversity"),
+    reactableOutput("diversity_table")
   ),
 
   # # # Clustering (Dynamic) # # #
