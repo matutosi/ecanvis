@@ -9,32 +9,10 @@ function(input, output, session){
   output$ab <- renderUI({varSelectInput("ab", "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
 
 
-  # editing now
-use_select_varSever("st", data = data_in(), group_label = "unit group", selected_col = 6)
-  # paste0(id, "-gr")    "st-gr"
-
   # stand group
-  output$use_st_gr <- renderUI({ 
-    req(data_in())
-    checkboxInput("use_st_group", "Use unit group (not work yet)", value = TRUE)
-  })
-  output$st_gr <- renderUI({
-    req(data_in(), input$use_st_group)
-    if(input$use_st_group)
-      varSelectInput("st_gr", "unit group: (not work yet)", data = data_in(), selected = colnames(data_in())[6])
-  }) 
+  use_select_varSever("st", data = data_in(), group_label = "unit group", selected_col = 6)  # paste0(id, "-gr")    "st-gr"
   # species group
-  output$use_sp_gr <- renderUI({ 
-    req(data_in())
-    checkboxInput("use_sp_group", "Use item group (not work yet)") 
-  })
-  output$sp_gr <- renderUI({
-    req(data_in(), input$use_sp_group)
-    if(input$use_sp_group)
-      varSelectInput("sp_gr", "item group: (not work yet)", data = data_in(), selected = colnames(data_in())[2])
-  }) 
-
-
+  use_select_varSever("sp", data = data_in(), group_label = "item group", selected_col = 1)
 
 
   # Download example
@@ -61,16 +39,15 @@ use_select_varSever("st", data = data_in(), group_label = "unit group", selected
 
   # # # Diversity # # #
   diversity <- 
-  #     calculate_diversity(data_in(), input$st, input$sp, input$ab, input$st_gr)
     calculate_diversity(data_in(), input$st, input$sp, input$ab, input$"st-gr")
 
   output$diversity_table <- renderReactable({
     reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
   })
 
-
-  #   diversitySever("diversity", diversity(), input$st_gr)
   diversitySever("diversity", diversity(), input$"st-gr")
+
+
 
   # # # Clustering (Dynamic) # # #
   # IN PROGRESS (not work as expected)
