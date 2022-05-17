@@ -17,8 +17,16 @@ navbarPage("ecan",
         uiOutput("sp"),
         uiOutput("ab"),
 
+
+  # editing now
+  # use_varUI("use_st"),
+  # select_varUI("select_st"),
+use_select_varUI("st"),
+
+
         uiOutput("use_st_gr"),   # checkbox
         uiOutput("st_gr"),
+
         uiOutput("use_sp_gr"),   # checkbox 
         uiOutput("sp_gr"),
 
