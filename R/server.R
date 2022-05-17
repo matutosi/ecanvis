@@ -8,11 +8,11 @@ function(input, output, session){
   output$sp <- renderUI({varSelectInput("sp", "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
   output$ab <- renderUI({varSelectInput("ab", "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
 
-
   # stand group
-  use_select_varSever("st", data = data_in(), group_label = "unit group", selected_col = 6)  # paste0(id, "-gr")    "st-gr"
+  #   use_select_varSever("st", data = data_in(), group_label = "unit group", selected_col = 6) # "st-gr")
   # species group
-  use_select_varSever("sp", data = data_in(), group_label = "item group", selected_col = 1)
+  #   id_sp <- "st"
+  #   use_select_varSever(id_sp, data = data_in(), group_label = "item group", selected_col = 1) # NS(id_st, "gr")
 
 
   # Download example
@@ -39,14 +39,14 @@ function(input, output, session){
 
   # # # Diversity # # #
   diversity <- 
-    calculate_diversity(data_in(), input$st, input$sp, input$ab, input$"st-gr")
+    calculate_diversity(data_in(), input$st, input$sp, input$ab)
 
   output$diversity_table <- renderReactable({
     reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
   })
 
-  diversitySever("diversity", diversity(), input$"st-gr")
-
+  diversitySever("diversity", diversity())
+  #   diversitySever("diversity", diversity(), input$"st-gr")
 
 
   # # # Clustering (Dynamic) # # #

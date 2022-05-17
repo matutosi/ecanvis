@@ -18,10 +18,9 @@ navbarPage("ecan",
         uiOutput("ab"),
 
 
-        use_select_varUI("st"),  # checkbox, select_var: input$"st-gr"
-  # editing now
+  #         use_select_varUI("st"),  # checkbox, select_var: input$"st-gr"
   # not work
-        use_select_varUI("sp"),  # checkbox, select_var: input$"sp-gr"
+  #         use_select_varUI("sp"),  # checkbox, select_var: input$"sp-gr"
 
 
       tags$hr(),
