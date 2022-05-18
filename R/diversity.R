@@ -17,18 +17,24 @@ calculate_diversity <- function(data_in, st, sp, ab){
 diversityUI <- function(id, diversity){
   ns <- NS(id)
   tagList(
-    selectInput(ns("div_index"), "Diversity index",
-      choices = c("Species richness (s)" = "s",
-                  "Shannon's H' (h)"     = "h",
-                  "Simpson's D (d)"      = "d", 
-                  "Simpson's 1/d (i)"    = "i")
-    ),
-    checkboxInput(ns("use_st_group"), "Use unit (stand) group", value = FALSE),
-    selectInput(ns("st_group"), "unit group", choices = character(0)),
+    sidebarLayout(
+      sidebarPanel(
+        selectInput(ns("div_index"), "Diversity index",
+          choices = c("Species richness (s)" = "s",
+                      "Shannon's H' (h)"     = "h",
+                      "Simpson's D (d)"      = "d", 
+                      "Simpson's 1/d (i)"    = "i")
+        ),
+        checkboxInput(ns("use_st_group"), "Use unit (stand) group", value = FALSE),
+        selectInput(ns("st_group"), "unit group", choices = character(0)),
+      ),
 
-    shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
-      plotOutput(ns("diversity_plot_s"))
-    ),
+      mainPanel(
+        shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
+          plotOutput(ns("diversity_plot_s"))
+        ),
+      )
+    )
   )
 }
 
@@ -38,8 +44,8 @@ diversitySever <- function(id, diversity){
 
     observeEvent(input$use_st_group, ignoreInit = TRUE, {
       choices <- setdiff(colnames(diversity), c("s", "h", "d", "i"))
-      colnames(diversity)
-      updateSelectInput(session, "st_group", choices = choices)
+      selected <- if(input$st_group == "") choices[1] else input$st_group
+      updateSelectInput(session, "st_group", choices = choices, selected = selected)
     })
 
     output$diversity_plot_s <- renderPlot(res = 96, {
