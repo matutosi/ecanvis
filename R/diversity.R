@@ -17,6 +17,8 @@ calculate_diversity <- function(data_in, st, sp, ab){
 diversityUI <- function(id, diversity){
   ns <- NS(id)
   tagList(
+  #     selectInput(session, "st_group", choices = colnames(diversity))
+
     checkboxInput(ns("use_st_group"), "Use unit (stand) group", value = FALSE),
     selectInput(ns("st_group"), "unit group", choices = character(0)),
 
@@ -35,35 +37,15 @@ diversitySever <- function(id, diversity){
     })
 
     output$diversity_plot_s <- renderPlot(res = 96, {
-      diversity %>%
-        ggplot(aes(x = .data[[input$st_group]], y = s)) + 
-          geom_boxplot() + 
-          geom_jitter(height = 0, width = 0.1) + 
-          theme_bw()
+      if(input$use_st_group)
+        div_gg <- ggplot(diversity, aes(x = .data[[input$st_group]], y = s))
+      else
+        div_gg <- ggplot(diversity, aes(x = 1,y = s))
+      div_gg +
+        geom_boxplot() + 
+        geom_jitter(height = 0, width = 0.1) + 
+        theme_bw()
     })
 
   })
 }
-
-  # UI module 
-  # diversityUI <- function(id){
-  #   ns <- NS(id)
-  #   tagList(
-  #     shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
-  #       plotOutput(ns("diversity_plot_s"))
-  #     ),
-  #   )
-  # }
-  # 
-  # Sever module
-  # diversitySever <- function(id, diversity, group){
-  #   moduleServer(id, function(input, output, session){
-  #     output$diversity_plot_s <- renderPlot(res = 96, {
-  #       diversity %>%
-  #         ggplot(aes(x = .data[[group]], y = s)) + 
-  #           geom_boxplot() + 
-  #           geom_jitter(width = 0.1) + 
-  #           theme_bw()
-  #     })
-  #   })
-  # }
