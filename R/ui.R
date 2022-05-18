@@ -43,9 +43,9 @@ navbarPage("ecan",
 
   # # # Ordinations # # #
   tabPanel("Ordinations",
-    ordinationUI("ord_1"),
-    ordinationUI("ord_2"),
-    ordinationUI("ord_3"),
+  #     ordinationUI("ord_1"),
+  #     ordinationUI("ord_2"),
+  #     ordinationUI("ord_3"),
     ordinationUI("ord_4")
   )
 )

@@ -33,9 +33,9 @@ clusterUI <- function(id){
 clusterSever <- function(id, tbl){
   moduleServer(id, function(input, output, session){
     output$clustering <- renderPlot(res = 96, {
-      req(tbl())
+      req(tbl)
       cls <- 
-        tbl() %>%
+        tbl %>%
         t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
         clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
       ggdendro::ggdendrogram(cls)

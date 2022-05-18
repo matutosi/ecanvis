@@ -21,6 +21,7 @@ function(input, output, session){
     reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
   })
 
+
   # # # Community table # # #
   com_table <- reactive({
     df2table(data_in(), 
@@ -29,29 +30,31 @@ function(input, output, session){
              ab = as.character(input$ab))
   })
 
+  # # # Colnames except c(st, sp, ab)  # # #
+  cols <- reactive({
+    st_sp_ab <- c(as.character(input$st), as.character(input$sp), as.character(input$ab))
+    setdiff(colnames(data_in()), st_sp_ab)
+  })
 
   # # # Diversity # # #
-  diversity <- 
-    calculate_diversity(data_in(), input$st, input$sp, input$ab)
+  diversity <- calculate_diversity(data_in(), input$st, input$sp, input$ab)
 
   output$diversity_table <- renderReactable({
     reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
   })
 
   diversitySever("diversity", diversity())
-  #   diversitySever("diversity", diversity(), input$"st-gr")
-
 
   # # # Clusterings # # #
-  clusterSever("cls_1", com_table)
-  clusterSever("cls_2", com_table)
-  clusterSever("cls_3", com_table)
-  clusterSever("cls_4", com_table)
+  clusterSever("cls_1", com_table())
+  clusterSever("cls_2", com_table())
+  clusterSever("cls_3", com_table())
+  clusterSever("cls_4", com_table())
 
   # # # Ordinations # # #
-  ordinationSever("ord_1", com_table)
-  ordinationSever("ord_2", com_table)
-  ordinationSever("ord_3", com_table)
-  ordinationSever("ord_4", com_table)
+  #   ordinationSever("ord_1", com_table, cols)
+  #   ordinationSever("ord_2", com_table, cols)
+  #   ordinationSever("ord_3", com_table, cols)
+  ordinationSever("ord_4", com_table(), cols(), data_in(), input$st, input$sp)
 
 }
