@@ -5,8 +5,10 @@ calculate_diversity <- function(data_in, st, sp, ab){
       shdi(stand     = st,
            species   = sp,
            abundance = ab) %>%
+      dplyr::mutate_if(is.numeric, round, digit = 4) %>%
       dplyr::left_join(
-        dplyr::select(data_in, !all_of(c(as.character(sp), as.character(ab))))
+        dplyr::select(data_in, !all_of(c(as.character(sp), as.character(ab)))) %>%
+          dplyr::distinct()
       )
   })
 }
@@ -36,7 +38,7 @@ diversitySever <- function(id, diversity){
       diversity %>%
         ggplot(aes(x = .data[[input$st_group]], y = s)) + 
           geom_boxplot() + 
-          geom_jitter(width = 0.1) + 
+          geom_jitter(height = 0, width = 0.1) + 
           theme_bw()
     })
 
