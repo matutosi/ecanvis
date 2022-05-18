@@ -36,6 +36,22 @@ function(input, output, session){
     setdiff(colnames(data_in()), st_sp_ab)
   })
 
+
+
+  # # # List of data # # #
+  all_data <- reactive({
+    list(
+      data_in   = data_in(),
+      com_table = com_table(),
+  #       diversity = diversity(),
+      st        = as.character(input$st),
+      sp        = as.character(input$sp),
+      ab        = as.character(input$ab),
+      cols      = cols()
+    )
+  })
+
+
   # # # Diversity # # #
   diversity <- calculate_diversity(data_in(), input$st, input$sp, input$ab)
 
@@ -46,15 +62,14 @@ function(input, output, session){
   diversitySever("diversity", diversity())
 
   # # # Clusterings # # #
-  clusterSever("cls_1", com_table())
-  clusterSever("cls_2", com_table())
-  clusterSever("cls_3", com_table())
+  #   clusterSever("cls_1", com_table())
+  #   clusterSever("cls_2", com_table())
+  #   clusterSever("cls_3", com_table())
   clusterSever("cls_4", com_table())
 
   # # # Ordinations # # #
   #   ordinationSever("ord_1", com_table, cols)
   #   ordinationSever("ord_2", com_table, cols)
   #   ordinationSever("ord_3", com_table, cols)
-  ordinationSever("ord_4", com_table(), cols(), data_in(), input$st, input$sp)
-
+  ordinationSever("ord_4", all_data())
 }
