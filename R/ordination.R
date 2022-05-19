@@ -73,6 +73,29 @@ ordinationSever <- function(id, all_data){
           all_data$sp
         }
 
+print(ord)
+print(input$ord_score)
+print(all_data$data_in)
+print(single)
+print(input$ord_group)
+  # [1] "st_scores"
+  # # A tibble: 197 x 8
+  #    stand species  cover    A1 Moisture Management Use      Manure
+  #    <chr> <chr>    <dbl> <dbl> <ord>    <fct>      <ord>    <ord> 
+  #  1 1     Achimill     1   2.8 1        SF         Haypastu 4     
+  #  2 1     Elymrepe     4   2.8 1        SF         Haypastu 4     
+  #  3 1     Lolipere     7   2.8 1        SF         Haypastu 4     
+  #  4 1     Poaprat      4   2.8 1        SF         Haypastu 4     
+  #  5 1     Poatriv      2   2.8 1        SF         Haypastu 4     
+  #  6 2     Achimill     3   3.5 1        BF         Haypastu 2     
+  #  7 2     Alopgeni     2   3.5 1        BF         Haypastu 2     
+  #  8 2     Bellpere     3   3.5 1        BF         Haypastu 2     
+  #  9 2     Bromhord     4   3.5 1        BF         Haypastu 2     
+  # 10 2     Elymrepe     4   3.5 1        BF         Haypastu 2     
+  # # ... with 187 more rows
+  # [1] "species"
+  # [1] "Manure"
+
       ord_scores <- 
         if(input$ord_use_group != "ord_no_group"){
           ord_add_group(
