@@ -73,11 +73,6 @@ ordinationSever <- function(id, all_data){
           all_data$sp
         }
 
-print(ord)
-print(input$ord_score)
-print(all_data$data_in)
-print(single)
-print(input$ord_group)
   # [1] "st_scores"
   # # A tibble: 197 x 8
   #    stand species  cover    A1 Moisture Management Use      Manure
@@ -96,6 +91,13 @@ print(input$ord_group)
   # [1] "species"
   # [1] "Manure"
 
+  #   tmp <-    ord_add_group(
+  #             ord    = ord, 
+  #             score  = "st_scores",
+  #             df     = df,
+  #             single = "species",
+  #             group  = "A1")
+
       ord_scores <- 
         if(input$ord_use_group != "ord_no_group"){
           ord_add_group(
@@ -108,13 +110,12 @@ print(input$ord_group)
           ord_extract_score(ord, input$ord_score)
         }
 
-print(ord_scores)
+      has_group <- sum(stringr::str_count(colnames(ord_scores), input$ord_group)) > 0
 
-  # devtools::load_all("d:/matu/work/todo/ecan/R")
       x   <- names(ord_scores)[input$ord_x]
       y   <- names(ord_scores)[input$ord_y]
       gg <- ggplot2::ggplot(ord_scores, ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores)))
-      if(input$ord_use_group != "ord_no_group"){
+      if(input$ord_use_group != "ord_no_group" & has_group){
         gg <- gg + ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha=0.2, size = 7)
         #   labs(col = input$ord_group) +  # change legend title
       }
@@ -125,3 +126,5 @@ print(ord_scores)
     })
   })
 }
+
+  # devtools::load_all("d:/matu/work/todo/ecan/R")
