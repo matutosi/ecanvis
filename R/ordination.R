@@ -71,7 +71,6 @@ ordinationSever <- function(id, all_data){
     })
 
 
-
     output$ordination <- renderPlot(res = 96, {
 
       ord <-
