@@ -4,6 +4,7 @@ ordinationUI <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(
+
         # method
         selectInput(ns("ord_o_method"), "Ordination method",
           choices = c("pca", "ca", "dca",
@@ -22,9 +23,7 @@ ordinationUI <- function(id){
             choices = c("Unit (stand)"   = "st_scores",
                         "Item (species)" = "sp_scores")
          ),
-  #         radioButtons(ns("ord_score"), "scores for plot",
-  #           choiceNames  = c("unit (stand)", "item (species)", "both"),
-  #           choiceValues = c("st_scores",    "sp_scores",      "both"))
+
         numericInput(ns("ord_x"), "X axis component (1-4)",
           value = 1, min = 1, max = 4, step = 1,
         ),
@@ -32,7 +31,7 @@ ordinationUI <- function(id){
           value = 2, min = 1, max = 4, step = 1,
         ),
 
-        selectInput(ns("ord_use_group"), "Group", 
+        selectInput(ns("ord_use_group"), "Use group", 
             choices = c("No group"       = "ord_no_group",
                         "Unit (stand)"   = "ord_st_group",
                         "Item (species)" = "ord_sp_group")
@@ -69,7 +68,6 @@ ordinationSever <- function(id, all_data){
         ""
       }
     })
-
 
 
     output$ordination <- renderPlot(res = 96, {

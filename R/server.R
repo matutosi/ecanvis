@@ -68,6 +68,8 @@ function(input, output, session){
   clusterSever("cls_4", com_table())
 
   # # # Ordinations # # #
+  output$ord_note <-
+    renderUI('When error, choose correct "Scores for plot", "Use Group" and "Select group".')
   #   ordinationSever("ord_1", com_table, cols)
   #   ordinationSever("ord_2", com_table, cols)
   #   ordinationSever("ord_3", com_table, cols)
