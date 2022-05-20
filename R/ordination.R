@@ -5,11 +5,11 @@ ordinationUI <- function(id){
     sidebarLayout(
       sidebarPanel(
         # method
-        selectInput(ns("ord_o_method"), "ordination method",
+        selectInput(ns("ord_o_method"), "Ordination method",
           choices = c("pca", "ca", "dca",
                       "pcoa", "fspa", "nmds")
         ),
-        selectInput(ns("ord_d_method"), "distance method",
+        selectInput(ns("ord_d_method"), "Distance method",
           choices = c("bray", "euclidean", "correlation", "manhattan",
                       "canberra", "clark", "kulczynski", "jaccard",
                       "gower", "altGower", "morisita", "horn",
@@ -25,10 +25,10 @@ ordinationUI <- function(id){
   #         radioButtons(ns("ord_score"), "scores for plot",
   #           choiceNames  = c("unit (stand)", "item (species)", "both"),
   #           choiceValues = c("st_scores",    "sp_scores",      "both"))
-        numericInput(ns("ord_x"), "x axis component (1-4)",
+        numericInput(ns("ord_x"), "X axis component (1-4)",
           value = 1, min = 1, max = 4, step = 1,
         ),
-        numericInput(ns("ord_y"), "y axis component (1-4)",
+        numericInput(ns("ord_y"), "Y axis component (1-4)",
           value = 2, min = 1, max = 4, step = 1,
         ),
 
@@ -55,7 +55,7 @@ ordinationSever <- function(id, all_data){
   moduleServer(id, function(input, output, session){
 
     observeEvent(input$ord_use_group, ignoreInit = TRUE, { # Need "ignoreInit = TRUE"
-      choices <- cols_one2multi(all_data$data_in, single())
+      choices <- if(single() == "") { "" } else { cols_one2multi(all_data$data_in, single()) }
       selected <- if(input$ord_group == "") choices[1] else input$ord_group
       updateSelectInput(session, "ord_group", choices = choices, selected = selected)
     })
@@ -69,6 +69,8 @@ ordinationSever <- function(id, all_data){
         ""
       }
     })
+
+
 
     output$ordination <- renderPlot(res = 96, {
 
@@ -91,12 +93,8 @@ ordinationSever <- function(id, all_data){
       x   <- names(ord_scores)[input$ord_x]
       y   <- names(ord_scores)[input$ord_y]
 
-print(ord_scores)
-print(input$ord_use_group)
-print(input$ord_group)
-
-
       if(input$ord_use_group != "ord_no_group"){
+        req(ord_scores, input$ord_group)
         gg <- 
           ggplot2::ggplot(ord_scores, ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores))) +
           ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha=0.2, size = 7) +
@@ -117,8 +115,9 @@ print(input$ord_group)
 
   # devtools::load_all("d:/matu/work/todo/ecan/R")
 
-
-
+  # print(ord_scores)
+  # print(input$ord_use_group)
+  # print(input$ord_group)
   # print(paste0("no_group: ", input$ord_use_group))
   # print(paste0("group: ", input$ord_use_group))
   # print(ord)
@@ -131,4 +130,3 @@ print(input$ord_group)
   # print(ord_scores)
   # print(input$ord_use_group)
   # print(input$ord_group)
-  # 
