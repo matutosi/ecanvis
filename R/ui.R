@@ -38,7 +38,7 @@ navbarPage("ecan",
   clusterUI("cls_1"),
   clusterUI("cls_2"),
   clusterUI("cls_3"),
-    clusterUI("cls_4")
+  clusterUI("cls_4")
   ),
 
   # # # Ordinations # # #
