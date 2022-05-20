@@ -1,5 +1,4 @@
 calculate_diversity <- function(all_data){
-  # calculate_diversity <- function(data_in, st, sp, ab){
   reactive({
     req(all_data$data_in)
 
@@ -9,11 +8,13 @@ calculate_diversity <- function(all_data){
            species   = all_data$sp,
            abundance = all_data$ab) %>%
       dplyr::mutate_if(is.numeric, round, digit = 4)
+
     cols <- c(all_data$st, cols_one2multi(all_data$data_in, all_data$st))
     extra_data <- 
       all_data$data_in %>%
       dplyr::select(all_of(cols)) %>%
       distinct()
+
     dplyr::left_join(diversity, extra_data)
   })
 }

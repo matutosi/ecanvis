@@ -43,7 +43,6 @@ function(input, output, session){
     list(
       data_in   = data_in(),
       com_table = com_table(),
-  #       diversity = diversity(),
       st        = as.character(input$st),
       sp        = as.character(input$sp),
       ab        = as.character(input$ab),
@@ -53,7 +52,6 @@ function(input, output, session){
 
 
   # # # Diversity # # #
-  #   diversity <- calculate_diversity(data_in(), input$st, input$sp, input$ab)
   diversity <- calculate_diversity(all_data())
 
   output$diversity_table <- renderReactable({
