@@ -1,15 +1,20 @@
-calculate_diversity <- function(data_in, st, sp, ab){
+calculate_diversity <- function(all_data){
+  # calculate_diversity <- function(data_in, st, sp, ab){
   reactive({
-    req(data_in)
-    data_in %>%
-      shdi(stand     = st,
-           species   = sp,
-           abundance = ab) %>%
-      dplyr::mutate_if(is.numeric, round, digit = 4) %>%
-      dplyr::left_join(
-        dplyr::select(data_in, !all_of(c(as.character(sp), as.character(ab)))) %>%
-          dplyr::distinct()
-      )
+    req(all_data$data_in)
+
+    diversity <- 
+      all_data$data_in %>%
+      shdi(stand     = all_data$st,
+           species   = all_data$sp,
+           abundance = all_data$ab) %>%
+      dplyr::mutate_if(is.numeric, round, digit = 4)
+    cols <- c(all_data$st, cols_one2multi(all_data$data_in, all_data$st))
+    extra_data <- 
+      all_data$data_in %>%
+      dplyr::select(all_of(cols)) %>%
+      distinct()
+    dplyr::left_join(diversity, extra_data)
   })
 }
 
@@ -54,7 +59,7 @@ diversitySever <- function(id, diversity){
       else
         div_gg <- ggplot(diversity, aes(x = 1,y = .data[[input$div_index]]))
       div_gg +
-        geom_boxplot() + 
+        geom_boxplot(outlier.shape = NA) +  # do not show outer point
         geom_jitter(height = 0, width = 0.1) + 
         theme_bw()
     })

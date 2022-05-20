@@ -53,7 +53,8 @@ function(input, output, session){
 
 
   # # # Diversity # # #
-  diversity <- calculate_diversity(data_in(), input$st, input$sp, input$ab)
+  #   diversity <- calculate_diversity(data_in(), input$st, input$sp, input$ab)
+  diversity <- calculate_diversity(all_data())
 
   output$diversity_table <- renderReactable({
     reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
