@@ -37,7 +37,7 @@ clusterSever <- function(id, tbl){
       cls <- 
         tbl %>%
         t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
-        clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
+        cluster(c_method = input$cl_c_method, d_method = input$cl_d_method)
       ggdendro::ggdendrogram(cls)
     })
   })
