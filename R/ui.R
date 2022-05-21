@@ -33,20 +33,20 @@ navbarPage("ecan",
     reactableOutput("diversity_table")
   ),
 
-  # # # Clusterings # # #
-  tabPanel("Clusterings",
-  clusterUI("cls_1"),
-  clusterUI("cls_2"),
-  clusterUI("cls_3"),
-  clusterUI("cls_4")
+  # # # Clusters # # #
+  tabPanel("Clusters",
+  #     clusterUI("cls_1"),
+  #     clusterUI("cls_2"),
+  #     clusterUI("cls_3"),
+    clusterUI("cls_4")
   ),
 
   # # # Ordinations # # #
   tabPanel("Ordinations",
-    htmlOutput("ord_note"),
-    ordinationUI("ord_1"),
-    ordinationUI("ord_2"),
-    ordinationUI("ord_3"),
+  #     htmlOutput("ord_note"),
+  #     ordinationUI("ord_1"),
+  #     ordinationUI("ord_2"),
+  #     ordinationUI("ord_3"),
     ordinationUI("ord_4")
   )
 )

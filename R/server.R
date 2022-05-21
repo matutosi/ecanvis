@@ -60,16 +60,16 @@ function(input, output, session){
 
   diversitySever("diversity", diversity())
 
-  # # # Clusterings # # #
-  clusterSever("cls_1", com_table())
-  clusterSever("cls_2", com_table())
-  clusterSever("cls_3", com_table())
+  # # # Clusters # # #
+  #   clusterSever("cls_1", com_table())
+  #   clusterSever("cls_2", com_table())
+  #   clusterSever("cls_3", com_table())
   clusterSever("cls_4", com_table())
 
   # # # Ordinations # # #
   output$ord_note <- renderUI('When error, choose correct "Scores for plot", "Use Group" and "Select group".')
-  ordinationSever("ord_1", all_data())
-  ordinationSever("ord_2", all_data())
-  ordinationSever("ord_3", all_data())
+  #   ordinationSever("ord_1", all_data())
+  #   ordinationSever("ord_2", all_data())
+  #   ordinationSever("ord_3", all_data())
   ordinationSever("ord_4", all_data())
 }

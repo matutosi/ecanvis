@@ -5,7 +5,7 @@ clusterUI <- function(id){
     sidebarLayout(
       sidebarPanel(
         # method
-        selectInput(ns("cl_c_method"), "clustering method",
+        selectInput(ns("cl_c_method"), "cluster method",
           choices = c("average", "ward.D", "ward.D2", "single",
                       "complete", "mcquitty", "median", "centroid", "diana")
         ),
@@ -18,11 +18,11 @@ clusterUI <- function(id){
                       "robust.aitchison")
         ),
         # stand or species
-        checkboxInput(ns("st_or_sp"), "clustering with item (species)", value = FALSE)
+        checkboxInput(ns("st_or_sp"), "cluster with item (species)", value = FALSE)
       ),
       mainPanel(
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
-          plotOutput(ns("clustering"))
+          plotOutput(ns("cluster"))
         )
       )
     )
@@ -32,12 +32,12 @@ clusterUI <- function(id){
   # Sever module
 clusterSever <- function(id, tbl){
   moduleServer(id, function(input, output, session){
-    output$clustering <- renderPlot(res = 96, {
+    output$cluster <- renderPlot(res = 96, {
       req(tbl)
       cls <- 
         tbl %>%
         t_if_true(input$st_or_sp) %>% # t() when chekcbox selected
-        clustering(c_method = input$cl_c_method, d_method = input$cl_d_method)
+        cluster(c_method = input$cl_c_method, d_method = input$cl_d_method)
       ggdendro::ggdendrogram(cls)
     })
   })
