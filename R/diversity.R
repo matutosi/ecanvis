@@ -9,7 +9,7 @@ calculate_diversity <- function(all_data){
            abundance = all_data$ab) %>%
       dplyr::mutate_if(is.numeric, round, digit = 4)
 
-    cols <- c(all_data$st, cols_one2multi(all_data$data_in, all_data$st))
+    cols <- cols_one2multi(all_data$data_in, all_data$st)
     extra_data <- 
       all_data$data_in %>%
       dplyr::select(all_of(cols)) %>%
