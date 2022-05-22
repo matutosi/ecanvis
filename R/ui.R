@@ -13,9 +13,9 @@ navbarPage("ecan",
         load_fileInput("load_file"),
 
         # stand, species, cover, stand group, species group,
-        uiOutput("st"),
-        uiOutput("sp"),
-        uiOutput("ab"),
+        selectInput("st", "Unit (stand): " ,     choices = character(0)),
+        selectInput("sp", "Item (species): ",    choices = character(0)),
+        selectInput("ab", "Value (abandance): ", choices = character(0)),
 
       tags$hr(),
         htmlOutput("download_example"),
@@ -28,25 +28,33 @@ navbarPage("ecan",
     )
   ),
 
+
+  # # # Diversity # # #
   tabPanel("Diversity",
-    diversityUI("diversity"),
-    reactableOutput("diversity_table")
+    diversityUI("diversity")
   ),
 
-  # # # Clusterings # # #
-  tabPanel("Clusterings",
-  clusterUI("cls_1"),
-  clusterUI("cls_2"),
-  clusterUI("cls_3"),
-  clusterUI("cls_4")
+
+  # # # Indicator Species Analysis # # #
+  #   tabPanel("ISA (Ind val)",
+  #     ind_valUI("ind_val_1")
+  #   ),
+
+
+  # # # Clusters # # #
+  tabPanel("Clusters",
+  #     clusterUI("cls_1"),
+  #     clusterUI("cls_2"),
+  #     clusterUI("cls_3"),
+    clusterUI("cls_4")
   ),
 
   # # # Ordinations # # #
   tabPanel("Ordinations",
     htmlOutput("ord_note"),
-    ordinationUI("ord_1"),
-    ordinationUI("ord_2"),
-    ordinationUI("ord_3"),
+  #     ordinationUI("ord_1"),
+  #     ordinationUI("ord_2"),
+  #     ordinationUI("ord_3"),
     ordinationUI("ord_4")
   )
 )

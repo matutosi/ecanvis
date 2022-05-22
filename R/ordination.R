@@ -21,38 +21,46 @@ ordinationUI <- function(id){
         # stand or species, x and y axis
         selectInput(ns("ord_score"), "Scores for plot",
             choices = c("Unit (stand)"   = "st_scores",
-                        "Item (species)" = "sp_scores")
-         ),
+                        "Item (species)" = "sp_scores")),
 
         numericInput(ns("ord_x"), "X axis component (1-4)",
-          value = 1, min = 1, max = 4, step = 1,
-        ),
-        numericInput(ns("ord_y"), "Y axis component (1-4)",
-          value = 2, min = 1, max = 4, step = 1,
-        ),
+          value = 1, min = 1, max = 4, step = 1,),
 
+        numericInput(ns("ord_y"), "Y axis component (1-4)",
+          value = 2, min = 1, max = 4, step = 1,),
+
+        # Use and select group
         selectInput(ns("ord_use_group"), "Use group", 
             choices = c("No group"       = "ord_no_group",
                         "Unit (stand)"   = "ord_st_group",
-                        "Item (species)" = "ord_sp_group")
-
-        ),
+                        "Item (species)" = "ord_sp_group")),
         selectInput(ns("ord_group"), "Select group", choices = character(0)),
 
+        # ggplot controll
+        sliderInput(ns("ggplot_point_size"), "Size of circle (available in using group)", 
+          min = 1, max = 10, value = 7, step = 0.5),
+        sliderInput(ns("ggplot_alpha"), "Darkness of circle (available in using group)", 
+          min = 0, max = 1, value = 0.3, step = 0.05),
+
       ),
+
+
       mainPanel(
+        # Plot
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
           plotOutput(ns("ordination"))
         )
       )
+
     )
   )
 }
 
-  # Server module
-ordinationSever <- function(id, all_data){
+## Server module
+ordinationSever <- function(id, data_in, st, sp, com_table){
   moduleServer(id, function(input, output, session){
 
+<<<<<<< HEAD
     observeEvent(input$ord_use_group, ignoreInit = TRUE, { # Need "ignoreInit = TRUE"
       choices <- 
         if(single() == "") { "" } 
@@ -61,21 +69,31 @@ ordinationSever <- function(id, all_data){
       updateSelectInput(session, "ord_group", choices = choices, selected = selected)
     })
 
+=======
+    # Update group select
+>>>>>>> develop
     single <- eventReactive(input$ord_use_group, { # species or stand
       if(input$ord_use_group == "ord_st_group"){
-        all_data$st
+        st
       } else if(input$ord_use_group == "ord_sp_group"){
-        all_data$sp
+        sp
       } else{
         ""
       }
     })
 
+    observeEvent(input$ord_use_group, ignoreInit = TRUE, { # Need "ignoreInit = TRUE"
+      choices <- if(single() == "") { "" } else { cols_one2multi(data_in, single(), inculde_self = FALSE) }
+      selected <- if(input$ord_group == "") choices[1] else input$ord_group
+      updateSelectInput(session, "ord_group", choices = choices, selected = selected)
+    })
 
+
+    # Compute and Plot
     output$ordination <- renderPlot(res = 96, {
 
       ord <-
-        all_data$com_table %>%
+        com_table %>%
         ordination(o_method = input$ord_o_method, d_method = input$ord_d_method)
 
       ord_scores <- 
@@ -85,7 +103,7 @@ ordinationSever <- function(id, all_data){
           ord_add_group(
             ord    = ord, 
             score  = input$ord_score,
-            df     = all_data$data_in,
+            df     = data_in,
             single = single(),
             group  = input$ord_group)
         }
@@ -95,9 +113,12 @@ ordinationSever <- function(id, all_data){
 
       if(input$ord_use_group != "ord_no_group"){
         req(ord_scores, input$ord_group)
+        alpha <- input$ggplot_alpha
+        size  <- input$ggplot_point_size
+
         gg <- 
           ggplot2::ggplot(ord_scores, ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores))) +
-          ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha=0.2, size = 7) +
+          ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha = alpha, size = size) +
           ggplot2::geom_text() +
           ggplot2::theme_bw()
       } else {
@@ -113,20 +134,4 @@ ordinationSever <- function(id, all_data){
   })
 }
 
-  # devtools::load_all("d:/matu/work/todo/ecan/R")
-
-  # print(ord_scores)
-  # print(input$ord_use_group)
-  # print(input$ord_group)
-  # print(paste0("no_group: ", input$ord_use_group))
-  # print(paste0("group: ", input$ord_use_group))
-  # print(ord)
-  # print(paste0("ord_score: ", input$ord_score))
-  # print(all_data$data_in)
-  # print(paste0("single: ", single()))
-  # print(paste0("ord_group: ", input$ord_group))
-  # print(ord_scores)
-  # print(rownames(ord_scores))
-  # print(ord_scores)
-  # print(input$ord_use_group)
-  # print(input$ord_group)
+  # devtools::load_all("../ecan/R")

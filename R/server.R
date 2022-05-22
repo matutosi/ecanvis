@@ -3,10 +3,16 @@ function(input, output, session){
 
   # # # Input data # # #
   data_in <- load_fileSever("load_file")
+
   # stand, species, cover
-  output$st <- renderUI({varSelectInput("st", "unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1]) })
-  output$sp <- renderUI({varSelectInput("sp", "item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
-  output$ab <- renderUI({varSelectInput("ab", "value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
+  observeEvent(data_in(), {
+    req(data_in())
+    choices <- colnames(data_in())
+    updateSelectInput(session, "st", choices = choices, selected = choices[1])
+    updateSelectInput(session, "sp", choices = choices, selected = choices[2])
+    updateSelectInput(session, "ab", choices = choices, selected = choices[3])
+  })
+
 
   # Download example
   output$download_example <-
@@ -24,7 +30,8 @@ function(input, output, session){
 
   # # # Community table # # #
   com_table <- reactive({
-    df2table(data_in(), 
+    req(data_in())
+    df2table(data_in(),
              st = as.character(input$st),
              sp = as.character(input$sp),
              ab = as.character(input$ab))
@@ -38,38 +45,33 @@ function(input, output, session){
 
 
 
-  # # # List of data # # #
-  all_data <- reactive({
-    list(
-      data_in   = data_in(),
-      com_table = com_table(),
-      st        = as.character(input$st),
-      sp        = as.character(input$sp),
-      ab        = as.character(input$ab),
-      cols      = cols()
-    )
-  })
-
-
   # # # Diversity # # #
-  diversity <- calculate_diversity(all_data())
-
-  output$diversity_table <- renderReactable({
-    reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
+  observeEvent(c(data_in(), input$st, input$sp, input$ab), ignoreInit = TRUE, {
+    diversitySever("diversity", data_in(), input$st, input$sp, input$ab)
   })
 
-  diversitySever("diversity", diversity())
 
-  # # # Clusterings # # #
-  clusterSever("cls_1", com_table())
-  clusterSever("cls_2", com_table())
-  clusterSever("cls_3", com_table())
-  clusterSever("cls_4", com_table())
+  # # # Indicator Species Analysis # # #
+  #   ind_valSever("ind_val_1", all_data())
+
+
+  # # # Clusters # # #
+  observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
+  #   clusterSever("cls_1", com_table())
+  #   clusterSever("cls_2", com_table())
+  #   clusterSever("cls_3", com_table())
+    clusterSever("cls_4", com_table())
+  })
 
   # # # Ordinations # # #
   output$ord_note <- renderUI('When error, choose correct "Scores for plot", "Use Group" and "Select group".')
-  ordinationSever("ord_1", all_data())
-  ordinationSever("ord_2", all_data())
-  ordinationSever("ord_3", all_data())
-  ordinationSever("ord_4", all_data())
+  observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
+  #   ordinationSever("ord_1", all_data())
+  #   ordinationSever("ord_2", all_data())
+  #   ordinationSever("ord_3", all_data())
+    ordinationSever("ord_4", data_in(), input$st, input$sp, com_table())
+  })
+
 }
+
+  # devtools::load_all("../ecan/R")
