@@ -32,7 +32,9 @@ function(input, output, session){
 
 
   # # # Community table # # #
+  #   com_table <- eventReactive(data_in(), ignoreInit = TRUE, {
   com_table <- reactive({
+    req(data_in())
     df2table(data_in(),
              st = as.character(input$st),
              sp = as.character(input$sp),
@@ -78,11 +80,14 @@ function(input, output, session){
 
   # # # Ordinations # # #
   output$ord_note <- renderUI('When error, choose correct "Scores for plot", "Use Group" and "Select group".')
+  observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
   #   ordinationSever("ord_1", all_data())
   #   ordinationSever("ord_2", all_data())
   #   ordinationSever("ord_3", all_data())
-  ordinationSever("ord_4", all_data())
-}
+    ordinationSever("ord_4", all_data())
+  #     ordinationSever("ord_4", data_in(), input$st, input$sp, com_table())
+  })
 
+}
 
   # devtools::load_all("../ecan/R")

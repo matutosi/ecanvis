@@ -51,6 +51,7 @@ ordinationUI <- function(id){
 
   # Server module
 ordinationSever <- function(id, all_data){
+  # ordinationSever <- function(id, data_in, st, sp, com_table){
   moduleServer(id, function(input, output, session){
 
     observeEvent(input$ord_use_group, ignoreInit = TRUE, { # Need "ignoreInit = TRUE"
@@ -70,6 +71,7 @@ ordinationSever <- function(id, all_data){
     })
 
 
+  # plot
     output$ordination <- renderPlot(res = 96, {
 
       ord <-
@@ -95,7 +97,7 @@ ordinationSever <- function(id, all_data){
         req(ord_scores, input$ord_group)
         gg <- 
           ggplot2::ggplot(ord_scores, ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores))) +
-          ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha=0.2, size = 7) +
+          ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha = 0.3, size = 7) +
           ggplot2::geom_text() +
           ggplot2::theme_bw()
       } else {
@@ -111,20 +113,4 @@ ordinationSever <- function(id, all_data){
   })
 }
 
-  # devtools::load_all("d:/matu/work/todo/ecan/R")
-  # 
-  # print(ord_scores)
-  # print(input$ord_use_group)
-  # print(input$ord_group)
-  # print(paste0("no_group: ", input$ord_use_group))
-  # print(paste0("group: ", input$ord_use_group))
-  # print(ord)
-  # print(paste0("ord_score: ", input$ord_score))
-  # print(all_data$data_in)
-  # print(paste0("single: ", single()))
-  # print(paste0("ord_group: ", input$ord_group))
-  # print(ord_scores)
-  # print(rownames(ord_scores))
-  # print(ord_scores)
-  # print(input$ord_use_group)
-  # print(input$ord_group)
+  # devtools::load_all("../ecan/R")
