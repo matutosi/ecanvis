@@ -61,20 +61,21 @@ print(input$st)
   })
 
 
+
   # # # Diversity # # #
   #   diversity <- reactive({
-  #     req(data_in)
-  #     calculate_diversity(data_in, input$st, input$sp, input$ab)
+  #     calculate_diversity(all_data())
+  #   #     calculate_diversity(data_in, input$st, input$sp, input$ab)
   #   })
-  diversity <- reactive({
-    calculate_diversity(all_data())
-  })
 
-  output$diversity_table <- renderReactable({
-    reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
-  })
+  #   output$diversity_table <- renderReactable({
+  #     reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
+  #   })
 
-  diversitySever("diversity", diversity())
+  #   diversitySever("diversity", diversity())
+  diversitySever("diversity", all_data())
+
+
 
 
   # # # Indicator Species Analysis # # #

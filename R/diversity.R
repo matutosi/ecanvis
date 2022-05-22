@@ -49,29 +49,40 @@ diversityUI <- function(id){
           plotOutput(ns("diversity_plot_s"))
         ),
       )
-    )
+    ),
+    reactableOutput(ns("diversity_table"))
   )
 }
 
   # Sever module
-diversitySever <- function(id, diversity){
+diversitySever <- function(id, all_data){
+  # diversitySever <- function(id, diversity){
   moduleServer(id, function(input, output, session){
 
+    diversity <- reactive({
+      calculate_diversity(all_data)
+    })
+    
+
     observeEvent(input$use_st_group, ignoreInit = TRUE, {
-      choices <- setdiff(colnames(diversity), c("s", "h", "d", "i"))
+      choices <- setdiff(colnames(diversity()), c("s", "h", "d", "i"))
       selected <- if(input$st_group == "") choices[1] else input$st_group
       updateSelectInput(session, "st_group", choices = choices, selected = selected)
     })
 
     output$diversity_plot_s <- renderPlot(res = 96, {
       if(input$use_st_group)
-        div_gg <- ggplot(diversity, aes(x = .data[[input$st_group]], y = .data[[input$div_index]]))
+        div_gg <- ggplot(diversity(), aes(x = .data[[input$st_group]], y = .data[[input$div_index]]))
       else
-        div_gg <- ggplot(diversity, aes(x = 1,y = .data[[input$div_index]]))
+        div_gg <- ggplot(diversity(), aes(x = 1,y = .data[[input$div_index]]))
       div_gg +
         geom_boxplot(outlier.shape = NA) +  # do not show outer point
         geom_jitter(height = 0, width = 0.1) + 
         theme_bw()
+    })
+
+    output$diversity_table <- renderReactable({
+      reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
     })
 
   })

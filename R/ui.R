@@ -34,8 +34,8 @@ navbarPage("ecan",
 
   # # # Diversity # # #
   tabPanel("Diversity",
-    diversityUI("diversity"),
-    reactableOutput("diversity_table")
+    diversityUI("diversity")
+  #     reactableOutput("diversity_table")
   ),
 
 
