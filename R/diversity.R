@@ -67,18 +67,17 @@ diversitySever <- function(id, data_in, st, sp, ab){
     # Plot
     output$diversity_plot_s <- renderPlot(res = 96, {
       req(diversity())
-      if(input$use_st_group)
-        div_gg <-
-          diversity() %>%
-          ggplot(aes(x = .data[[input$st_group]], y = .data[[input$div_index]]))
-      else
-        div_gg <-
-          diversity() %>%
-          ggplot(aes(x = 1,y = .data[[input$div_index]]))
-      div_gg +
-        geom_boxplot(outlier.shape = NA) +  # do not show outer point
-        geom_jitter(height = 0, width = 0.1) + 
-        theme_bw()
+
+      # group setting
+      all_data <- "all_data"
+      selected_group <- if(input$use_st_group) { input$st_group } else { all_data }
+
+      diversity() %>%
+        dplyr::mutate({{all_data}} := 1) %>%
+        ggplot(aes(x = .data[[selected_group]], y = .data[[input$div_index]])) + 
+          geom_boxplot(outlier.shape = NA) +  # do not show outer point
+          geom_jitter(height = 0, width = 0.1) + 
+          theme_bw()
     })
 
     # Table
