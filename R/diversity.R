@@ -12,7 +12,7 @@
   # 
   #     dplyr::left_join(diversity, extra_data)
   # }
-
+  # 
 calculate_diversity <- function(all_data){
   diversity <- 
     all_data$data_in %>%
@@ -27,7 +27,6 @@ calculate_diversity <- function(all_data){
 
   dplyr::left_join(diversity, extra_data)
 }
-
 
   # UI module 
 diversityUI <- function(id){
@@ -58,7 +57,7 @@ diversityUI <- function(id){
 diversitySever <- function(id, diversity){
   moduleServer(id, function(input, output, session){
 
-    observeEvent(diversity, input$use_st_group, ignoreInit = TRUE, {
+    observeEvent(input$use_st_group, ignoreInit = TRUE, {
       choices <- setdiff(colnames(diversity), c("s", "h", "d", "i"))
       selected <- if(input$st_group == "") choices[1] else input$st_group
       updateSelectInput(session, "st_group", choices = choices, selected = selected)
@@ -77,3 +76,4 @@ diversitySever <- function(id, diversity){
 
   })
 }
+  # devtools::load_all("d:/matu/work/todo/ecan/R")

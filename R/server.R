@@ -46,7 +46,8 @@ function(input, output, session){
 
 
   # # # List of data # # #
-  all_data <- eventReactive(c(data_in, input$st, input$sp, input$ab), {
+  #   all_data <- eventReactive(c(data_in, input$st, input$sp, input$ab), {
+  all_data <- reactive({
 print("all_data")
 print(input$st)
     list(
@@ -58,16 +59,6 @@ print(input$st)
       cols      = cols()
     )
   })
-  #   all_data <- reactive({
-  #     list(
-  #       data_in   = data_in(),
-  #       com_table = com_table(),
-  #       st        = as.character(input$st),
-  #       sp        = as.character(input$sp),
-  #       ab        = as.character(input$ab),
-  #       cols      = cols()
-  #     )
-  #   })
 
 
   # # # Diversity # # #
@@ -76,7 +67,6 @@ print(input$st)
   #     calculate_diversity(data_in, input$st, input$sp, input$ab)
   #   })
   diversity <- reactive({
-    req(all_data())
     calculate_diversity(all_data())
   })
 
