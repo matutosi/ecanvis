@@ -62,12 +62,8 @@ function(input, output, session){
 
   # # # Diversity # # #
   observeEvent(c(data_in(), input$st, input$sp, input$ab), {
-    diversitySever("diversity", all_data())
+    diversitySever("diversity", data_in(), input$st, input$sp, input$ab)
   })
-
-  #   observeEvent(data_in(), {
-  #     diversitySever("diversity", data_in(), input$st, input$sp, input$ab)
-  #   })
 
 
   # # # Indicator Species Analysis # # #

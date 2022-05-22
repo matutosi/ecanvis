@@ -1,32 +1,32 @@
-  # calculate_diversity <- function(df, st, sp, ab){
-  #     diversity <- 
-  #       df %>%
-  #       shdi(stand     = st,
-  #            species   = sp,
-  #            abundance = ab) %>%
-  #       dplyr::mutate_if(is.numeric, round, digit = 4)
-  # 
-  #     extra_data <- 
-  #       df %>%
-  #       select_one2multi(st, inculde_self = TRUE)
-  # 
-  #     dplyr::left_join(diversity, extra_data)
-  # }
+calculate_diversity <- function(df, st, sp, ab){
+    diversity <- 
+      df %>%
+      shdi(stand     = st,
+           species   = sp,
+           abundance = ab) %>%
+      dplyr::mutate_if(is.numeric, round, digit = 4)
 
-calculate_diversity <- function(all_data){
-  diversity <- 
-    all_data$data_in %>%
-    shdi(stand     = all_data$st,
-         species   = all_data$sp,
-         abundance = all_data$ab) %>%
-    dplyr::mutate_if(is.numeric, round, digit = 4)
+    extra_data <- 
+      df %>%
+      select_one2multi(st, inculde_self = TRUE)
 
-  extra_data <- 
-    all_data$data_in %>%
-    select_one2multi(all_data$st, inculde_self = TRUE)
-
-  dplyr::left_join(diversity, extra_data)
+    dplyr::left_join(diversity, extra_data)
 }
+
+  # calculate_diversity <- function(all_data){
+  #   diversity <- 
+  #     all_data$data_in %>%
+  #     shdi(stand     = all_data$st,
+  #          species   = all_data$sp,
+  #          abundance = all_data$ab) %>%
+  #     dplyr::mutate_if(is.numeric, round, digit = 4)
+  # 
+  #   extra_data <- 
+  #     all_data$data_in %>%
+  #     select_one2multi(all_data$st, inculde_self = TRUE)
+  # 
+  #   dplyr::left_join(diversity, extra_data)
+  # }
 
 
   # UI module 
@@ -56,18 +56,14 @@ diversityUI <- function(id){
 }
 
   # Sever module
-  # diversitySever <- function(id, df, st, sp, ab){
-diversitySever <- function(id, all_data){
-  # diversitySever <- function(id, diversity){
+diversitySever <- function(id, df, st, sp, ab){
   moduleServer(id, function(input, output, session){
 
     diversity <- reactive({
-  #       calculate_diversity(df, st, sp, ab)
-      calculate_diversity(all_data)
+      calculate_diversity(df, st, sp, ab)
     })
 
-    observeEvent(input$use_st_group, ignoreInit = TRUE, {
-  #     observeEvent(c(df, st, sp, ab, input$use_st_group), ignoreInit = TRUE, {
+    observeEvent(c(df, st, sp, ab, input$use_st_group), ignoreInit = TRUE, {
       choices <- setdiff(colnames(diversity()), c("s", "h", "d", "i"))
       updateSelectInput(session, "st_group", choices = choices)
     })
