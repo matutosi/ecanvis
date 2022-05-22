@@ -1,18 +1,18 @@
   # calculate_diversity <- function(df, st, sp, ab){
   #     diversity <- 
-  #       df() %>%
+  #       df %>%
   #       shdi(stand     = st,
   #            species   = sp,
   #            abundance = ab) %>%
   #       dplyr::mutate_if(is.numeric, round, digit = 4)
   # 
   #     extra_data <- 
-  #       df() %>%
+  #       df %>%
   #       select_one2multi(st, inculde_self = TRUE)
   # 
   #     dplyr::left_join(diversity, extra_data)
   # }
-  # 
+
 calculate_diversity <- function(all_data){
   diversity <- 
     all_data$data_in %>%
@@ -27,6 +27,7 @@ calculate_diversity <- function(all_data){
 
   dplyr::left_join(diversity, extra_data)
 }
+
 
   # UI module 
 diversityUI <- function(id){
@@ -55,19 +56,20 @@ diversityUI <- function(id){
 }
 
   # Sever module
+  # diversitySever <- function(id, df, st, sp, ab){
 diversitySever <- function(id, all_data){
   # diversitySever <- function(id, diversity){
   moduleServer(id, function(input, output, session){
 
     diversity <- reactive({
+  #       calculate_diversity(df, st, sp, ab)
       calculate_diversity(all_data)
     })
-    
 
     observeEvent(input$use_st_group, ignoreInit = TRUE, {
+  #     observeEvent(c(df, st, sp, ab, input$use_st_group), ignoreInit = TRUE, {
       choices <- setdiff(colnames(diversity()), c("s", "h", "d", "i"))
-      selected <- if(input$st_group == "") choices[1] else input$st_group
-      updateSelectInput(session, "st_group", choices = choices, selected = selected)
+      updateSelectInput(session, "st_group", choices = choices)
     })
 
     output$diversity_plot_s <- renderPlot(res = 96, {

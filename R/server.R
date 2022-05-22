@@ -48,8 +48,8 @@ function(input, output, session){
   # # # List of data # # #
   #   all_data <- eventReactive(c(data_in, input$st, input$sp, input$ab), {
   all_data <- reactive({
-print("all_data")
-print(input$st)
+  # print("all_data")
+  # print(input$st)
     list(
       data_in   = data_in(),
       com_table = com_table(),
@@ -60,22 +60,14 @@ print(input$st)
     )
   })
 
-
-
   # # # Diversity # # #
-  #   diversity <- reactive({
-  #     calculate_diversity(all_data())
-  #   #     calculate_diversity(data_in, input$st, input$sp, input$ab)
+  observeEvent(c(data_in(), input$st, input$sp, input$ab), {
+    diversitySever("diversity", all_data())
+  })
+
+  #   observeEvent(data_in(), {
+  #     diversitySever("diversity", data_in(), input$st, input$sp, input$ab)
   #   })
-
-  #   output$diversity_table <- renderReactable({
-  #     reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
-  #   })
-
-  #   diversitySever("diversity", diversity())
-  diversitySever("diversity", all_data())
-
-
 
 
   # # # Indicator Species Analysis # # #
