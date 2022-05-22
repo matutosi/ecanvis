@@ -40,15 +40,15 @@ diversityUI <- function(id){
 }
 
   # Sever module
-diversitySever <- function(id, df, st, sp, ab){
+diversitySever <- function(id, data_in, st, sp, ab){
   moduleServer(id, function(input, output, session){
 
     diversity <- reactive({
-      if(st != "" & sp != "" & ab != "" & !is.null(df[[ab]]))
-        calculate_diversity(df, st, sp, ab)
+      if(st != "" & sp != "" & ab != "" & !is.null(data_in[[ab]]))
+        calculate_diversity(data_in, st, sp, ab)
     })
 
-    observeEvent(c(df, st, sp, ab, input$use_st_group), ignoreInit = TRUE, {
+    observeEvent(c(data_in, st, sp, ab, input$use_st_group), ignoreInit = TRUE, {
       req(diversity())
       choices <- setdiff(colnames(diversity()), c("s", "h", "d", "i"))
       updateSelectInput(session, "st_group", choices = choices)
