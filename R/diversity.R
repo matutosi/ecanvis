@@ -1,26 +1,40 @@
-calculate_diversity <- function(all_data){
-  reactive({
-    req(all_data$data_in)
-
+calculate_diversity <- function(df, st, sp, ab){
     diversity <- 
-      all_data$data_in %>%
-      shdi(stand     = all_data$st,
-           species   = all_data$sp,
-           abundance = all_data$ab) %>%
+      df() %>%
+      shdi(stand     = st,
+           species   = sp,
+           abundance = ab) %>%
       dplyr::mutate_if(is.numeric, round, digit = 4)
 
-    cols <- c(all_data$st, cols_one2multi(all_data$data_in, all_data$st))
     extra_data <- 
-      all_data$data_in %>%
-      dplyr::select(all_of(cols)) %>%
-      distinct()
+      df() %>%
+      select_one2multi(st, inculde_self = TRUE)
 
     dplyr::left_join(diversity, extra_data)
-  })
 }
 
+  # calculate_diversity <- function(all_data){
+  #   reactive({
+  #     req(all_data$data_in)
+  # 
+  #     diversity <- 
+  #       all_data$data_in %>%
+  #       shdi(stand     = all_data$st,
+  #            species   = all_data$sp,
+  #            abundance = all_data$ab) %>%
+  #       dplyr::mutate_if(is.numeric, round, digit = 4)
+  # 
+  #     extra_data <- 
+  #       all_data$data_in %>%
+  #       select_one2multi(all_data$st, inculde_self = TRUE)
+  # 
+  #     dplyr::left_join(diversity, extra_data)
+  #   })
+  # }
+
+
   # UI module 
-diversityUI <- function(id, diversity){
+diversityUI <- function(id){
   ns <- NS(id)
   tagList(
     sidebarLayout(
@@ -32,7 +46,7 @@ diversityUI <- function(id, diversity){
                       "Simpson's 1/d (i)"    = "i")
         ),
         checkboxInput(ns("use_st_group"), "Use unit (stand) group", value = FALSE),
-        selectInput(ns("st_group"), "unit group", choices = character(0)),
+        selectInput(ns("st_group"), "Unit group", choices = character(0)),
       ),
 
       mainPanel(

@@ -13,9 +13,12 @@ navbarPage("ecan",
         load_fileInput("load_file"),
 
         # stand, species, cover, stand group, species group,
-        uiOutput("st"),
-        uiOutput("sp"),
-        uiOutput("ab"),
+  #         uiOutput("st"),
+  #         uiOutput("sp"),
+  #         uiOutput("ab"),
+        selectInput("st", "Unit (stand): " ,     choices = character(0)),
+        selectInput("sp", "Item (species): ",    choices = character(0)),
+        selectInput("ab", "Value (abandance): ", choices = character(0)),
 
       tags$hr(),
         htmlOutput("download_example"),
@@ -28,10 +31,19 @@ navbarPage("ecan",
     )
   ),
 
+
+  # # # Diversity # # #
   tabPanel("Diversity",
     diversityUI("diversity"),
     reactableOutput("diversity_table")
   ),
+
+
+  # # # Indicator Species Analysis # # #
+  #   tabPanel("ISA (Ind val)",
+  #     ind_valUI("ind_val_1")
+  #   ),
+
 
   # # # Clusters # # #
   tabPanel("Clusters",
