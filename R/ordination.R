@@ -21,30 +21,37 @@ ordinationUI <- function(id){
         # stand or species, x and y axis
         selectInput(ns("ord_score"), "Scores for plot",
             choices = c("Unit (stand)"   = "st_scores",
-                        "Item (species)" = "sp_scores")
-         ),
+                        "Item (species)" = "sp_scores")),
+
         numericInput(ns("ord_x"), "X axis component (1-4)",
-          value = 1, min = 1, max = 4, step = 1,
-        ),
+          value = 1, min = 1, max = 4, step = 1,),
+
         numericInput(ns("ord_y"), "Y axis component (1-4)",
-          value = 2, min = 1, max = 4, step = 1,
-        ),
+          value = 2, min = 1, max = 4, step = 1,),
 
         # Use and select group
         selectInput(ns("ord_use_group"), "Use group", 
             choices = c("No group"       = "ord_no_group",
                         "Unit (stand)"   = "ord_st_group",
-                        "Item (species)" = "ord_sp_group")
-        ),
+                        "Item (species)" = "ord_sp_group")),
         selectInput(ns("ord_group"), "Select group", choices = character(0)),
 
-      # Plot
+        # ggplot controll
+        sliderInput(ns("ggplot_point_size"), "Size of circle (available in using group)", 
+          min = 1, max = 10, value = 7, step = 0.5),
+        sliderInput(ns("ggplot_alpha"), "Darkness of circle (available in using group)", 
+          min = 0, max = 1, value = 0.3, step = 0.05),
+
       ),
+
+
       mainPanel(
+        # Plot
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
           plotOutput(ns("ordination"))
         )
       )
+
     )
   )
 }
@@ -95,9 +102,12 @@ ordinationSever <- function(id, data_in, st, sp, com_table){
 
       if(input$ord_use_group != "ord_no_group"){
         req(ord_scores, input$ord_group)
+        alpha <- input$ggplot_alpha
+        size  <- input$ggplot_point_size
+
         gg <- 
           ggplot2::ggplot(ord_scores, ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores))) +
-          ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha = 0.3, size = 7) +
+          ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha = alpha, size = size) +
           ggplot2::geom_text() +
           ggplot2::theme_bw()
       } else {
