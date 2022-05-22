@@ -13,9 +13,6 @@ navbarPage("ecan",
         load_fileInput("load_file"),
 
         # stand, species, cover, stand group, species group,
-  #         uiOutput("st"),
-  #         uiOutput("sp"),
-  #         uiOutput("ab"),
         selectInput("st", "Unit (stand): " ,     choices = character(0)),
         selectInput("sp", "Item (species): ",    choices = character(0)),
         selectInput("ab", "Value (abandance): ", choices = character(0)),
@@ -35,7 +32,6 @@ navbarPage("ecan",
   # # # Diversity # # #
   tabPanel("Diversity",
     diversityUI("diversity")
-  #     reactableOutput("diversity_table")
   ),
 
 

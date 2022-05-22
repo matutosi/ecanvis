@@ -5,9 +5,6 @@ function(input, output, session){
   data_in <- load_fileSever("load_file")
 
   # stand, species, cover
-  #   output$st <- renderUI({varSelectInput("st", "Unit (stand): " ,     data = data_in(), selected = colnames(data_in())[1]) })
-  #   output$sp <- renderUI({varSelectInput("sp", "Item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
-  #   output$ab <- renderUI({varSelectInput("ab", "Value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
   observeEvent(data_in(), {
     req(data_in())
     choices <- colnames(data_in())
@@ -32,7 +29,6 @@ function(input, output, session){
 
 
   # # # Community table # # #
-  #   com_table <- eventReactive(data_in(), ignoreInit = TRUE, {
   com_table <- reactive({
     req(data_in())
     df2table(data_in(),
@@ -48,19 +44,6 @@ function(input, output, session){
   })
 
 
-  # # # List of data # # #
-  #   all_data <- eventReactive(c(data_in, input$st, input$sp, input$ab), {
-  all_data <- reactive({
-    list(
-      data_in   = data_in(),
-      com_table = com_table(),
-      st        = as.character(input$st),
-      sp        = as.character(input$sp),
-      ab        = as.character(input$ab),
-      cols      = cols()
-    )
-  })
-
 
   # # # Diversity # # #
   observeEvent(c(data_in(), input$st, input$sp, input$ab), ignoreInit = TRUE, {
@@ -73,10 +56,12 @@ function(input, output, session){
 
 
   # # # Clusters # # #
+  observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
   #   clusterSever("cls_1", com_table())
   #   clusterSever("cls_2", com_table())
   #   clusterSever("cls_3", com_table())
-  clusterSever("cls_4", com_table())
+    clusterSever("cls_4", com_table())
+  })
 
   # # # Ordinations # # #
   output$ord_note <- renderUI('When error, choose correct "Scores for plot", "Use Group" and "Select group".')
@@ -84,8 +69,7 @@ function(input, output, session){
   #   ordinationSever("ord_1", all_data())
   #   ordinationSever("ord_2", all_data())
   #   ordinationSever("ord_3", all_data())
-    ordinationSever("ord_4", all_data())
-  #     ordinationSever("ord_4", data_in(), input$st, input$sp, com_table())
+    ordinationSever("ord_4", data_in(), input$st, input$sp, com_table())
   })
 
 }

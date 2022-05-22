@@ -23,7 +23,6 @@ ordinationUI <- function(id){
             choices = c("Unit (stand)"   = "st_scores",
                         "Item (species)" = "sp_scores")
          ),
-
         numericInput(ns("ord_x"), "X axis component (1-4)",
           value = 1, min = 1, max = 4, step = 1,
         ),
@@ -31,14 +30,15 @@ ordinationUI <- function(id){
           value = 2, min = 1, max = 4, step = 1,
         ),
 
+        # Use and select group
         selectInput(ns("ord_use_group"), "Use group", 
             choices = c("No group"       = "ord_no_group",
                         "Unit (stand)"   = "ord_st_group",
                         "Item (species)" = "ord_sp_group")
-
         ),
         selectInput(ns("ord_group"), "Select group", choices = character(0)),
 
+      # Plot
       ),
       mainPanel(
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
@@ -49,33 +49,33 @@ ordinationUI <- function(id){
   )
 }
 
-  # Server module
-ordinationSever <- function(id, all_data){
-  # ordinationSever <- function(id, data_in, st, sp, com_table){
+## Server module
+ordinationSever <- function(id, data_in, st, sp, com_table){
   moduleServer(id, function(input, output, session){
 
-    observeEvent(input$ord_use_group, ignoreInit = TRUE, { # Need "ignoreInit = TRUE"
-      choices <- if(single() == "") { "" } else { cols_one2multi(all_data$data_in, single(), inculde_self = FALSE) }
-      selected <- if(input$ord_group == "") choices[1] else input$ord_group
-      updateSelectInput(session, "ord_group", choices = choices, selected = selected)
-    })
-
+    # Update group select
     single <- eventReactive(input$ord_use_group, { # species or stand
       if(input$ord_use_group == "ord_st_group"){
-        all_data$st
+        st
       } else if(input$ord_use_group == "ord_sp_group"){
-        all_data$sp
+        sp
       } else{
         ""
       }
     })
 
+    observeEvent(input$ord_use_group, ignoreInit = TRUE, { # Need "ignoreInit = TRUE"
+      choices <- if(single() == "") { "" } else { cols_one2multi(data_in, single(), inculde_self = FALSE) }
+      selected <- if(input$ord_group == "") choices[1] else input$ord_group
+      updateSelectInput(session, "ord_group", choices = choices, selected = selected)
+    })
 
-  # plot
+
+    # Compute and Plot
     output$ordination <- renderPlot(res = 96, {
 
       ord <-
-        all_data$com_table %>%
+        com_table %>%
         ordination(o_method = input$ord_o_method, d_method = input$ord_d_method)
 
       ord_scores <- 
@@ -85,7 +85,7 @@ ordinationSever <- function(id, all_data){
           ord_add_group(
             ord    = ord, 
             score  = input$ord_score,
-            df     = all_data$data_in,
+            df     = data_in,
             single = single(),
             group  = input$ord_group)
         }
