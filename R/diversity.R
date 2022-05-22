@@ -14,22 +14,18 @@
   # }
 
 calculate_diversity <- function(all_data){
-  reactive({
-  #     req(all_data$data_in)
-  # 
-    diversity <- 
-      all_data$data_in %>%
-      shdi(stand     = all_data$st,
-           species   = all_data$sp,
-           abundance = all_data$ab) %>%
-      dplyr::mutate_if(is.numeric, round, digit = 4)
+  diversity <- 
+    all_data$data_in %>%
+    shdi(stand     = all_data$st,
+         species   = all_data$sp,
+         abundance = all_data$ab) %>%
+    dplyr::mutate_if(is.numeric, round, digit = 4)
 
-    extra_data <- 
-      all_data$data_in %>%
-      select_one2multi(all_data$st, inculde_self = TRUE)
+  extra_data <- 
+    all_data$data_in %>%
+    select_one2multi(all_data$st, inculde_self = TRUE)
 
-    dplyr::left_join(diversity, extra_data)
-  })
+  dplyr::left_join(diversity, extra_data)
 }
 
 
@@ -62,7 +58,7 @@ diversityUI <- function(id){
 diversitySever <- function(id, diversity){
   moduleServer(id, function(input, output, session){
 
-    observeEvent(input$use_st_group, ignoreInit = TRUE, {
+    observeEvent(diversity, input$use_st_group, ignoreInit = TRUE, {
       choices <- setdiff(colnames(diversity), c("s", "h", "d", "i"))
       selected <- if(input$st_group == "") choices[1] else input$st_group
       updateSelectInput(session, "st_group", choices = choices, selected = selected)
