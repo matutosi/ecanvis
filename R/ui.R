@@ -55,7 +55,7 @@ navbarPage("ecan",
 
   # # # Ordinations # # #
   tabPanel("Ordinations",
-  #     htmlOutput("ord_note"),
+    htmlOutput("ord_note"),
   #     ordinationUI("ord_1"),
   #     ordinationUI("ord_2"),
   #     ordinationUI("ord_3"),

@@ -13,22 +13,6 @@ calculate_diversity <- function(df, st, sp, ab){
     dplyr::left_join(diversity, extra_data)
 }
 
-  # calculate_diversity <- function(all_data){
-  #   diversity <- 
-  #     all_data$data_in %>%
-  #     shdi(stand     = all_data$st,
-  #          species   = all_data$sp,
-  #          abundance = all_data$ab) %>%
-  #     dplyr::mutate_if(is.numeric, round, digit = 4)
-  # 
-  #   extra_data <- 
-  #     all_data$data_in %>%
-  #     select_one2multi(all_data$st, inculde_self = TRUE)
-  # 
-  #   dplyr::left_join(diversity, extra_data)
-  # }
-
-
   # UI module 
 diversityUI <- function(id){
   ns <- NS(id)
@@ -60,15 +44,18 @@ diversitySever <- function(id, df, st, sp, ab){
   moduleServer(id, function(input, output, session){
 
     diversity <- reactive({
-      calculate_diversity(df, st, sp, ab)
+      if(st != "" & sp != "" & ab != "" & !is.null(df[[ab]]))
+        calculate_diversity(df, st, sp, ab)
     })
 
     observeEvent(c(df, st, sp, ab, input$use_st_group), ignoreInit = TRUE, {
+      req(diversity())
       choices <- setdiff(colnames(diversity()), c("s", "h", "d", "i"))
       updateSelectInput(session, "st_group", choices = choices)
     })
 
     output$diversity_plot_s <- renderPlot(res = 96, {
+      req(diversity())
       if(input$use_st_group)
         div_gg <- ggplot(diversity(), aes(x = .data[[input$st_group]], y = .data[[input$div_index]]))
       else
@@ -80,9 +67,9 @@ diversitySever <- function(id, df, st, sp, ab){
     })
 
     output$diversity_table <- renderReactable({
+      req(diversity())
       reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
     })
 
   })
 }
-  # devtools::load_all("d:/matu/work/todo/ecan/R")
