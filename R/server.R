@@ -71,11 +71,14 @@ print(input$st)
 
 
   # # # Diversity # # #
+  #   diversity <- reactive({
+  #     req(data_in)
+  #     calculate_diversity(data_in, input$st, input$sp, input$ab)
+  #   })
   diversity <- reactive({
-    req(data_in)
-    calculate_diversity(data_in, input$st, input$sp, input$ab)
+    req(all_data())
+    calculate_diversity(all_data())
   })
-  #   diversity <- calculate_diversity(all_data())
 
   output$diversity_table <- renderReactable({
     reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)

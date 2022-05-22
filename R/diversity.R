@@ -1,36 +1,36 @@
-calculate_diversity <- function(df, st, sp, ab){
-    diversity <- 
-      df() %>%
-      shdi(stand     = st,
-           species   = sp,
-           abundance = ab) %>%
-      dplyr::mutate_if(is.numeric, round, digit = 4)
-
-    extra_data <- 
-      df() %>%
-      select_one2multi(st, inculde_self = TRUE)
-
-    dplyr::left_join(diversity, extra_data)
-}
-
-  # calculate_diversity <- function(all_data){
-  #   reactive({
-  #     req(all_data$data_in)
-  # 
+  # calculate_diversity <- function(df, st, sp, ab){
   #     diversity <- 
-  #       all_data$data_in %>%
-  #       shdi(stand     = all_data$st,
-  #            species   = all_data$sp,
-  #            abundance = all_data$ab) %>%
+  #       df() %>%
+  #       shdi(stand     = st,
+  #            species   = sp,
+  #            abundance = ab) %>%
   #       dplyr::mutate_if(is.numeric, round, digit = 4)
   # 
   #     extra_data <- 
-  #       all_data$data_in %>%
-  #       select_one2multi(all_data$st, inculde_self = TRUE)
+  #       df() %>%
+  #       select_one2multi(st, inculde_self = TRUE)
   # 
   #     dplyr::left_join(diversity, extra_data)
-  #   })
   # }
+
+calculate_diversity <- function(all_data){
+  reactive({
+  #     req(all_data$data_in)
+  # 
+    diversity <- 
+      all_data$data_in %>%
+      shdi(stand     = all_data$st,
+           species   = all_data$sp,
+           abundance = all_data$ab) %>%
+      dplyr::mutate_if(is.numeric, round, digit = 4)
+
+    extra_data <- 
+      all_data$data_in %>%
+      select_one2multi(all_data$st, inculde_self = TRUE)
+
+    dplyr::left_join(diversity, extra_data)
+  })
+}
 
 
   # UI module 
