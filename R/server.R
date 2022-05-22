@@ -9,6 +9,7 @@ function(input, output, session){
   #   output$sp <- renderUI({varSelectInput("sp", "Item (species): ",    data = data_in(), selected = colnames(data_in())[2]) })
   #   output$ab <- renderUI({varSelectInput("ab", "Value (abandance): ", data = data_in(), selected = colnames(data_in())[3]) })
   observeEvent(data_in(), {
+    req(data_in())
     choices <- colnames(data_in())
     updateSelectInput(session, "st", choices = choices, selected = choices[1])
     updateSelectInput(session, "sp", choices = choices, selected = choices[2])
@@ -48,8 +49,6 @@ function(input, output, session){
   # # # List of data # # #
   #   all_data <- eventReactive(c(data_in, input$st, input$sp, input$ab), {
   all_data <- reactive({
-  # print("all_data")
-  # print(input$st)
     list(
       data_in   = data_in(),
       com_table = com_table(),
@@ -60,8 +59,9 @@ function(input, output, session){
     )
   })
 
+
   # # # Diversity # # #
-  observeEvent(c(data_in(), input$st, input$sp, input$ab), {
+  observeEvent(c(data_in(), input$st, input$sp, input$ab), ignoreInit = TRUE, {
     diversitySever("diversity", data_in(), input$st, input$sp, input$ab)
   })
 
@@ -83,3 +83,6 @@ function(input, output, session){
   #   ordinationSever("ord_3", all_data())
   ordinationSever("ord_4", all_data())
 }
+
+
+  # devtools::load_all("../ecan/R")
