@@ -60,14 +60,6 @@ ordinationUI <- function(id){
 ordinationSever <- function(id, data_in, st, sp, com_table){
   moduleServer(id, function(input, output, session){
 
-    observeEvent(input$ord_use_group, ignoreInit = TRUE, { # Need "ignoreInit = TRUE"
-      choices <- 
-        if(single() == "") { "" } 
-        else { cols_one2multi(all_data$data_in, single(), inculde_self = FALSE) }
-      selected <- if(input$ord_group == "") choices[1] else input$ord_group
-      updateSelectInput(session, "ord_group", choices = choices, selected = selected)
-    })
-
     # Update group select
     single <- eventReactive(input$ord_use_group, { # species or stand
       if(input$ord_use_group == "ord_st_group"){
