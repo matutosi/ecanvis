@@ -12,9 +12,7 @@ library(zeallot)
 
 source("data_load.R")
 source("data_example.R")
-source("use_select_var.R")
-
 source("diversity.R")
-
+source("ind_val.R")
 source("cluster.R")
 source("ordination.R")
