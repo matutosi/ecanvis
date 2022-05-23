@@ -111,5 +111,3 @@ ordinationSever <- function(id, data_in, st, sp, com_table){
 
   })
 }
-
-  # devtools::load_all("../ecan/R")
