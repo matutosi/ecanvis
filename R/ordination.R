@@ -18,32 +18,28 @@ ordinationUI <- function(id){
                       "mahalanobis", "chisq", "chord", "aitchison",
                       "robust.aitchison")
         ),
-        # stand or species, x and y axis
-        selectInput(ns("ord_score"), "Scores for plot",
-            choices = c("Unit (stand)"   = "st_scores",
-                        "Item (species)" = "sp_scores")),
 
+        # x, y axis
         numericInput(ns("ord_x"), "X axis component (1-4)",
           value = 1, min = 1, max = 4, step = 1,),
 
         numericInput(ns("ord_y"), "Y axis component (1-4)",
           value = 2, min = 1, max = 4, step = 1,),
 
-        # Use and select group
-        selectInput(ns("ord_use_group"), "Use group", 
-            choices = c("No group"       = "ord_no_group",
-                        "Unit (stand)"   = "ord_st_group",
-                        "Item (species)" = "ord_sp_group")),
+        # stand or species
+        checkboxInput(ns("ord_use_species_scores"), "Use species scores"),
+
+        # Show and select group
+        checkboxInput(ns("ord_show_group"), "Show group"),
         selectInput(ns("ord_group"), "Select group", choices = character(0)),
 
         # ggplot controll
-        sliderInput(ns("ggplot_point_size"), "Size of circle (available in using group)", 
+        sliderInput(ns("ggplot_point_size"), "Size of group (available in showing)", 
           min = 1, max = 10, value = 7, step = 0.5),
-        sliderInput(ns("ggplot_alpha"), "Darkness of circle (available in using group)", 
+        sliderInput(ns("ggplot_alpha"), "Darkness of group (available in showing )", 
           min = 0, max = 1, value = 0.3, step = 0.05),
 
       ),
-
 
       mainPanel(
         # Plot
@@ -61,22 +57,14 @@ ordinationSever <- function(id, data_in, st, sp, com_table){
   moduleServer(id, function(input, output, session){
 
     # Update group select
-    single <- eventReactive(input$ord_use_group, { # species or stand
-      if(input$ord_use_group == "ord_st_group"){
-        st
-      } else if(input$ord_use_group == "ord_sp_group"){
-        sp
-      } else{
-        ""
+    indiv <- eventReactive(c(input$ord_show_group, input$ord_use_species_scores), {
+      if(input$ord_show_group){
+        indiv <- if(input$ord_use_species_scores){ sp } else { st }
+        choices <- cols_one2multi(data_in, indiv, inculde_self = FALSE)
+        updateSelectInput(session, "ord_group", choices = choices)
       }
+      indiv
     })
-
-    observeEvent(input$ord_use_group, ignoreInit = TRUE, { # Need "ignoreInit = TRUE"
-      choices <- if(single() == "") { "" } else { cols_one2multi(data_in, single(), inculde_self = FALSE) }
-      selected <- if(input$ord_group == "") choices[1] else input$ord_group
-      updateSelectInput(session, "ord_group", choices = choices, selected = selected)
-    })
-
 
     # Compute and Plot
     output$ordination <- renderPlot(res = 96, {
@@ -85,23 +73,24 @@ ordinationSever <- function(id, data_in, st, sp, com_table){
         com_table %>%
         ordination(o_method = input$ord_o_method, d_method = input$ord_d_method)
 
+      score <- if(input$ord_use_species_scores) "sp_scores" else "st_scores"
       ord_scores <- 
-        if(input$ord_use_group == "ord_no_group"){
-          ord_extract_score(ord, input$ord_score)
-        } else {
+        if(input$ord_show_group){
           ord_add_group(
             ord    = ord, 
-            score  = input$ord_score,
+            score  = score,
             df     = data_in,
-            single = single(),
+            indiv = indiv(),    # need "()": indiv is reactive
             group  = input$ord_group)
+        } else {
+          ord_extract_score(ord, score)
         }
 
       x   <- names(ord_scores)[input$ord_x]
       y   <- names(ord_scores)[input$ord_y]
 
-      if(input$ord_use_group != "ord_no_group"){
-        req(ord_scores, input$ord_group)
+      if(input$ord_show_group){
+        req(input$ord_group)
         alpha <- input$ggplot_alpha
         size  <- input$ggplot_point_size
 

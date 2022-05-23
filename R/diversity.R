@@ -58,21 +58,26 @@ diversitySever <- function(id, data_in, st, sp, ab){
     })
 
     # Update group select
-    observeEvent(c(data_in, st, sp, ab, input$use_st_group), ignoreInit = TRUE, {
-      req(diversity())
+    observeEvent(c(diversity(), data_in, st, sp, ab, input$use_st_group), {
       choices <- setdiff(colnames(diversity()), c("s", "h", "d", "i"))
       updateSelectInput(session, "st_group", choices = choices)
     })
 
     # Plot
     output$diversity_plot_s <- renderPlot(res = 96, {
-      req(diversity())
+      req(diversity(), input$st_group)
 
       # group setting
       all_data <- "all_data"
       selected_group <- if(input$use_st_group) { input$st_group } else { all_data }
 
-      diversity() %>%
+      div <- 
+        if(is.double(diversity()[[selected_group]])){
+            dplyr::mutate(diversity(), {{selected_group}} := cut_conti(.data[[selected_group]]))
+        } else {
+          diversity()
+        }
+      div %>%
         dplyr::mutate({{all_data}} := 1) %>%
         ggplot(aes(x = .data[[selected_group]], y = .data[[input$div_index]])) + 
           geom_boxplot(outlier.shape = NA) +  # do not show outer point
