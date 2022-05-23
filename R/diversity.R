@@ -30,8 +30,8 @@ diversityUI <- function(id){
         ),
 
         # Select group
-        checkboxInput(ns("show_st_group"), "Show unit (stand) group", value = FALSE),
-        selectInput(ns("st_group"), "Unit group", choices = character(0)),
+        checkboxInput(ns("div_show_st_group"), "Show unit (stand) group", value = FALSE),
+        selectInput(ns("div_st_group"), "Unit group", choices = character(0)),
 
       ),
 
@@ -58,18 +58,18 @@ diversitySever <- function(id, data_in, st, sp, ab){
     })
 
     # Update group select
-    observeEvent(c(diversity(), data_in, st, sp, ab, input$show_st_group), {
+    observeEvent(c(diversity(), data_in, st, sp, ab, input$div_show_st_group), {
       choices <- setdiff(colnames(diversity()), c("s", "h", "d", "i"))
-      updateSelectInput(session, "st_group", choices = choices)
+      updateSelectInput(session, "div_st_group", choices = choices)
     })
 
     # Plot
     output$diversity_plot_s <- renderPlot(res = 96, {
-      req(diversity(), input$st_group)
+      req(diversity(), input$div_st_group)
 
       # group setting
       all_data <- "all_data"
-      selected_group <- if(input$show_st_group) { input$st_group } else { all_data }
+      selected_group <- if(input$div_show_st_group) { input$div_st_group } else { all_data }
 
       div <- 
         if(is.double(diversity()[[selected_group]])){
