@@ -9,6 +9,10 @@ ind_valUI <- function(id){
       ),
 
       mainPanel(
+        # Caution
+        htmlOutput(ns("caution")),
+
+        # Table
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
           reactableOutput(ns("ind_val_table"))
         ),
@@ -30,12 +34,17 @@ ind_valSever <- function(id, data_in, st, sp, ab){
     # Compute
     ind_res <- reactive({
       req(data_in)
-      ind_val(df        = data_in, 
-              stand     = st, 
-              species   = sp, 
-              abundance = ab,
-              group     = input$ind_val_st_group) %>%
-      dplyr::mutate_if(is.numeric, round, digit = 4)
+      if(st != sp & is.numeric(data_in[[ab]])){
+        output$caution <- renderUI(character(0)) # No caution
+        ind_val(df        = data_in, 
+                stand     = st, 
+                species   = sp, 
+                abundance = ab,
+                group     = input$ind_val_st_group) %>%
+        dplyr::mutate_if(is.numeric, round, digit = 4)
+      } else {
+        output$caution <- renderUI("Select correct set of unit, item and abundance. Unit and item must not be duplicated. Abundance must be numeric.")
+      }
     })
 
     output$ind_val_table <- renderReactable({

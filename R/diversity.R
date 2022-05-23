@@ -36,6 +36,10 @@ diversityUI <- function(id){
       ),
 
       mainPanel(
+
+        # Caution
+        htmlOutput(ns("caution")),
+
         # Plot
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
           plotOutput(ns("diversity_plot_s"))
@@ -53,8 +57,14 @@ diversitySever <- function(id, data_in, st, sp, ab){
 
     # Compute
     diversity <- reactive({
-      if(st != "" & sp != "" & ab != "" & !is.null(data_in[[ab]]))
+      if(st != sp & is.numeric(data_in[[ab]])){
+        output$caution <- renderUI(character(0)) # No caution
+        if(st != "" & sp != "" & ab != "" & !is.null(data_in[[ab]]))
         calculate_diversity(data_in, st, sp, ab)
+      } else {
+        output$caution <-
+          renderUI("Select correct set of unit, item and abundance. Unit and item must not be duplicated. Abundance must be numeric.")
+      }
     })
 
     # Update group select
