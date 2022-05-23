@@ -37,13 +37,6 @@ function(input, output, session){
              ab = as.character(input$ab))
   })
 
-  # # # Colnames except c(st, sp, ab)  # # #
-  #   cols <- reactive({
-  #     st_sp_ab <- c(as.character(input$st), as.character(input$sp), as.character(input$ab))
-  #     setdiff(colnames(data_in()), st_sp_ab)
-  #   })
-
-
 
   # # # Diversity # # #
   observeEvent(c(data_in(), input$st, input$sp, input$ab), ignoreInit = TRUE, {
@@ -56,23 +49,21 @@ function(input, output, session){
     ind_valSever("ind_val", data_in(), input$st, input$sp, input$ab)
   })
 
-
   # # # Clusters # # #
   observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
-  #     clusterSever("cls_1", data_in(), input$st, input$sp, com_table())
-  #     clusterSever("cls_2", data_in(), input$st, input$sp, com_table())
-  #     clusterSever("cls_3", data_in(), input$st, input$sp, com_table())
+    clusterSever("cls_1", data_in(), input$st, input$sp, com_table())
+    clusterSever("cls_2", data_in(), input$st, input$sp, com_table())
+    clusterSever("cls_3", data_in(), input$st, input$sp, com_table())
     clusterSever("cls_4", data_in(), input$st, input$sp, com_table())
   })
 
   # # # Ordinations # # #
   observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
-  #     ordinationSever("ord_1", data_in(), input$st, input$sp, com_table())
-  #     ordinationSever("ord_2", data_in(), input$st, input$sp, com_table())
-  #     ordinationSever("ord_3", data_in(), input$st, input$sp, com_table())
+    ordinationSever("ord_1", data_in(), input$st, input$sp, com_table())
+    ordinationSever("ord_2", data_in(), input$st, input$sp, com_table())
+    ordinationSever("ord_3", data_in(), input$st, input$sp, com_table())
     ordinationSever("ord_4", data_in(), input$st, input$sp, com_table())
   })
 
 }
-
   # devtools::load_all("../ecan/R")
