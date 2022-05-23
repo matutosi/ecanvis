@@ -64,7 +64,7 @@ function(input, output, session){
   })
 
   # # # Ordinations # # #
-  output$ord_note <- renderUI('When error, choose correct "Scores for plot", "Use Group" and "Select group".')
+  #   output$ord_note <- renderUI('When error, choose correct "Scores for plot", "Use Group" and "Select group".')
   observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
   #   ordinationSever("ord_1", all_data())
   #   ordinationSever("ord_2", all_data())
