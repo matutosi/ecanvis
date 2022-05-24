@@ -1,6 +1,7 @@
   # https://matutosi.shinyapps.io/ecanvis/
 if(!require("ecan"))            devtools::install_github("matutosi/ecan")
 if(!require("ggdendro"))        install.packages("ggdendro")
+if(!require("dendextend"))      install.packages("dendextend")
 if(!require("reactable"))       install.packages("reactable")
 if(!require("shinycssloaders")) install.packages("shinycssloaders")
 
@@ -9,6 +10,7 @@ library(vegan)
 library(tidyverse)
 library(shiny)
 library(zeallot)
+library(dendextend)
 
 source("data_load.R")
 source("data_example.R")
