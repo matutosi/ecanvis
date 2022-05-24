@@ -24,7 +24,8 @@ clusterUI <- function(id){
         # Show and select group
         checkboxInput(ns("cls_show_group"), "Show group"),
         selectInput(ns("cls_group"), "Select group", choices = character(0)),
-
+        sliderInput(ns("cls_label_gray"), "Darkness of labels (0: black, 1: white)",
+          min = 0, max = 1, value = 0.3, step = 0.05),
       ),
 
       mainPanel(
@@ -58,9 +59,19 @@ clusterSever <- function(id, data_in, st, sp, tbl){
         tbl %>%
         t_if_true(input$cls_with_sp) %>% # t() when chekcbox selected
         cluster(c_method = input$cl_c_method, d_method = input$cl_d_method)
-      if(input$cls_show_group) cls$labels <- cls_add_group(cls, data_in, indiv = indiv(), group = input$cls_group)
-
-      ggdendro::ggdendrogram(cls)
+      if(input$cls_show_group){
+        col <- cls_color(cls, data_in, indiv = indiv(), group = input$cls_group)  # need BEFORE add group
+        cls <- cls_add_group(cls, data_in, indiv = indiv(), group = input$cls_group)
+        cls <- stats::as.dendrogram(cls)
+        labels_colors(cls) <- gray(input$cls_label_gray)
+        plot(cls)
+        dendextend::colored_bars(colors = col, cls, input$cls_group, y_shift = 0,  y_scale = 2)
+        par(new = TRUE)
+        plot(cls)
+      } else {
+        cls <- stats::as.dendrogram(cls)
+        plot(cls)
+      }
     })
 
   })
