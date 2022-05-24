@@ -5,7 +5,13 @@ ind_valUI <- function(id){
     sidebarLayout(
 
       sidebarPanel(
-        selectInput(ns("ind_val_st_group"), "Unit group", choices = character(0))
+
+        # Select group
+        selectInput(ns("ind_val_st_group"), "Unit group", choices = character(0)),
+
+        # download data
+        data_download_tsvUI(ns("download_tsv")),
+
       ),
 
       mainPanel(
@@ -46,6 +52,11 @@ ind_valSever <- function(id, data_in, st, sp, ab){
         output$caution <- renderUI("Select correct set of unit, item and abundance. Unit and item must not be duplicated. Abundance must be numeric.")
       }
     })
+
+    # Download data
+    data_download_tsvSever("download_tsv", 
+      data = ind_res(),
+      filename = paste("ind_val", st, sp, ab, input$ind_val_st_group, sep = "_"))
 
     output$ind_val_table <- renderReactable({
       req(ind_res())
