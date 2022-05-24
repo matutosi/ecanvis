@@ -5,8 +5,7 @@ calculate_diversity <- function(df, st, sp, ab){
       shdi(stand     = st,
            species   = sp,
            abundance = ab) %>%
-      dplyr::mutate_if(is.numeric, round, digit = 4)
-
+      dplyr::mutate_if(is.numeric, round, digit = 6)
     extra_data <- 
       df %>%
       select_one2multi(st, inculde_self = TRUE)
