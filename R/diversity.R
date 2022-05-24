@@ -32,6 +32,9 @@ diversityUI <- function(id){
         checkboxInput(ns("div_show_st_group"), "Show unit (stand) group", value = FALSE),
         selectInput(ns("div_st_group"), "Unit group", choices = character(0)),
 
+        # download data
+        data_download_tsvUI(ns("download_tsv")),
+
       ),
 
       mainPanel(
@@ -71,6 +74,11 @@ diversitySever <- function(id, data_in, st, sp, ab){
       choices <- setdiff(colnames(diversity()), c("s", "h", "d", "i"))
       updateSelectInput(session, "div_st_group", choices = choices)
     })
+
+    # Download data
+    data_download_tsvSever("download_tsv", 
+      data = diversity(),
+      filename = paste("diversity", st, sp, sep = "_"))
 
     # Plot
     output$diversity_plot_s <- renderPlot(res = 96, {
