@@ -78,7 +78,7 @@ diversitySever <- function(id, data_in, st, sp, ab){
     # Download data
     data_download_tsvSever("download_tsv", 
       data = diversity(),
-      filename = paste("diversity", st, sp, sep = "_"))
+      filename = paste("diversity", st, sp, ab, sep = "_"))
 
     # Plot
     output$diversity_plot_s <- renderPlot(res = 96, {

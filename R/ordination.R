@@ -1,4 +1,4 @@
-  # UI module
+## UI module
 ordinationUI <- function(id){
   ns <- NS(id)
   tagList(
@@ -93,7 +93,7 @@ ordinationSever <- function(id, data_in, st, sp, com_table){
         # Download data
         data_download_tsvSever("download_tsv", 
           data = ord_scores,
-          filename = paste("ord", score, st, sp, input$ord_o_method, input$ord_d_method, sep = "_"))
+          filename = paste("ord", score, st, sp, ab, input$ord_o_method, input$ord_d_method, sep = "_"))
 
         # return
         ord_scores
