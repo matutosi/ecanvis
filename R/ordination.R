@@ -39,6 +39,9 @@ ordinationUI <- function(id){
         sliderInput(ns("ggplot_alpha"), "Darkness of group (available in showing)", 
           min = 0, max = 1, value = 0.3, step = 0.05),
 
+        # download data
+        data_download_tsvUI(ns("download_tsv")),
+
       ),
 
       mainPanel(
@@ -83,8 +86,16 @@ ordinationSever <- function(id, data_in, st, sp, com_table){
               indiv = indiv(),    # need "()": indiv is reactive
               group  = input$ord_group)
           } else {
-            ord_extract_score(ord, score)
+            row_name <- if(input$ord_use_species_scores){ sp } else { st }
+            ord_extract_score(ord, score, row_name)
           }
+        # Download data
+print(ord_scores)
+        data_download_tsvSever("download_tsv", 
+          data = ord_scores,
+          filename = paste("ord_", score, st, sp, input$ord_o_method, input$ord_d_method, sep = "_"))
+
+        # return
         ord_scores
     })
 
