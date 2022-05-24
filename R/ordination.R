@@ -57,7 +57,7 @@ ordinationUI <- function(id){
 }
 
 ## Server module
-ordinationSever <- function(id, data_in, st, sp, com_table){
+ordinationSever <- function(id, data_in, st, sp, ab, com_table){
   moduleServer(id, function(input, output, session){
 
     # Update group select

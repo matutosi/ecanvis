@@ -51,18 +51,18 @@ function(input, output, session){
 
   # # # Clusters # # #
   observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
-  #     clusterSever("cls_1", data_in(), input$st, input$sp, com_table())
-  #     clusterSever("cls_2", data_in(), input$st, input$sp, com_table())
-  #     clusterSever("cls_3", data_in(), input$st, input$sp, com_table())
+    clusterSever("cls_1", data_in(), input$st, input$sp, com_table())
+    clusterSever("cls_2", data_in(), input$st, input$sp, com_table())
+    clusterSever("cls_3", data_in(), input$st, input$sp, com_table())
     clusterSever("cls_4", data_in(), input$st, input$sp, com_table())
   })
 
   # # # Ordinations # # #
   observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
-  #     ordinationSever("ord_1", data_in(), input$st, input$sp, com_table())
-  #     ordinationSever("ord_2", data_in(), input$st, input$sp, com_table())
-  #     ordinationSever("ord_3", data_in(), input$st, input$sp, com_table())
-    ordinationSever("ord_4", data_in(), input$st, input$sp, com_table())
+    ordinationSever("ord_1", data_in(), input$st, input$sp, input$ab, com_table())
+    ordinationSever("ord_2", data_in(), input$st, input$sp, input$ab, com_table())
+    ordinationSever("ord_3", data_in(), input$st, input$sp, input$ab, com_table())
+    ordinationSever("ord_4", data_in(), input$st, input$sp, input$ab, com_table())
   })
 
 }
