@@ -14,6 +14,7 @@ library(dendextend)
 
 source("data_load.R")
 source("data_example.R")
+source("data_download.R")
 source("diversity.R")
 source("ind_val.R")
 source("cluster.R")

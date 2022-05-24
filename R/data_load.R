@@ -1,4 +1,4 @@
-  # UI module
+## UI module
 load_fileInput <- function(id, label = "Upload file") {
   ns <- NS(id)
   tagList(
@@ -9,7 +9,7 @@ load_fileInput <- function(id, label = "Upload file") {
   )
 }
 
-  # Server module
+## Server module
 load_fileSever <- function(id){
   moduleServer(id, function(input, output, session){
     uploaded_file <- reactive({
