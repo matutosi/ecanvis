@@ -1,4 +1,4 @@
-  # UI module
+## UI module
 data_exampleInput <- function(id) {
   ns <- NS(id)
   tagList(
@@ -6,7 +6,7 @@ data_exampleInput <- function(id) {
   )
 }
 
-  # Sever module
+## Sever module
 data_exampleServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     eventReactive(input$use_example_data,
@@ -15,7 +15,7 @@ data_exampleServer <- function(id) {
   })
 }
 
-  # Generate example data
+## Generate example data
 gen_example_data <- function(){
   data(dune)
   data(dune.env)
