@@ -36,18 +36,19 @@ ordinationUI <- function(id){
         # ggplot controll
         sliderInput(ns("ggplot_point_size"), "Size of group (available in showing)", 
           min = 1, max = 10, value = 7, step = 0.5),
-        sliderInput(ns("ggplot_alpha"), "Darkness of group (available in showing )", 
+        sliderInput(ns("ggplot_alpha"), "Darkness of group (available in showing)", 
           min = 0, max = 1, value = 0.3, step = 0.05),
 
       ),
 
       mainPanel(
+
         # Plot
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
           plotOutput(ns("ordination"))
-        )
-      )
+        ),
 
+      )
     )
   )
 }
@@ -66,28 +67,31 @@ ordinationSever <- function(id, data_in, st, sp, com_table){
       indiv
     })
 
-    # Compute and Plot
-    output$ordination <- renderPlot(res = 96, {
+    # Compute
+    ord_scores <- reactive({
+        ord <-
+          com_table %>%
+          ordination(o_method = input$ord_o_method, d_method = input$ord_d_method)
 
-      ord <-
-        com_table %>%
-        ordination(o_method = input$ord_o_method, d_method = input$ord_d_method)
+        score <- if(input$ord_use_species_scores) "sp_scores" else "st_scores"
+        ord_scores <- 
+          if(input$ord_show_group){
+            ord_add_group(
+              ord    = ord, 
+              score  = score,
+              df     = data_in,
+              indiv = indiv(),    # need "()": indiv is reactive
+              group  = input$ord_group)
+          } else {
+            ord_extract_score(ord, score)
+          }
+        ord_scores
+    })
 
-      score <- if(input$ord_use_species_scores) "sp_scores" else "st_scores"
-      ord_scores <- 
-        if(input$ord_show_group){
-          ord_add_group(
-            ord    = ord, 
-            score  = score,
-            df     = data_in,
-            indiv = indiv(),    # need "()": indiv is reactive
-            group  = input$ord_group)
-        } else {
-          ord_extract_score(ord, score)
-        }
-
-      x   <- names(ord_scores)[input$ord_x]
-      y   <- names(ord_scores)[input$ord_y]
+    # Plot
+    gg <- reactive({
+      x   <- names(ord_scores())[input$ord_x]
+      y   <- names(ord_scores())[input$ord_y]
 
       if(input$ord_show_group){
         req(input$ord_group)
@@ -95,19 +99,24 @@ ordinationSever <- function(id, data_in, st, sp, com_table){
         size  <- input$ggplot_point_size
 
         gg <- 
-          ggplot2::ggplot(ord_scores, ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores))) +
+          ggplot2::ggplot(ord_scores(), ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores()))) +
           ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha = alpha, size = size) +
           ggplot2::geom_text() +
           ggplot2::theme_bw()
       } else {
         gg <- 
-          ggplot2::ggplot(ord_scores, ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores))) +
+          ggplot2::ggplot(ord_scores(), ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores()))) +
           ggplot2::geom_text() + 
           ggplot2::theme_bw()
       }
-    gg
+      gg
+    })
 
+    # Render
+    output$ordination <- renderPlot(res = 96, {
+      gg()
     })
 
   })
 }
+  # devtools::load_all("../ecan/R")
