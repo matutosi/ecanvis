@@ -54,7 +54,7 @@ ind_valSever <- function(id, data_in, st, sp, ab){
     })
 
     # Download data
-    data_download_tsvSever("download_tsv", 
+    data_download_tsvServer("download_tsv", 
       data = ind_res(),
       filename = paste("ind_val", st, sp, ab, input$ind_val_st_group, sep = "_"))
 

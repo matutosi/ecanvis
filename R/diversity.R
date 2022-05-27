@@ -76,7 +76,7 @@ diversitySever <- function(id, data_in, st, sp, ab){
     })
 
     # Download data
-    data_download_tsvSever("download_tsv", 
+    data_download_tsvServer("download_tsv", 
       data = diversity(),
       filename = paste("diversity", st, sp, ab, sep = "_"))
 

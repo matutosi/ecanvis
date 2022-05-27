@@ -91,7 +91,7 @@ ordinationSever <- function(id, data_in, st, sp, ab, com_table){
           }
 
         # Download data
-        data_download_tsvSever("download_tsv", 
+        data_download_tsvServer("download_tsv", 
           data = ord_scores,
           filename = paste("ord", score, st, sp, ab, input$ord_o_method, input$ord_d_method, sep = "_"))
 

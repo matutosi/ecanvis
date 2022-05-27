@@ -1,7 +1,7 @@
   # https://matutosi.shinyapps.io/ecanvis/
 if(!require("devtools"))        install.packages("devtools")
 if(!require("ecan"))            devtools::install_github("matutosi/ecan")
-if(1 >= compareVersion(as.character(packageVersion("ecan")), "0.1.0"))
+if(1 < compareVersion(as.character(packageVersion("ecan")), "0.1.0"))
                                 devtools::install_github("matutosi/ecan", force = TRUE)
 if(!require("cluster"))         install.packages("cluster")
 if(!require("dave"))            install.packages("dave")

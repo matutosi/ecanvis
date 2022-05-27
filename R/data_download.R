@@ -7,7 +7,7 @@ data_download_tsvUI <- function(id, label = "Download file") {
 }
 
 ## Server module
-data_download_tsvSever <- function(id, data, filename){
+data_download_tsvServer <- function(id, data, filename){
   moduleServer(id, function(input, output, session){
     output$data_download_tsv = downloadHandler(
       filename = paste0(filename, ".tsv"),
