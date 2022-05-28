@@ -34,9 +34,9 @@ ordinationUI <- function(id){
         selectInput(ns("ord_group"), "Select group", choices = character(0)),
 
         # ggplot controll
-        sliderInput(ns("ggplot_point_size"), "Size of group (available in showing)", 
+        sliderInput(ns("ggplot_point_size"), "Size of group circle (available in showing)", 
           min = 1, max = 10, value = 7, step = 0.5),
-        sliderInput(ns("ggplot_alpha"), "Darkness of group (available in showing)", 
+        sliderInput(ns("ggplot_alpha"), "Darkness of group circle (available in showing)", 
           min = 0, max = 1, value = 0.3, step = 0.05),
 
         # download data
@@ -57,13 +57,17 @@ ordinationUI <- function(id){
 }
 
 ## Server module
-ordinationSever <- function(id, data_in, st, sp, ab, com_table){
+ordinationSever <- function(id, data_in, com_table){
   moduleServer(id, function(input, output, session){
+
+    st <- reactive({ colnames(data_in)[1] })
+    sp <- reactive({ colnames(data_in)[2] })
+    ab <- reactive({ colnames(data_in)[3] })
 
     # Update group select
     indiv <- eventReactive(c(input$ord_show_group, input$ord_use_species_scores), {
       if(input$ord_show_group){
-        indiv <- if(input$ord_use_species_scores){ sp } else { st }
+        indiv <- if(input$ord_use_species_scores){ sp() } else { st() }
         choices <- cols_one2multi(data_in, indiv, inculde_self = FALSE)
         updateSelectInput(session, "ord_group", choices = choices)
       }
@@ -86,14 +90,14 @@ ordinationSever <- function(id, data_in, st, sp, ab, com_table){
               indiv = indiv(),    # need "()": indiv is reactive
               group  = input$ord_group)
           } else {
-            row_name <- if(input$ord_use_species_scores){ sp } else { st }
+            row_name <- if(input$ord_use_species_scores){ sp() } else { st() }
             ord_extract_score(ord, score, row_name)
           }
 
         # Download data
         data_download_tsvServer("download_tsv", 
           data = ord_scores,
-          filename = paste("ord", score, st, sp, ab, input$ord_o_method, input$ord_d_method, sep = "_"))
+          filename = paste("ord", score, st(), sp(), ab(), input$ord_o_method, input$ord_d_method, sep = "_"))
 
         # return
         ord_scores

@@ -31,11 +31,11 @@ function(input, output, session){
   })
 
   # # # Ordinations # # #
-  observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
-    ordinationSever("ord_1", data_in(), input$st, input$sp, input$ab, com_table())
-    ordinationSever("ord_2", data_in(), input$st, input$sp, input$ab, com_table())
-    ordinationSever("ord_3", data_in(), input$st, input$sp, input$ab, com_table())
-    ordinationSever("ord_4", data_in(), input$st, input$sp, input$ab, com_table())
+  observeEvent(c(data_in()), {
+    ordinationSever("ord_1", data_in(), com_table())
+    ordinationSever("ord_2", data_in(), com_table())
+    ordinationSever("ord_3", data_in(), com_table())
+    ordinationSever("ord_4", data_in(), com_table())
   })
 
 }

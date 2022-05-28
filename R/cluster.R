@@ -44,6 +44,7 @@ clusterSever <- function(id, data_in, tbl){
 
     st <- reactive({ colnames(data_in)[1] })
     sp <- reactive({ colnames(data_in)[2] })
+    ab <- reactive({ colnames(data_in)[3] })
 
     # Update group select
     indiv <- eventReactive(c(input$cls_show_group, input$cls_with_sp), {
