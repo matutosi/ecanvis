@@ -39,13 +39,16 @@ clusterUI <- function(id){
 }
 
 ## Sever module
-clusterSever <- function(id, data_in, st, sp, tbl){
+clusterSever <- function(id, data_in, tbl){
   moduleServer(id, function(input, output, session){
+
+    st <- reactive({ colnames(data_in)[1] })
+    sp <- reactive({ colnames(data_in)[2] })
 
     # Update group select
     indiv <- eventReactive(c(input$cls_show_group, input$cls_with_sp), {
       if(input$cls_show_group){
-        indiv <- if(input$cls_with_sp){ sp } else { st }
+        indiv <- if(input$cls_with_sp){ sp() } else { st() }
         choices <- cols_one2multi(data_in, indiv, inculde_self = FALSE)
         updateSelectInput(session, "cls_group", choices = choices)
       }

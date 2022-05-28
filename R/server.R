@@ -23,11 +23,11 @@ function(input, output, session){
   })
 
   # # # Clusters # # #
-  observeEvent(c(data_in(), input$st, input$sp), ignoreInit = TRUE, {
-    clusterSever("cls_1", data_in(), input$st, input$sp, com_table())
-    clusterSever("cls_2", data_in(), input$st, input$sp, com_table())
-    clusterSever("cls_3", data_in(), input$st, input$sp, com_table())
-    clusterSever("cls_4", data_in(), input$st, input$sp, com_table())
+  observeEvent(c(data_in()), {
+    clusterSever("cls_1", data_in(), com_table())
+    clusterSever("cls_2", data_in(), com_table())
+    clusterSever("cls_3", data_in(), com_table())
+    clusterSever("cls_4", data_in(), com_table())
   })
 
   # # # Ordinations # # #
