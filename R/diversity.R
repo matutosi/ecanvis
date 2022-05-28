@@ -54,15 +54,20 @@ diversityUI <- function(id){
 }
 
 ## Sever module
-diversitySever <- function(id, data_in, st, sp, ab){
+diversitySever <- function(id, data_in){
   moduleServer(id, function(input, output, session){
+
+    st <- reactive({ colnames(data_in)[1] })
+    sp <- reactive({ colnames(data_in)[2] })
+    ab <- reactive({ colnames(data_in)[3] })
 
     # Compute
     diversity <- reactive({
-      if(st != sp & is.numeric(data_in[[ab]])){
+      
+      if(st() != sp() & is.numeric(data_in[[ab()]])){
         output$caution <- renderUI(character(0)) # No caution
-        if(st != "" & sp != "" & ab != "" & !is.null(data_in[[ab]]))
-        calculate_diversity(data_in, st, sp, ab)
+        if(st() != "" & sp() != "" & ab() != "" & !is.null(data_in[[ab()]]))
+        calculate_diversity(data_in, st(), sp(), ab())
       } else {
         output$caution <-
           renderUI("Select correct set of unit, item and abundance. Unit and item must not be duplicated. Abundance must be numeric.")
@@ -70,7 +75,7 @@ diversitySever <- function(id, data_in, st, sp, ab){
     })
 
     # Update group select
-    observeEvent(c(diversity(), data_in, st, sp, ab, input$div_show_st_group), {
+    observeEvent(c(diversity(), data_in, st(), sp(), ab(), input$div_show_st_group), {
       choices <- setdiff(colnames(diversity()), c("s", "h", "d", "i"))
       updateSelectInput(session, "div_st_group", choices = choices)
     })
@@ -78,7 +83,7 @@ diversitySever <- function(id, data_in, st, sp, ab){
     # Download data
     data_download_tsvServer("download_tsv", 
       data = diversity(),
-      filename = paste("diversity", st, sp, ab, sep = "_"))
+      filename = paste("diversity", st(), sp(), ab(), sep = "_"))
 
     # Plot
     output$diversity_plot_s <- renderPlot(res = 96, {

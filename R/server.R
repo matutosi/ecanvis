@@ -14,8 +14,11 @@ function(input, output, session){
   })
 
   # # # Diversity # # #
-  observeEvent(c(data_in(), colnames(data_in())[1], colnames(data_in())[2], colnames(data_in())[3]), {
-    diversitySever("diversity", data_in(), colnames(data_in())[1], colnames(data_in())[2], colnames(data_in())[3])
+  #   observe({
+  #     diversitySever("diversity", data_in())
+  #   })
+  observeEvent(data_in(), {
+    diversitySever("diversity", data_in())
   })
 
 
