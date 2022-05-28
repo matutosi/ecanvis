@@ -2,7 +2,7 @@
 navbarPage("ecan",
 
   # # # Read data # # #
-  tabPanel("Read data 2",
+  tabPanel("Read data",
     load_dataUI("read_data")
   ),
 
