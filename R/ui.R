@@ -1,33 +1,10 @@
   # https://matutosi.shinyapps.io/ecanvis/
 navbarPage("ecan",
 
-  # # # Input data # # #
-  tabPanel("Read data",
-    sidebarLayout(
-      sidebarPanel(
-
-        tags$ol(
-          tags$li('Select "Use example data" or "Upload file"'),
-          tags$li('Specify vars as inputs')
-        ),
-        load_fileInput("load_file"),
-
-        # stand, species, cover, stand group, species group,
-        selectInput("st", "Unit (stand): " ,     choices = character(0)),
-        selectInput("sp", "Item (species): ",    choices = character(0)),
-        selectInput("ab", "Value (abandance): ", choices = character(0)),
-
-      tags$hr(),
-        htmlOutput("download_example"),
-        downloadButton("dl_example_data", "Downlaod example data"),
-      ),
-
-      mainPanel(
-        reactableOutput("table"),
-      )
-    )
+  # # # Read data # # #
+  tabPanel("Read data 2",
+    load_dataUI("read_data")
   ),
-
 
   # # # Diversity # # #
   tabPanel("Diversity",

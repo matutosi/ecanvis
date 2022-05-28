@@ -1,46 +1,21 @@
   # https://matutosi.shinyapps.io/ecanvis/
 function(input, output, session){
 
-  # # # Input data # # #
-  data_in <- load_fileSever("load_file")
 
-  # stand, species, cover
-  observeEvent(data_in(), {
-    req(data_in())
-    choices <- colnames(data_in())
-    updateSelectInput(session, "st", choices = choices, selected = choices[1])
-    updateSelectInput(session, "sp", choices = choices, selected = choices[2])
-    updateSelectInput(session, "ab", choices = choices, selected = choices[3])
-  })
-
-
-  # Download example
-  output$download_example <-
-    renderUI("Example data is generated with data dune and dune.env in library vegan.")
-  output$dl_example_data = downloadHandler(
-    filename = "example_data.tsv",
-    content  = function(file) { readr::write_tsv(gen_example_data(), file) }
-  )
-
-  # package reactable: https://glin.github.io/reactable/index.html
-  output$table <- renderReactable({
-    reactable::reactable(data_in(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
-  })
-
+  # # # Load data # # #
+  data_in <- load_dataServer("read_data", example_data = gen_example_data())
 
   # # # Community table # # #
   com_table <- reactive({
     req(data_in())
-    df2table(data_in(),
-             st = as.character(input$st),
-             sp = as.character(input$sp),
-             ab = as.character(input$ab))
+    df2table(data_in(), st = colnames(data_in())[1],
+                        sp = colnames(data_in())[2],
+                        ab = colnames(data_in())[3])
   })
 
-
   # # # Diversity # # #
-  observeEvent(c(data_in(), input$st, input$sp, input$ab), ignoreInit = TRUE, {
-    diversitySever("diversity", data_in(), input$st, input$sp, input$ab)
+  observeEvent(c(data_in(), colnames(data_in())[1], colnames(data_in())[2], colnames(data_in())[3]), {
+    diversitySever("diversity", data_in(), colnames(data_in())[1], colnames(data_in())[2], colnames(data_in())[3])
   })
 
 
