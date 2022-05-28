@@ -1,7 +1,6 @@
   # https://matutosi.shinyapps.io/ecanvis/
 function(input, output, session){
 
-
   # # # Load data # # #
   data_in <- load_dataServer("read_data", example_data = gen_example_data())
 
@@ -14,17 +13,13 @@ function(input, output, session){
   })
 
   # # # Diversity # # #
-  #   observe({
-  #     diversitySever("diversity", data_in())
-  #   })
   observeEvent(data_in(), {
     diversitySever("diversity", data_in())
   })
 
-
   # # # Indicator Species Analysis # # #
-  observeEvent(c(data_in(), input$st, input$sp, input$ab), ignoreInit = TRUE, {
-    ind_valSever("ind_val", data_in(), input$st, input$sp, input$ab)
+  observeEvent(data_in(), {
+    ind_valSever("ind_val", data_in())
   })
 
   # # # Clusters # # #
@@ -44,4 +39,5 @@ function(input, output, session){
   })
 
 }
+  # devtools::install_github("matutosi/ecan")
   # devtools::load_all("../ecan/R")
