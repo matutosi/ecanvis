@@ -9,6 +9,9 @@ ind_valUI <- function(id){
         # Select group
         selectInput(ns("ind_val_st_group"), "Unit group", choices = character(0)),
 
+        # Use Japanese font
+        checkboxInput(ns("use_jp_font"), "Use Japanese font"),
+
         # Plot settings
         selectInput(ns("p_val_max"),   "Maximum p.value",
           choices = c("1", "0.1", "0.05", "0.01", "0.001", "0.001")),
@@ -72,7 +75,9 @@ ind_valSever <- function(id, data_in){
     # Plot
     output$ind_val_plot <- renderPlot(res = 96, {
       req(ind_val_res(), input$ind_val_st_group)
+
       selected_group <- input$ind_val_st_group
+      font_family <- if(input$use_jp_font) "IPAexGothic" else ""
 
       # group setting
       ind <- 
@@ -89,9 +94,9 @@ ind_valSever <- function(id, data_in){
         ggplot(aes(x = .data[[selected_group]], y = .data[["ind.val"]], 
                    size = log(1 / (.data[["p.value"]] * 10)),
                    label = .data[[sp()]])) + 
-          geom_point() + 
+          ggplot2::geom_point() + 
           ggrepel::geom_text_repel(aes(size = log(1 / (.data[["p.value"]] * 10), base = 5))) + 
-          theme_bw() + 
+          ggplot2::theme_bw(base_family = font_family)
           theme(legend.position = "none")
     })
 

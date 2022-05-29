@@ -21,6 +21,9 @@ clusterUI <- function(id){
         # stand or species
         checkboxInput(ns("cls_with_sp"), "Cluster with item (species)", value = FALSE),
 
+        # Use Japanese font
+        checkboxInput(ns("use_jp_font"), "Use Japanese font"),
+
         # Show and select group
         checkboxInput(ns("cls_show_group"), "Show group"),
         selectInput(ns("cls_group"), "Select group", choices = character(0)),
@@ -63,6 +66,8 @@ clusterSever <- function(id, data_in, tbl){
         tbl %>%
         t_if_true(input$cls_with_sp) %>% # t() when chekcbox selected
         cluster(c_method = input$cl_c_method, d_method = input$cl_d_method)
+
+      font_family <- if(input$use_jp_font) "IPAexGothic" else ""
       if(input$cls_show_group){
         col <- cls_color(cls, data_in, indiv = indiv(), group = input$cls_group)  # need BEFORE add group
         cls <- cls_add_group(cls, data_in, indiv = indiv(), group = input$cls_group)
@@ -71,10 +76,10 @@ clusterSever <- function(id, data_in, tbl){
         plot(cls)
         dendextend::colored_bars(colors = col, cls, input$cls_group, y_shift = 0,  y_scale = 2)
         par(new = TRUE)
-        plot(cls)
+        plot(cls, family = font_family)
       } else {
         cls <- stats::as.dendrogram(cls)
-        plot(cls)
+        plot(cls, family = font_family)
       }
     })
 

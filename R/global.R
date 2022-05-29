@@ -34,9 +34,6 @@ source("ind_val.R")
 source("cluster.R")
 source("ordination.R")
 
-  # Japanese font settings
+  # Japanese font settings: usefull in shiny.io
   #   https://github.com/ltl-manabi/shinyapps.io_japanese_font
-  # Usefull in shiny.io
-download.file("https://raw.githubusercontent.com/ltl-manabi/shinyapps.io_japanese_font/master/use_4_font.sh", 
-  destfile = "use_4_font.sh")
 system("bash ./use_4_font.sh")

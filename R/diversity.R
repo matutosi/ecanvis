@@ -28,6 +28,9 @@ diversityUI <- function(id){
                       "Simpson's 1/d (i)"    = "i")
         ),
 
+        # Use Japanese font
+        checkboxInput(ns("use_jp_font"), "Use Japanese font"),
+
         # Select group
         checkboxInput(ns("div_show_st_group"), "Show unit (stand) group", value = FALSE),
         selectInput(ns("div_st_group"), "Unit group", choices = character(0)),
@@ -89,6 +92,8 @@ diversitySever <- function(id, data_in){
     output$diversity_plot_s <- renderPlot(res = 96, {
       req(diversity(), input$div_st_group)
 
+      font_family <- if(input$use_jp_font) "IPAexGothic" else ""
+
       # group setting
       all_data <- "all_data"
       selected_group <- if(input$div_show_st_group) { input$div_st_group } else { all_data }
@@ -102,9 +107,9 @@ diversitySever <- function(id, data_in){
       div %>%
         dplyr::mutate({{all_data}} := 1) %>%
         ggplot(aes(x = .data[[selected_group]], y = .data[[input$div_index]])) + 
-          geom_boxplot(outlier.shape = NA) +  # do not show outer point
-          geom_jitter(height = 0, width = 0.1) + 
-          theme_bw()
+          ggplot2::geom_boxplot(outlier.shape = NA) +  # do not show outer point
+          ggplot2::geom_jitter(height = 0, width = 0.1) + 
+          ggplot2::theme_bw(base_family = font_family)
     })
 
     # Table
