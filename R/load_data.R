@@ -75,7 +75,7 @@ load_dataServer <- function(id, example_data){
         } else {
           req(input$file)
           try(
-            readr::read_tsv(uploaded_file()$datapath, locale = locale, show_col_types = FALSE)
+            readr::read_delim(uploaded_file()$datapath, locale = locale, show_col_types = FALSE)
           )
         }
       if(inherits(data_in, "try-error")) data_in <- tibble::tibble("Select correct file encoding" = "")
@@ -104,6 +104,8 @@ load_dataServer <- function(id, example_data){
     })    
 
     cols <- reactive({
+      req(data_in())
+  #       req(input$s, input$sp, input$ab)
       c(input$st, input$sp, input$ab)
     })
 

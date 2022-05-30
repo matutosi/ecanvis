@@ -28,8 +28,11 @@ diversityUI <- function(id){
                       "Simpson's 1/d (i)"    = "i")
         ),
 
-        # Use Japanese font
-        checkboxInput(ns("use_jp_font"), "Use Japanese font"),
+        # Japanese font
+        selectInput(ns("jp_font"), "Japanese font", 
+          choices = c("none", # system font
+                      "IPAexGothic", "Source Han Sans",  "Noto Sans CJK JP",
+                      "IPAexMincho", "Source Han Serif", "Noto Serif CJK JP")),
 
         # Select group
         checkboxInput(ns("div_show_st_group"), "Show unit (stand) group", value = FALSE),
@@ -92,7 +95,7 @@ diversitySever <- function(id, data_in){
     output$diversity_plot_s <- renderPlot(res = 96, {
       req(diversity(), input$div_st_group)
 
-      font_family <- if(input$use_jp_font) "IPAexGothic" else ""
+      font_family <- if(input$jp_font == "none") "" else input$jp_font
 
       # group setting
       all_data <- "all_data"

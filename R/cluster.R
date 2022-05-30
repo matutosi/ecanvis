@@ -21,8 +21,11 @@ clusterUI <- function(id){
         # stand or species
         checkboxInput(ns("cls_with_sp"), "Cluster with item (species)", value = FALSE),
 
-        # Use Japanese font
-        checkboxInput(ns("use_jp_font"), "Use Japanese font"),
+        # Japanese font
+        selectInput(ns("jp_font"), "Japanese font", 
+          choices = c("none", # system font
+                      "IPAexGothic", "Source Han Sans",  "Noto Sans CJK JP",
+                      "IPAexMincho", "Source Han Serif", "Noto Serif CJK JP")),
 
         # Show and select group
         checkboxInput(ns("cls_show_group"), "Show group"),
@@ -67,7 +70,7 @@ clusterSever <- function(id, data_in, tbl){
         t_if_true(input$cls_with_sp) %>% # t() when chekcbox selected
         cluster(c_method = input$cl_c_method, d_method = input$cl_d_method)
 
-      font_family <- if(input$use_jp_font) "IPAexGothic" else ""
+      font_family <- if(input$jp_font == "none") "" else input$jp_font
       if(input$cls_show_group){
         col <- cls_color(cls, data_in, indiv = indiv(), group = input$cls_group)  # need BEFORE add group
         cls <- cls_add_group(cls, data_in, indiv = indiv(), group = input$cls_group)

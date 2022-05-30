@@ -36,4 +36,20 @@ source("ordination.R")
 
   # Japanese font settings: usefull in shiny.io
   #   https://github.com/ltl-manabi/shinyapps.io_japanese_font
-system("bash ./use_4_font.sh")
+  # 
+  # IPAex font
+download.file("https://raw.githubusercontent.com/ltl-manabi/shinyapps.io_japanese_font/master/use_ipaex_font.sh", 
+  destfile = "use_ipaex_font.sh")
+system("bash ./use_ipaex_font.sh")
+  # Genno font
+download.file("https://raw.githubusercontent.com/ltl-manabi/shinyapps.io_japanese_font/master/use_sourcehan_font.sh", 
+  destfile = "use_sourcehan_font.sh")
+system("bash ./use_sourcehan_font.sh")
+  # Noto font
+download.file("https://raw.githubusercontent.com/ltl-manabi/shinyapps.io_japanese_font/master/use_noto_font.sh", 
+  destfile = "use_noto_font.sh")
+system("bash ./use_noto_font.sh")
+
+  # download.file("https://raw.githubusercontent.com/ltl-manabi/shinyapps.io_japanese_font/master/use_4_font.sh", 
+  #   destfile = "use_4_font.sh")
+  # system("bash ./use_4_font.sh")
