@@ -29,12 +29,6 @@ ordinationUI <- function(id){
         # stand or species
         checkboxInput(ns("ord_use_species_scores"), "Use species scores"),
 
-        # Japanese font
-        selectInput(ns("jp_font"), "Japanese font", 
-          choices = c("none", # system font
-                      "IPAexGothic", "Source Han Sans",  "Noto Sans CJK JP",
-                      "IPAexMincho", "Source Han Serif", "Noto Serif CJK JP")),
-
         # Show and select group
         checkboxInput(ns("ord_show_group"), "Show group"),
         selectInput(ns("ord_group"), "Select group", choices = character(0)),
@@ -112,7 +106,6 @@ ordinationSever <- function(id, data_in, com_table){
     # Plot
     gg <- reactive({
       # settings
-      font_family <- if(input$jp_font == "none") "" else input$jp_font
       x   <- names(ord_scores())[input$ord_x]
       y   <- names(ord_scores())[input$ord_y]
 
@@ -125,12 +118,12 @@ ordinationSever <- function(id, data_in, com_table){
           ggplot2::ggplot(ord_scores(), ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores()))) +
           ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha = alpha, size = size) +
           ggplot2::geom_text() +
-          ggplot2::theme_bw(base_family = font_family)
+          ggplot2::theme_bw()
       } else {
         gg <- 
           ggplot2::ggplot(ord_scores(), ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores()))) +
           ggplot2::geom_text() + 
-          ggplot2::theme_bw(base_family = font_family)
+          ggplot2::theme_bw()
       }
       gg
     })

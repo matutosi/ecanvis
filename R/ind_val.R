@@ -9,12 +9,6 @@ ind_valUI <- function(id){
         # Select group
         selectInput(ns("ind_val_st_group"), "Unit group", choices = character(0)),
 
-        # Japanese font
-        selectInput(ns("jp_font"), "Japanese font", 
-          choices = c("none", # system font
-                      "IPAexGothic", "Source Han Sans",  "Noto Sans CJK JP",
-                      "IPAexMincho", "Source Han Serif", "Noto Serif CJK JP")),
-
         # Plot settings
         selectInput(ns("p_val_max"),   "Maximum p.value",
           choices = c("1", "0.1", "0.05", "0.01", "0.001", "0.001")),
@@ -80,7 +74,6 @@ ind_valSever <- function(id, data_in){
       req(ind_val_res())
 
       selected_group <- colnames(ind_val_res()[1])
-      font_family <- if(input$jp_font == "none") "" else input$jp_font
 
       # group setting
       ind <- 
@@ -98,7 +91,7 @@ ind_valSever <- function(id, data_in){
                    size = log(1 / (.data[["p.value"]] * 10)),
                    label = .data[[sp()]])) + 
           ggplot2::geom_point() + 
-          ggrepel::geom_text_repel(aes(size = log(1 / (.data[["p.value"]] * 10), base = 5)), family = font_family) + 
+          ggrepel::geom_text_repel(aes(size = log(1 / (.data[["p.value"]] * 10), base = 5))) + 
           ggplot2::theme_bw() + 
           theme(legend.position = "none")
     })
