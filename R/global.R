@@ -1,7 +1,6 @@
   # https://matutosi.shinyapps.io/ecanvis/
 if(!require("devtools"))        install.packages("devtools")
 if(!require("ecan"))            devtools::install_github("matutosi/ecan")
-if(1 < compareVersion(as.character(packageVersion("ecan")), "0.1.0"))
                                 devtools::install_github("matutosi/ecan", force = TRUE)
 if(!require("vegan"))           install.packages("vegan")
 if(!require("cluster"))         install.packages("cluster")
@@ -19,6 +18,7 @@ if(!require("shinycssloaders")) install.packages("shinycssloaders")
 if(!require("tidyverse"))       install.packages("tidyverse")
 if(!require("rlang"))           install.packages("rlang")
 if(!require("ggrepel"))         install.packages("ggrepel")
+if(!require("zeallot"))         install.packages("zeallot")
 
 library(ecan)
 library(vegan)
