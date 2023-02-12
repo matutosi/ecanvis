@@ -35,6 +35,10 @@ diversityUI <- function(id){
         # download data
         data_download_tsvUI(ns("download_tsv")),
 
+        # bookmarking
+  #         bookmarkButton(),
+
+
       ),
 
       mainPanel(

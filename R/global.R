@@ -1,6 +1,6 @@
   # https://matutosi.shinyapps.io/ecanvis/
 if(!require("devtools"))        install.packages("devtools")
-if(!require("ecan"))            devtools::install_github("matutosi/ecan")
+  # if(!require("ecan"))            devtools::install_github("matutosi/ecan")
                                 devtools::install_github("matutosi/ecan", force = TRUE)
 if(!require("vegan"))           install.packages("vegan")
 if(!require("cluster"))         install.packages("cluster")
@@ -34,6 +34,7 @@ source("ind_val.R")
 source("cluster.R")
 source("ordination.R")
 
+shiny::enableBookmarking(store = "url")
   # Japanese font settings: usefull in shiny.io
   #   https://github.com/ltl-manabi/shinyapps.io_japanese_font
   # IPAex font
