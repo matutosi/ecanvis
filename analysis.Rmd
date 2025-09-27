@@ -118,10 +118,10 @@ GISなどもある
 - 代表的な指数
   - 種数(S) [1, S]
   - Shannonの情報量(H')
-  - Simpsonの均等度1/d：[1, S]
-  - Simpsonの均等度(D)
+  - Simpsonの均等度，1 / d：[1, S]
+  - Simpsonの均等度，1 - d(D)
 - 均等度：
-  - S < H' 
+  - S < H' < 
 - 個人的見解
   - 種数は必須
   - 1/dが理解しやすい
@@ -129,28 +129,31 @@ GISなどもある
 
 ## 類似度
 
-- bray-curtis
 - ユークリッド距離
-- マンハッタン距離
-- correlation
+- bray-curtis
+- マンハッタン距離(碁盤の目の移動)
+- correlation(相関係数)
 - QS = 2a / (2a+b+c), Sorensen
 - CC = a / (a+b+c), Jaccard
 
 φ = (ad - bc) / ((a+b)(a+c)(b+d)(c+d))
 
 <aside class="notes">
-「生物群集の多変量解析」小林四郎 p26
+小林(1995)のp26
 </aside>
 
 ## クラスター分析
 
-- 手法は多種多様(代表的なもの)
+- 概要
+  - 地点(種)間の類似度を計算
+  - 「近いもの」を結合していく
+  - 類似度と結合方法の組み合わせで結果が異なる
+- 結合方法は多種多様(代表的なもの)
   - 最近隣方式
   - 最遠隣方式
   - 重心方式
   - 群平均法<br>
     非加重，加重
-- 類似度との組み合わせで結果が異なる
 - 個人的見解
     - 地点や種を結びつけていくイメージ
   - 1次元的
@@ -164,33 +167,35 @@ GISなどもある
   - nMDS
   - CCA
   - RDA
+- 類似度との組み合わせで結果が異なる
 - 個人的見解
   - 2次元への位置づけ<br>
   本当は多次元だが，実質的には2次元だけ
-  - 類似度との組み合わせで結果が異なる
   - 最近は，nMDSが多い?
-
 
 # データ分析の実演
 
 - パッケージの準備
 - veganパッケージのデータ
-- データの前処理：かなり重要
+- 前処理：かなり重要
 - α多様性
-- 序列化
 - クラスター分析
+- 序列化
 - 指標種分析
+
+- https://matutosi.github.io/ecan/ とほぼ同じ内容
+- https://matutosi.shinyapps.io/ecanvis/ でも実行可能
 
 ## 準備：パッケージのインストール
 
+- tidyverse: プログラムを簡単に
 - vegan: 植生データ解析の定番
 - ecan: 各種関数を簡単に
-- tidyverse: プログラムを簡単に
 
 ```{r install-packages, eval = FALSE}
-  # install.packages("vegan")
-  # install.packages("ecan")
   # install.packages("tidyverse")
+  # install.packages("ecan")
+  # install.packages("vegan") # ecanと同時にインストールされる
 ```
 
 1回実行すればOK
@@ -209,8 +214,8 @@ library(tidyverse)
 data(dune.env) # 地点
 dune_env_df <- 
   dune.env |>
-  tibble() |>
-  tibble::rownames_to_column("stand") |>
+  tibble::tibble() |>
+  tibble::rownames_to_column("stand") |> # 地点名を列に変換
   print()
 ```
 
@@ -222,14 +227,17 @@ tibble(dune) |>
   dplyr::select(1:5) # 5列のみ表示
 ```
 
+- 20地点(行)，30種(列)
+- 0-9の値
+
 ## duneデータの変換
 
 ```{r dune-df}
-dune_df <- ecan::table2df(dune, st = "stand", sp = "species", ab = "cover")
+dune_df <- 
+  dune |>  # 組成表形式からdf形式に変換
+  ecan::table2df(st = "stand", sp = "species", ab = "cover")
 dune_df
 ```
-
-組成表形式からdf形式に変換
 
 ## 種データ(ダミー)
 
@@ -241,41 +249,39 @@ sp_dummy <- tibble::tibble(
 sp_dummy
 ```
 
-
 ## データの結合
 
 ```{r join}
-example <- 
-    dune_df |>
-    dplyr::left_join(dune_env_df) |>
-    dplyr::left_join(sp_dummy)
+df <- 
+    dune_df |>                       # 組成
+    dplyr::left_join(dune_env_df) |> # 地点
+    dplyr::left_join(sp_dummy)       # 種
 ```
-
-組成，地点，種を1つに結合
 
 ## データの結合
 
 ```{r joined}
-example
+df
 ```
 
+これで基本データか完成!
 
 ## α多様性
 
-```{r diversity}
-(diversity <- ecan::shdi(example))
-```
-
 - s: 種数
-- h: シャノンの情報量指数
-- d: 1 - D(シンプソンの均等度指数)
-- i: 1 / D
+- h: Shannon's H'
+- d: Simpson's index (1 - D)
+- i: Simpson's inverse (1 / D)
+
+```{r diversity}
+(div <- ecan::shdi(df))
+dune_env_df <- dplyr::left_join(dune_env_df, div) # 地点データに結合
+```
 
 ## α多様性の平均値
 
 ```{r diversity-group}
-diversity |>
-  dplyr::left_join(dune_env_df) |>
+dune_env_df |>
   dplyr::group_by(Management) |>
   dplyr::summarise_if(is.numeric, mean)
 ```
@@ -283,40 +289,82 @@ diversity |>
 
 ## α多様性の図示
 
-```{r diversity-group}
-diversity |>
-  dplyr::left_join(dune_env_df) |>
+```{r diversity-ggplot}
+dune_env_df |>
   ggplot2::ggplot(aes(x = Management, y = i)) + # 1 / d
   ggplot2::geom_boxplot(outlier.shape = NA) +  # 外れ値非表示
   ggplot2::geom_jitter(height = 0, width = 0.1) + 
   ggplot2::theme_bw() 
 ```
 
+## クラスター分析
 
-## ウエブでの分析
+```{r cluster}
+cls <- 
+  df |>
+  ecan::df2table() |> # 組成形式に変換
+  ecan::cluster(c_method = "average", d_method = "bray")
+cls
+```
 
-https://matutosi.shinyapps.io/ecanvis/
+## クラスター分析結果の図示
 
+```{r cluster-plot}
+  # install.pacakges("ggdendro")
+library(ggdendro)
+ggdendro::ggdendrogram(cls)
+```
+
+## クラスター分析結果の図示(グループ別)
+
+```{r cluster-plot-group}
+indiv <- "stand"
+group <- "Use"
+cls_group <- ecan::cls_add_group(cls, dune_env_df, indiv = indiv, group = group)
+ggdendro::ggdendrogram(cls_group)
+```
+
+## クラスター分析結果の図示(グループ別)
+
+```{r cluster-plot-group-color}
+indiv <- "stand"
+group <- "Use"
+cls_color <- 
+  ecan::cls_add_group(cls, dune_env_df, indiv = indiv, group = group) |>
+  stats::as.dendrogram()
+col <- cls_color(cls, dune_env_df, indiv = indiv, group = group)
+dendextend::labels_colors(cls_color) <- gray(0)
+plot(cls_color)
+dendextend::colored_bars(colors = col, cls_color, group, y_shift = 0,  y_scale = 3)
+par(new = TRUE)
+plot(cls)
+
+```
+
+## クラスター分析
+
+
+```{r}
+```
+
+## クラスター分析
+
+
+```{r}
+```
+
+https://matutosi.github.io/ecan/
 
 
 # 文献
 
-- 生物群集解析のための類似度とその応用：R を使った類似度の算出、グラフ化、検定, 生態学会誌，61，3-20
-- 「生物群集の多変量解析」小林四郎
-- 群落の組成と構造
-- 植物群集の
+- 佐々木 雄大・小山 明日香・小柳 知代・古川 拓哉・内田 圭. 2015. 生物群集の構造と多様性の解析. 共立出版. 
+- 伊藤 秀三(編). 2003. 群落の組成と構造. 朝倉書店. <br>
+  1977年に出版し，絶版．2003年に復刊し，絶版．
+  中古がネット書店に．
+- 小林 四郎. 1995. 生物群集の多変量解析. 蒼樹書房. <br>
+  絶版．中古がネット書店に．
 
-伊藤 秀三(編). 2003. 群落の組成と構造. 朝倉書店. 
-
-1977年に出版され，その後長らく絶版になっていた．
-2003年に復刊されたものの，これもすでに絶版である．
-大手ネット書店ではやや高値で中古が取引されている．
-
-小林 四郎. 1995. 生物群集の多変量解析. 蒼樹書房. 
-
-Wildi, O. 2017. Data Analysis in Vegetation Ecology, 3rd ed. Cabi.
-
-佐々木 雄大・小山 明日香・小柳 知代・古川 拓哉・内田 圭. 2015. 生物群集の構造と多様性の解析. 共立出版. 
-
-土居 秀幸・岡村 寛. 2011. 生物群集解析のための類似度とその応用: Rを使った類似度の算出, グラフ化, 検定. 日本生態学会誌, 61, 3-20. 
+- 土居 秀幸・岡村 寛. 2011. 生物群集解析のための類似度とその応用: Rを使った類似度の算出, グラフ化, 検定. 日本生態学会誌, 61, 3-20. 
+- Wildi, O. 2017. Data Analysis in Vegetation Ecology, 3rd ed. Cabi.
 
