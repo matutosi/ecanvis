@@ -324,36 +324,117 @@ cls_group <- ecan::cls_add_group(cls, dune_env_df, indiv = indiv, group = group)
 ggdendro::ggdendrogram(cls_group)
 ```
 
-## クラスター分析結果の図示(グループ別)
+## クラスター分析結果の図示(グループ別に着色)
 
 ```{r cluster-plot-group-color}
-indiv <- "stand"
-group <- "Use"
-cls_color <- 
-  ecan::cls_add_group(cls, dune_env_df, indiv = indiv, group = group) |>
-  stats::as.dendrogram()
+cls_color <- stats::as.dendrogram(cls_group)
 col <- cls_color(cls, dune_env_df, indiv = indiv, group = group)
 dendextend::labels_colors(cls_color) <- gray(0)
+```
+
+## クラスター分析結果の図示(グループ別に着色)
+
+```{r cluster-plot-group-color-plot}
 plot(cls_color)
 dendextend::colored_bars(colors = col, cls_color, group, y_shift = 0,  y_scale = 3)
 par(new = TRUE)
-plot(cls)
-
+plot(cls_color)
 ```
 
-## クラスター分析
-
+## 序列化：nMDS
 
 ```{r}
+ord_nmds <- 
+  df  |>
+  df2table() |>
+  ordination(o_method = "nmds")
 ```
 
-## クラスター分析
-
+## 序列化：地点の図示
 
 ```{r}
+(ord_nmds_st <- ord_extract_score(ord_nmds, score = "st_scores"))
+ord_nmds_st |>
+  ggplot2::ggplot(aes(V1, V2, label = .data[["rowname"]])) +
+  ggplot2::geom_text() +
+  ggplot2::theme_bw()
 ```
 
-https://matutosi.github.io/ecan/
+## 序列化：種の図示の準備
+
+```{r}
+# (ord_nmds_sp <- ord_extract_score(ord_nmds, score = "sp_scores"))
+indiv <- "species"
+group <- "dummy_1"
+ord_nmds_sp <- ord_add_group(ord_nmds, score = "sp_scores", df, indiv, group)
+ord_nmds_sp
+```
+
+## 序列化：種の図示
+
+```{r}
+ord_nmds_sp |>
+  ggplot2::ggplot(aes(V1, V2, label = .data[[indiv]])) +
+  geom_point(aes(col = .data[[group]]), alpha = 0.4, size = 7) +
+  ggplot2::geom_text() +
+  ggplot2::theme_bw()
+```
+
+## 指標種分析：Dufrene and Legendre (1997)
+
+labdsv::indval()のそのままの結果
+
+```{r}
+isa_res_raw <- ind_val(df, group = "Management", row_data = TRUE)
+```
+
+## 指標種分析の結果：種の出現頻度
+
+```{r}
+isa_res_raw$relfrq
+```
+
+## 指標種分析の結果：種の出現量の平均値
+
+```{r}
+isa_res_raw$relabu
+```
+
+## 指標種分析の結果：指標値
+
+```{r}
+isa_res_raw$indval
+```
+
+## 指標種分析の結果：最大値のクラス(区分)，その指標値とp値
+
+```{r}
+tibble(
+  cls = isa_res_raw$maxcls, 
+  ind_val = isa_res_raw$indcls, 
+  p = isa_res_raw$pval)
+```
+
+## 指標種分析の結果：整理した結果
+
+```{r}
+group <- "Management"
+(isa_res <- ind_val(df, group = group))
+```
+
+## 指標種分析の結果：図示
+
+```{r}
+install.packages("ggrepel")
+isa_res |>
+  ggplot(aes(x = .data[[group]], y = .data[["ind.val"]], 
+             size = log(1 / (.data[["p.value"]] * 10)),
+             label = .data[["species"]])) + 
+    ggplot2::geom_point() + 
+    ggrepel::geom_text_repel(aes(size = log(1 / (.data[["p.value"]] * 10), base = 5))) + 
+    ggplot2::theme_bw() + 
+    ggplot2::theme(legend.position = "none")
+```
 
 
 # 文献
@@ -367,4 +448,4 @@ https://matutosi.github.io/ecan/
 
 - 土居 秀幸・岡村 寛. 2011. 生物群集解析のための類似度とその応用: Rを使った類似度の算出, グラフ化, 検定. 日本生態学会誌, 61, 3-20. 
 - Wildi, O. 2017. Data Analysis in Vegetation Ecology, 3rd ed. Cabi.
-
+- Dufrene, M. and Legendre, P.  1997.  Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecol. Monogr. 67, 345-366.
