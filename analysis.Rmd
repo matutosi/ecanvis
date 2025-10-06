@@ -1,7 +1,7 @@
 ---
 title: "植生データの解析方法"
 author: "松村 俊和"
-date: today()
+date: "2025-12-01"
 institute: "甲南女子大学"
 
 output:
@@ -65,7 +65,7 @@ output:
 - 百分率
 - その他もある(DAVE参照?)
 
-```{r}
+```{r, include = FALSE}
 #|echo:    false
 tbl <- tibble::tribble(
   ~"在・不在" , ~"B-B階級値", ~"百分率" , ~"百分率の代表値", 
@@ -91,24 +91,19 @@ tbl
 # 解析の種類
 
 - 多様性指数：α，β，γ
-    - S, H', 1/d, D, Jなど
+    - α：S, H', 1/d, D, Jなど
 - 序列化(Ordination)：
-- 分類
-    - クラスター分析
-    - TwinSpan
-    - 分類回帰樹木
+- 分類：クラスター分析，TwinSpan，...
 - Rarefaction Curve
-- 指標種分析(IndVal or ISA：Indicator Species Analsis)
-
-GISなどもある
+- 指標種分析(ISA：Indicator Species Analsis)
+- その他もいろいろ：時系列，GIS，...
 
 ## 多様性指数
 
 - α：地点の多様性<br>
   - 1地点 / 単位面積あたりの種数
   - 均等度の考慮の有無
-- β：地点間の多様性<br>
-  - 地点間での類似度
+- β：地点間の多様性(類似度)
   - β = γ / α
   - β = γ - α
 - γ：地域の多様性
@@ -120,10 +115,8 @@ GISなどもある
   - Shannonの情報量(H')
   - Simpsonの均等度，1 / d：[1, S]
   - Simpsonの均等度，1 - d(D)
-- 均等度：
   - S < H' < 
 - 個人的見解
-  - 種数は必須
   - 1/dが理解しやすい
 
 
@@ -154,6 +147,9 @@ GISなどもある
   - 重心方式
   - 群平均法<br>
     非加重，加重
+
+## クラスター分析
+
 - 個人的見解
     - 地点や種を結びつけていくイメージ
   - 1次元的
@@ -168,6 +164,9 @@ GISなどもある
   - CCA
   - RDA
 - 類似度との組み合わせで結果が異なる
+
+## 序列化，Ordination
+
 - 個人的見解
   - 2次元への位置づけ<br>
   本当は多次元だが，実質的には2次元だけ
@@ -183,6 +182,8 @@ GISなどもある
 - 序列化
 - 指標種分析
 
+## 参考コード
+
 - https://matutosi.github.io/ecan/ とほぼ同じ内容
 - https://matutosi.shinyapps.io/ecanvis/ でも実行可能
 
@@ -193,9 +194,9 @@ GISなどもある
 - ecan: 各種関数を簡単に
 
 ```{r install-packages, eval = FALSE}
-  # install.packages("tidyverse")
-  # install.packages("ecan")
-  # install.packages("vegan") # ecanと同時にインストールされる
+install.packages("tidyverse")
+install.packages("ecan")
+install.packages("vegan") # ecanと同時にインストールされる
 ```
 
 1回実行すればOK
@@ -275,7 +276,12 @@ df
 
 ```{r diversity}
 (div <- ecan::shdi(df))
-dune_env_df <- dplyr::left_join(dune_env_df, div) # 地点データに結合
+```
+
+## α多様性(地点を結合)
+
+```{r diversity-add-st}
+dune_env_df <- dplyr::left_join(dune_env_df, div) # 地点を結合
 ```
 
 ## α多様性の平均値
@@ -307,32 +313,43 @@ cls <-
 cls
 ```
 
+## クラスター分析結果の図示(準備)
+
+```{r cluster-plot-package, eval = FALSE}
+install.pacakges("ggdendro")
+```
+
 ## クラスター分析結果の図示
 
 ```{r cluster-plot}
-  # install.pacakges("ggdendro")
 library(ggdendro)
 ggdendro::ggdendrogram(cls)
 ```
 
-## クラスター分析結果の図示(グループ別)
+## クラスター分析(図示の準備)
 
-```{r cluster-plot-group}
+```{r cluster-plot-group-prep}
 indiv <- "stand"
 group <- "Use"
 cls_group <- ecan::cls_add_group(cls, dune_env_df, indiv = indiv, group = group)
+```
+
+## クラスター分析(グループ別で図示)
+
+
+```{r cluster-plot-group}
 ggdendro::ggdendrogram(cls_group)
 ```
 
-## クラスター分析結果の図示(グループ別に着色)
+## クラスター分析(グループ別で着色)
 
 ```{r cluster-plot-group-color}
 cls_color <- stats::as.dendrogram(cls_group)
 col <- cls_color(cls, dune_env_df, indiv = indiv, group = group)
-dendextend::labels_colors(cls_color) <- gray(0)
+  # dendextend::labels_colors(cls_color) <- gray(0)
 ```
 
-## クラスター分析結果の図示(グループ別に着色)
+## クラスター分析(グループ別で着色)
 
 ```{r cluster-plot-group-color-plot}
 plot(cls_color)
@@ -343,36 +360,47 @@ plot(cls_color)
 
 ## 序列化：nMDS
 
-```{r}
+```{r nmds}
 ord_nmds <- 
   df  |>
   df2table() |>
   ordination(o_method = "nmds")
 ```
 
+## 序列化：地点の図示の準備
+
+```{r nmds-plot-st-prep-data}
+(ord_nmds_st <- ecan::ord_extract_score(ord_nmds, score = "st_scores"))
+```
 ## 序列化：地点の図示
 
-```{r}
-(ord_nmds_st <- ord_extract_score(ord_nmds, score = "st_scores"))
+```{r nmds-plot-st-prep}
 ord_nmds_st |>
   ggplot2::ggplot(aes(V1, V2, label = .data[["rowname"]])) +
   ggplot2::geom_text() +
   ggplot2::theme_bw()
 ```
 
+
 ## 序列化：種の図示の準備
 
-```{r}
-# (ord_nmds_sp <- ord_extract_score(ord_nmds, score = "sp_scores"))
+ord_add_group()で抽出も実行
+
+```{r nmds-plot-sp-prep}
 indiv <- "species"
 group <- "dummy_1"
-ord_nmds_sp <- ord_add_group(ord_nmds, score = "sp_scores", df, indiv, group)
+ord_nmds_sp <- ecan::ord_add_group(ord_nmds, score = "sp_scores", df, indiv, group)
+```
+
+## 序列化：種の図示用のデータ
+
+```{r nmds-plot-sp-prep-show}
 ord_nmds_sp
 ```
 
 ## 序列化：種の図示
 
-```{r}
+```{r nmds-plot-sp-plot}
 ord_nmds_sp |>
   ggplot2::ggplot(aes(V1, V2, label = .data[[indiv]])) +
   geom_point(aes(col = .data[[group]]), alpha = 0.4, size = 7) +
@@ -382,33 +410,34 @@ ord_nmds_sp |>
 
 ## 指標種分析：Dufrene and Legendre (1997)
 
-labdsv::indval()のそのままの結果
+`row_data = TRUE`でlabdsv::indval()のそのままの結果
 
-```{r}
+```{r indval}
 isa_res_raw <- ind_val(df, group = "Management", row_data = TRUE)
 ```
 
 ## 指標種分析の結果：種の出現頻度
 
-```{r}
+```{r indval-raw-res-freq}
 isa_res_raw$relfrq
 ```
 
-## 指標種分析の結果：種の出現量の平均値
+## 指標種分析の結果：種の平均出現量
 
-```{r}
+```{r indval-raw-res-abundance}
 isa_res_raw$relabu
 ```
 
 ## 指標種分析の結果：指標値
 
-```{r}
+```{r indval-raw-res-indval}
 isa_res_raw$indval
 ```
 
-## 指標種分析の結果：最大値のクラス(区分)，その指標値とp値
+## 指標種分析の結果：まとめ
 
-```{r}
+```{r indval-raw-res-summary}
+  # 最大値のクラス(区分)，その指標値とp値
 tibble(
   cls = isa_res_raw$maxcls, 
   ind_val = isa_res_raw$indcls, 
@@ -417,17 +446,22 @@ tibble(
 
 ## 指標種分析の結果：整理した結果
 
-```{r}
+```{r indval-res}
 group <- "Management"
 (isa_res <- ind_val(df, group = group))
 ```
 
-## 指標種分析の結果：図示
+## 指標種分析の結果(パッケージのインストール)
 
-```{r}
+```{r indval-plot-prep, eval = FALSE}
 install.packages("ggrepel")
+```
+
+## 指標種分析の結果：
+
+```{r indval-plot}
 isa_res |>
-  ggplot(aes(x = .data[[group]], y = .data[["ind.val"]], 
+   ggplot2::ggplot(aes(x = .data[[group]], y = .data[["ind.val"]],
              size = log(1 / (.data[["p.value"]] * 10)),
              label = .data[["species"]])) + 
     ggplot2::geom_point() + 
@@ -439,13 +473,31 @@ isa_res |>
 
 # 文献
 
+- 原典の論文：細かな計算方法
+- 書籍，解説記事：全体的なこと
+
+## 論文
+
+- Dufrene, M. and Legendre, P.  1997.  Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecol. Monogr. 67, 345-366.
+- 
+
+## 書籍
+
 - 佐々木 雄大・小山 明日香・小柳 知代・古川 拓哉・内田 圭. 2015. 生物群集の構造と多様性の解析. 共立出版. 
-- 伊藤 秀三(編). 2003. 群落の組成と構造. 朝倉書店. <br>
+- 伊藤 秀三(編). 2003. 群落の組成と構造. 朝倉書店. 
   1977年に出版し，絶版．2003年に復刊し，絶版．
   中古がネット書店に．
-- 小林 四郎. 1995. 生物群集の多変量解析. 蒼樹書房. <br>
+- 小林 四郎. 1995. 生物群集の多変量解析. 蒼樹書房. 
   絶版．中古がネット書店に．
+- Wildi, O. 2017. Data Analysis in Vegetation Ecology, 3rd ed. Cabi.
+
+## 解説記事
 
 - 土居 秀幸・岡村 寛. 2011. 生物群集解析のための類似度とその応用: Rを使った類似度の算出, グラフ化, 検定. 日本生態学会誌, 61, 3-20. 
-- Wildi, O. 2017. Data Analysis in Vegetation Ecology, 3rd ed. Cabi.
-- Dufrene, M. and Legendre, P.  1997.  Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecol. Monogr. 67, 345-366.
+
+## Rで自動化・効率化(宣伝)
+
+- 松村 俊和. 2025. Rによる自動化・効率化レシピ集. 森北出版.
+- https://github.com/matutosi/r-auto (サポートページ)
+- https://www.amazon.co.jp/dp/4627858310/ (Amazon)
+
