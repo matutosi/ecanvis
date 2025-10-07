@@ -12,6 +12,13 @@ output:
     css: style.css
 ---
 
+```{r, echo = FALSE, eval = FALSE}
+wd <- "D:/matu/work/todo/ecanvis"; setwd(wd)
+rmd <- 'analysis.Rmd'
+rmarkdown::render(rmd)
+  # PDF印刷用
+  # file:///D:/matu/work/ToDo/ecanvis/analysis.html?print-pdf
+```
 
 # 植生データの解析
 
@@ -58,7 +65,7 @@ output:
   - 勝手に変換されないように文字列として保存
 
 
-## 被度の変換
+## 様々な被度
 
 - 在・不在
 - Braun-Blanquetの階級値
@@ -214,22 +221,19 @@ library(tidyverse)
 ```{r dune-env}
 data(dune.env) # 地点
 dune_env_df <- 
-  dune.env |>
-  tibble::tibble() |>
+  tibble::tibble(dune.env) |> # A1, Moisture, Management, Use, Manure
   tibble::rownames_to_column("stand") |> # 地点名を列に変換
-  print()
+  print(n = 8) # 8行のみ
 ```
 
 ## duneデータ(組成)
 
 ```{r dune}
 data(dune) # 組成
-tibble(dune) |>
-  dplyr::select(1:5) # 5列のみ表示
+tibble(dune) |> # 0-9の値
+  dplyr::select(1:5) |> # 5列のみ表示
+  print(n = 8) # 8行のみ
 ```
-
-- 20地点(行)，30種(列)
-- 0-9の値
 
 ## duneデータの変換
 
@@ -247,7 +251,7 @@ sp_dummy <- tibble::tibble(
   "species" = colnames(dune), 
   "dummy_1" = stringr::str_sub(colnames(dune), 1, 1), # 1文字目
   "dummy_6" = stringr::str_sub(colnames(dune), 6, 6)) # 6文字目
-sp_dummy
+print(sp_dummy, n = 8)
 ```
 
 ## データの結合
@@ -259,13 +263,11 @@ df <-
     dplyr::left_join(sp_dummy)       # 種
 ```
 
-## データの結合
+## データの結合：基本データの完成!
 
 ```{r joined}
-df
+print(df, n = 8)
 ```
-
-これで基本データか完成!
 
 ## α多様性
 
@@ -275,7 +277,8 @@ df
 - i: Simpson's inverse (1 / D)
 
 ```{r diversity}
-(div <- ecan::shdi(df))
+div <- ecan::shdi(df)
+print(div, n = 8)
 ```
 
 ## α多様性(地点を結合)
@@ -296,11 +299,18 @@ dune_env_df |>
 ## α多様性の図示
 
 ```{r diversity-ggplot}
-dune_env_df |>
+diversity_gg <- 
+  dune_env_df |>
   ggplot2::ggplot(aes(x = Management, y = i)) + # 1 / d
   ggplot2::geom_boxplot(outlier.shape = NA) +  # 外れ値非表示
   ggplot2::geom_jitter(height = 0, width = 0.1) + 
   ggplot2::theme_bw() 
+```
+
+## α多様性の図示
+
+```{r diversity-ggplot-show}
+diversity_gg
 ```
 
 ## クラスター分析
@@ -310,18 +320,31 @@ cls <-
   df |>
   ecan::df2table() |> # 組成形式に変換
   ecan::cluster(c_method = "average", d_method = "bray")
+```
+
+
+## クラスター分析の結果
+
+```{r cluster-result}
 cls
 ```
 
-## クラスター分析結果の図示(準備)
+## クラスター分析結果の図示
 
 ```{r cluster-plot-package, eval = FALSE}
 install.pacakges("ggdendro")
 ```
 
+```{r cluster-plot, eval = FALSE}
+library(ggdendro)
+ggdendro::ggdendrogram(cls)
+```
+
 ## クラスター分析結果の図示
 
-```{r cluster-plot}
+```{r cluster-plot-show, echo = FALSE}
+  # echo = FALSEでコード非表示
+  # include = FALSE # 実行のみで，コード・出力・図は非表示
 library(ggdendro)
 ggdendro::ggdendrogram(cls)
 ```
