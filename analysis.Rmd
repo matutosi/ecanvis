@@ -512,7 +512,6 @@ isa_res |>
     ggplot2::theme(legend.position = "none")
 ```
 
-
 # 文献
 
 - 原典の論文：細かな計算方法
