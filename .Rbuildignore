@@ -1,2 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.github$
+^\analysis_files$
+^analysis.html$
+^analysis.pdf$

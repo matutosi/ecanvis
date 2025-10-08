@@ -5,3 +5,6 @@
 .Ruserdata
 rsconnect/
 .vdoc*
+analysis_files/
+analysis.html
+analysis.pdf
