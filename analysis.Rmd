@@ -21,6 +21,7 @@ rmarkdown::render(rmd)
 ```
 
 ```{r setup}
+install.packages("rmarkdown")
 install.packages("tidyverse")
 install.packages("ecan")
 install.packages("vegan") # ecanと同時にインストールされる
