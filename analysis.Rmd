@@ -20,6 +20,27 @@ rmarkdown::render(rmd)
   # file:///D:/matu/work/ToDo/ecanvis/analysis.html?print-pdf
 ```
 
+```{r setup}
+install.packages("tidyverse")
+install.packages("ecan")
+install.packages("vegan") # ecanと同時にインストールされる
+install.pacakges("ggdendro")
+install.packages("ggrepel")
+
+
+opts_chunk$set( # 警告，メッセージ，エラーの非表示
+  warning = FALSE,
+  message = FALSE,
+  error   = FALSE)
+  # 
+  # memo：他のオプション
+  #                   コード表示  結果  実行
+  # eval = FALSE    #     ◯      －    －
+  # echo = FALSE    #     －      ◯    ◯
+  # include = FALSE #     －      －    ◯
+```
+
+
 # 植生データの解析
 
 - 一般的な手法を解説
