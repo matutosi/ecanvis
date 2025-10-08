@@ -49,7 +49,7 @@ ind_valSever <- function(id, data_in){
 
     # Update group select
     observeEvent(c(data_in, st()), {
-      choices <- cols_one2multi(data_in, st(), inculde_self = FALSE)
+      choices <- ecan::cols_one2multi(data_in, st(), inculde_self = FALSE)
       updateSelectInput(session, "ind_val_st_group", choices = choices)
     })
 
@@ -58,7 +58,7 @@ ind_valSever <- function(id, data_in){
       req(data_in)
       if(st() != sp() & is.numeric(data_in[[ab()]])){
         output$caution <- renderUI(character(0)) # No caution
-        ind_val(df        = data_in, 
+        ecan::ind_val(df        = data_in, 
                 stand     = st(), 
                 species   = sp(), 
                 abundance = ab(),

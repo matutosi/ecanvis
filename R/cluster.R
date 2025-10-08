@@ -50,7 +50,7 @@ clusterSever <- function(id, data_in, tbl){
     indiv <- eventReactive(c(input$cls_show_group, input$cls_with_sp), {
       if(input$cls_show_group){
         indiv <- if(input$cls_with_sp){ sp() } else { st() }
-        choices <- cols_one2multi(data_in, indiv, inculde_self = FALSE)
+        choices <- ecan::cols_one2multi(data_in, indiv, inculde_self = FALSE)
         updateSelectInput(session, "cls_group", choices = choices)
       }
       indiv
@@ -62,11 +62,11 @@ clusterSever <- function(id, data_in, tbl){
       cls <- 
         tbl %>%
         t_if_true(input$cls_with_sp) %>% # t() when chekcbox selected
-        cluster(c_method = input$cl_c_method, d_method = input$cl_d_method)
+        ecan::cluster(c_method = input$cl_c_method, d_method = input$cl_d_method)
 
       if(input$cls_show_group){
-        col <- cls_color(cls, data_in, indiv = indiv(), group = input$cls_group)  # need BEFORE add group
-        cls <- cls_add_group(cls, data_in, indiv = indiv(), group = input$cls_group)
+        col <- ecan::cls_color(cls, data_in, indiv = indiv(), group = input$cls_group)  # need BEFORE add group
+        cls <- ecan::cls_add_group(cls, data_in, indiv = indiv(), group = input$cls_group)
         cls <- stats::as.dendrogram(cls)
         labels_colors(cls) <- gray(input$cls_label_gray)
         plot(cls)

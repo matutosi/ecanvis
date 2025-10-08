@@ -7,7 +7,7 @@ function(input, output, session){
   # # # Community table # # #
   com_table <- reactive({
     req(data_in())
-    df2table(data_in(), st = colnames(data_in())[1],
+    ecan::df2table(data_in(), st = colnames(data_in())[1],
                         sp = colnames(data_in())[2],
                         ab = colnames(data_in())[3])
   })

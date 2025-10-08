@@ -2,13 +2,13 @@
 calculate_diversity <- function(df, st, sp, ab){
     diversity <- 
       df %>%
-      shdi(stand     = st,
+      ecan::shdi(stand     = st,
            species   = sp,
            abundance = ab) %>%
       dplyr::mutate_if(is.numeric, round, digit = 6)
     extra_data <- 
       df %>%
-      select_one2multi(st, inculde_self = TRUE)
+      ecan::select_one2multi(st, inculde_self = TRUE)
 
     dplyr::left_join(diversity, extra_data)
 }

@@ -68,7 +68,7 @@ ordinationSever <- function(id, data_in, com_table){
     indiv <- eventReactive(c(input$ord_show_group, input$ord_use_species_scores), {
       if(input$ord_show_group){
         indiv <- if(input$ord_use_species_scores){ sp() } else { st() }
-        choices <- cols_one2multi(data_in, indiv, inculde_self = FALSE)
+        choices <- ecan::cols_one2multi(data_in, indiv, inculde_self = FALSE)
         updateSelectInput(session, "ord_group", choices = choices)
       }
       indiv
@@ -78,12 +78,12 @@ ordinationSever <- function(id, data_in, com_table){
     ord_scores <- reactive({
         ord <-
           com_table %>%
-          ordination(o_method = input$ord_o_method, d_method = input$ord_d_method)
+          ecan::ordination(o_method = input$ord_o_method, d_method = input$ord_d_method)
 
         score <- if(input$ord_use_species_scores) "sp_scores" else "st_scores"
         ord_scores <- 
           if(input$ord_show_group){
-            ord_add_group(
+            ecan::ord_add_group(
               ord    = ord, 
               score  = score,
               df     = data_in,
@@ -91,7 +91,7 @@ ordinationSever <- function(id, data_in, com_table){
               group  = input$ord_group)
           } else {
             row_name <- if(input$ord_use_species_scores){ sp() } else { st() }
-            ord_extract_score(ord, score, row_name)
+            ecan::ord_extract_score(ord, score, row_name)
           }
 
         # Download data
