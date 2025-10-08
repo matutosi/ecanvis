@@ -3,8 +3,8 @@ on: push
 jobs:
   hello:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.MY_GITHUB_TOKEN }}
     steps:
       - run: echo "Hello, world!"
       - uses: actions/checkout@v4
-        with:
-	    token: ${{ secrets.MY_GITHUB_TOKEN }}
