@@ -27,7 +27,6 @@ install.packages("vegan") # ecanと同時にインストールされる
 install.pacakges("ggdendro")
 install.packages("ggrepel")
 
-
 opts_chunk$set( # 警告，メッセージ，エラーの非表示
   warning = FALSE,
   message = FALSE,
