@@ -10,7 +10,7 @@ gen_example_data <- function(){
     )
   example <- 
     dune %>%
-    table2df(st = "stand", sp = "species", ab = "cover") %>%
+    ecan::table2df(st = "stand", sp = "species", ab = "cover") %>%
     dplyr::left_join(tibble::rownames_to_column(dune.env, "stand")) %>%
     dplyr::left_join(sp_dummy)
   return(example)
