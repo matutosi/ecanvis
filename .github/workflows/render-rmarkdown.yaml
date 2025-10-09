@@ -31,7 +31,7 @@ jobs:
 
       - name: Install R packages
         run: |
-          R -e 'install.packages(c("rmarkdown", "knitr"))' # Install necessary packages
+          R -e 'install.packages(c("rmarkdown", "knitr", "revealjs"))' # Install necessary packages
 
       - name: Render R Markdown document
         run: |
