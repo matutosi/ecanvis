@@ -24,7 +24,7 @@ rmarkdown::render(rmd)
 install.packages("tidyverse")
 install.packages("ecan")
 install.packages("vegan") # ecanと同時にインストールされる
-install.pacakges("ggdendro")
+install.packages("ggdendro")
 install.packages("ggrepel")
 
 
