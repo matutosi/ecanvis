@@ -229,7 +229,18 @@ install.packages("vegan") # ecanと同時にインストールされる
 
 ## 準備：パッケージの呼び出し
 
-```{r load-library}
+```{r, include = FALSE}
+library(vegan)
+library(ecan)
+
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(tibble)
+library(ggolot2)
+```
+
+```{r load-library, eval = FALSE}
 library(vegan)
 library(ecan)
 library(tidyverse)
