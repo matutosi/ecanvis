@@ -33,9 +33,13 @@ jobs:
         run: |
           R -e 'install.packages(c("rmarkdown", "knitr", "revealjs"))' # Install necessary packages
 
+      - name: checkout gh-pages
+        run: |
+          git checkout gh-pages
+
       - name: Render R Markdown document
         run: |
-          R -e 'rmarkdown::render("analysis.Rmd")' # Replace with your Rmd file
+          R -e 'rmarkdown::render("analysis.Rmd", output_dir = "docs")' # Replace with your Rmd file
 
       - name: Commit rendered output (optional)
         if: github.event_name == 'push' # Only commit on pushes, not pull requests
