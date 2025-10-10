@@ -237,7 +237,7 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 library(tibble)
-library(ggolot2)
+library(ggplot2)
 ```
 
 ```{r load-library, eval = FALSE}
