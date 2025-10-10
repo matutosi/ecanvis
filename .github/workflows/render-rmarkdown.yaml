@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: gh-pages
 
       - name: Install Pandoc
         run: |
@@ -32,10 +34,6 @@ jobs:
       - name: Install R packages
         run: |
           R -e 'install.packages(c("rmarkdown", "knitr", "revealjs"))' # Install necessary packages
-
-      - name: checkout gh-pages
-        run: |
-          git checkout gh-pages
 
       - name: Render R Markdown document
         run: |
