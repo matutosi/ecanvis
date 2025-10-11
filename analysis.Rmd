@@ -20,7 +20,7 @@ rmarkdown::render(rmd)
   # file:///D:/matu/work/ToDo/ecanvis/analysis.html?print-pdf
 ```
 
-```{r setup}
+```{r setup, include = FALSE}
 install.packages("tidyverse")
 install.packages("ecan")
 install.packages("vegan") # ecanと同時にインストールされる
@@ -166,7 +166,8 @@ tbl
 - 概要
   - 地点(種)間の類似度を計算
   - 「近いもの」を結合していく
-  - 類似度と結合方法の組み合わせで結果が異なる
+  - 類似度と結合方法によって結果が異なる
+  - 横方向の並びは意味無し
 - 結合方法は多種多様(代表的なもの)
   - 最近隣方式
   - 最遠隣方式
@@ -179,7 +180,7 @@ tbl
 - 個人的見解
     - 地点や種を結びつけていくイメージ
   - 1次元的
-  - 非荷重群平均法が多い?
+  - 非荷重群平均法が多い
 
 ## 序列化，Ordination
 
@@ -196,7 +197,7 @@ tbl
 - 個人的見解
   - 2次元への位置づけ<br>
   本当は多次元だが，実質的には2次元だけ
-  - 最近は，nMDSが多い?
+  - nMDSが多い
 
 # データ分析の実演
 
@@ -284,7 +285,7 @@ sp_dummy <- tibble::tibble(
 print(sp_dummy, n = 8)
 ```
 
-## データの結合
+## 結合
 
 ```{r join}
 df <- 
@@ -293,18 +294,24 @@ df <-
     dplyr::left_join(sp_dummy)       # 種
 ```
 
-## データの結合：基本データの完成!
+## 結合：基本データの完成!
 
-```{r joined}
+```{r, echo = FALSE, eval = FALSE}
+  # コードの表示幅をもう少し長くできる?
+```
+
+```{r joined-show}
 print(df, n = 8)
 ```
 
-## α多様性
+## α多様性(おさらい)
 
 - s: 種数
 - h: Shannon's H'
 - d: Simpson's index (1 - D)
 - i: Simpson's inverse (1 / D)
+
+## α多様性の計算
 
 ```{r diversity}
 div <- ecan::shdi(df)
@@ -314,7 +321,8 @@ print(div, n = 8)
 ## α多様性(地点を結合)
 
 ```{r diversity-add-st}
-dune_env_df <- dplyr::left_join(dune_env_df, div) # 地点を結合
+dune_env_df <- 
+  dplyr::left_join(dune_env_df, div) # 地点を結合
 ```
 
 ## α多様性の平均値
