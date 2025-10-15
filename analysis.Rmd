@@ -13,9 +13,9 @@ output:
 ---
 
 ```{r, echo = FALSE, eval = FALSE}
-wd <- "D:/matu/work/todo/ecanvis"; setwd(wd)
-rmd <- 'analysis.Rmd'
-rmarkdown::render(rmd)
+# wd <- "D:/matu/work/todo/ecanvis"; setwd(wd)
+# rmd <- 'analysis.Rmd'
+# rmarkdown::render(rmd)
   # https://matutosi.github.io/ecanvis/analysis.html
   # https://matutosi.github.io/ecanvis/analysis.html?print-pdf # PDF印刷用
 ```
@@ -165,7 +165,7 @@ tbl <- tibble::tribble(
   "1"         , "r"         , " -0"     , "0.01?"        , 
   "0"         , "-"         , "0"       , "0"            )
 caption <- "量的データの種類"
-gen_table(tbl, caption)
+  # gen_table(tbl, caption)
 ```
 
 <aside class="notes">
