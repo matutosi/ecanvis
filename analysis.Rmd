@@ -22,6 +22,9 @@ rmarkdown::render(rmd)
 
 ```{r, include = FALSE}
 pkg <- "tidyverse"; if(!require(pkg)); install.packages(pkg)
+pkg <- "knitr"    ; if(!require(pkg)); install.packages(pkg)
+pkg <- "flextable"; if(!require(pkg)); install.packages(pkg)
+pkg <- "magrittr" ; if(!require(pkg)); install.packages(pkg)
 pkg <- "ecan"     ; if(!require(pkg)); install.packages(pkg)
 pkg <- "vegan"    ; if(!require(pkg)); install.packages(pkg) # ecanと同時にインストールされる
 pkg <- "ggdendro" ; if(!require(pkg)); install.packages(pkg) # 図示で使用
@@ -31,7 +34,8 @@ knitr::opts_chunk$set( # 警告，メッセージ，エラーの非表示
   warning = FALSE,
   message = FALSE,
   error   = FALSE)
-  # 
+
+source("funs.R")
   # memo：他のオプション
   #                   コード表示  結果  実行
   # eval = FALSE    #     ◯      －    －
@@ -82,13 +86,13 @@ knitr::opts_chunk$set( # 警告，メッセージ，エラーの非表示
 "Tidy datasets are all alike, but every messy dataset is messy in its own way."<br>
 — Hadley Wickham
 
-## messy data
+## Messy data
 
 ```{r messy}
 tidyr::table2
 ```
 
-## tidy data
+## Tidy data
 
 ```{r tidy}
 tidyr::table2 |>
@@ -127,7 +131,6 @@ tidyr::table2 |>
 - その他もある(DAVE参照?)
 
 ```{r, include = FALSE}
-#|echo:    false
 tbl <- tibble::tribble(
   ~"在・不在" , ~"B-B階級値", ~"百分率" , ~"百分率の代表値", 
   "1"         , "5"         , "75-"     , "87.5"         , 
@@ -138,10 +141,8 @@ tbl <- tibble::tribble(
   "1"         , "+"         , " -0"     , "0.1"          , 
   "1"         , "r"         , " -0"     , "0.01?"        , 
   "0"         , "-"         , "0"       , "0"            )
-```
-
-```{r}
-tbl
+caption <- "量的データの種類"
+gen_table(tbl, caption)
 ```
 
 <aside class="notes">

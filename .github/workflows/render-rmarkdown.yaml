@@ -37,9 +37,9 @@ jobs:
 
       - name: Render R Markdown document
         run: |
-          R -e 'rmarkdown::render("analysis.Rmd", output_dir = "docs")' # Replace with your Rmd file
+          R -e 'rmarkdown::render("analysis.Rmd", output_dir = ".")' # Replace with your Rmd file
 
-      - name: Commit rendered output (optional)
+      - name: Commit rendered output
         if: github.event_name == 'push' # Only commit on pushes, not pull requests
         run: |
           git config --global user.name 'github-actions[bot]'
