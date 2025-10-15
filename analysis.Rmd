@@ -20,15 +20,15 @@ rmarkdown::render(rmd)
   # https://matutosi.github.io/ecanvis/analysis.html?print-pdf # PDF印刷用
 ```
 
-```{r, include = FALSE}
-pkg <- "tidyverse"; if(!require(pkg)); install.packages(pkg)
-pkg <- "knitr"    ; if(!require(pkg)); install.packages(pkg)
-pkg <- "flextable"; if(!require(pkg)); install.packages(pkg)
-pkg <- "magrittr" ; if(!require(pkg)); install.packages(pkg)
-pkg <- "ecan"     ; if(!require(pkg)); install.packages(pkg)
-pkg <- "vegan"    ; if(!require(pkg)); install.packages(pkg) # ecanと同時にインストールされる
-pkg <- "ggdendro" ; if(!require(pkg)); install.packages(pkg) # 図示で使用
-pkg <- "ggrepel"  ; if(!require(pkg)); install.packages(pkg) # 図示で使用
+```{r setup, include = FALSE}
+pkg <- "tidyverse"; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
+pkg <- "knitr"    ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
+pkg <- "flextable"; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
+pkg <- "magrittr" ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
+pkg <- "ecan"     ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
+pkg <- "vegan"    ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # ecanと同時にインストールされる
+pkg <- "ggdendro" ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
+pkg <- "ggrepel"  ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
 
 knitr::opts_chunk$set( # 警告，メッセージ，エラーの非表示
   warning = FALSE,
