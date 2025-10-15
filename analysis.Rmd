@@ -16,15 +16,15 @@ output:
 wd <- "D:/matu/work/todo/ecanvis"; setwd(wd)
 rmd <- 'analysis.Rmd'
 rmarkdown::render(rmd)
-  # PDF印刷用
-  # file:///D:/matu/work/ToDo/ecanvis/analysis.html?print-pdf
+  # https://matutosi.github.io/ecanvis/analysis.html
+  # https://matutosi.github.io/ecanvis/analysis.html?print-pdf # PDF印刷用
 ```
 
-```{r setup, include = FALSE}
+```{r, include = FALSE}
 pkg <- "tidyverse"; if(!require(pkg)); install.packages(pkg)
 pkg <- "ecan"     ; if(!require(pkg)); install.packages(pkg)
 pkg <- "vegan"    ; if(!require(pkg)); install.packages(pkg) # ecanと同時にインストールされる
-pkg <- "ggdendro" ; if(!require(pkg)); install.pacakges(pkg) # 図示で使用
+pkg <- "ggdendro" ; if(!require(pkg)); install.packages(pkg) # 図示で使用
 pkg <- "ggrepel"  ; if(!require(pkg)); install.packages(pkg) # 図示で使用
 
 knitr::opts_chunk$set( # 警告，メッセージ，エラーの非表示
@@ -320,7 +320,7 @@ tbl
 install.packages("tidyverse")
 install.packages("ecan")
 install.packages("vegan")    # ecanと同時にインストールされる
-install.pacakges("ggdendro") # 図示で使用
+install.packages("ggdendro") # 図示で使用
 install.packages("ggrepel")  # 図示で使用
 ```
 
