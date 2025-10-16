@@ -8,6 +8,7 @@
   color: blue;
   text-transform: none;
   font-family: 'Noto Sans CJK JP', 'Hiragino Sans', sans-serif;
+  width: 100%;
 }
 
 .reveal section img {

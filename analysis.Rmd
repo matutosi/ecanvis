@@ -103,10 +103,12 @@ str2tbl <- function(str, ncol){
 
 ## tidy VS messy
 
-"Happy families are all alike; every unhappy family is unhappy in its own way."<br>
+"Happy families are all alike; <br>
+every unhappy family is unhappy in its own way."<br>
 — Leo Tolstoy
 
-"Tidy datasets are all alike, but every messy dataset is messy in its own way."<br>
+"Tidy datasets are all alike, <br>
+but every messy dataset is messy in its own way."<br>
 — Hadley Wickham
 
 ## Messy data
@@ -199,7 +201,11 @@ caption <- "量的データの種類"
   - Simpsonの均等度，1 / d
   - Simpsonの均等度，1 - d
   - S < 1/d < H'
-- 個人的見解：1/dが理解しやすい
+
+## α多様性の個人的見解
+
+- 基本情報としての種数
+- 均等度考慮：1/dが理解しやすい
   - 最小値：1
   - 最大値：S(全種が均等)
 
@@ -270,13 +276,12 @@ caption <- "量的データの種類"
 小林(1995)のp26
 </aside>
 
-## クラスター分析まとめ
+## クラスター分析の個人的見解
 
-- 個人的見解
-  - 地点や種を結びつけていくイメージ
-  - 1次元的
-  - 非荷重群平均法が多い
-  - TwinSpanは他とちょっと違う
+- 地点や種を結びつけていくイメージ
+- 1次元的
+- 非荷重群平均法が多い
+- TwinSpanは他とちょっと違う
 
 # 序列化，Ordination
 
@@ -302,12 +307,11 @@ caption <- "量的データの種類"
 ## CCA
 
 
-## 序列化まとめ
+## 序列化の個人的見解
 
-- 個人的見解
-  - 2次元への位置づけ<br>
-  本当は多次元だが，実質的には2次元だけ
-  - nMDSが多い
+- 2次元への位置づけ<br>
+本当は多次元だが，実質的には2次元だけ
+- nMDSが多い
 
 # 指標種分析
 
