@@ -70,7 +70,7 @@ str2tbl <- function(str, ncol){
 
 - 基礎的・一般的な手法を紹介
   - 他にも色々とある
-  - 他のもの：参考文献や論文で勉強する
+  - 書籍や論文で学ぶ
 - AIに聞けば結果を教えてくれるかも
   - 基本的な考え方を知るのが重要
   - ブラックボックスではダメ
@@ -80,11 +80,14 @@ str2tbl <- function(str, ncol){
 - 解説編
   - データの取り扱い
   - 解析手法の種類
-  - 種多様性
+  - 多様性指数
   - クラスター分析
   - 序列化
   - 指標種分析
 - 演習編
+  - 準備
+  - 前処理
+  - 解析・図化
 
 # データの取り扱い
 
@@ -92,16 +95,16 @@ str2tbl <- function(str, ncol){
 - 地点，組成，種で分けて保存
 - 被度の変換???
 
-## tidyな形式
+## Tidyとは
 
 - 1つの変数が1つの列
 - 1つの観測が1つの行
 - 1つのタイプの観測群が1つの表
 - 1つの値が1つのセル
-- 詳細は文献を参照<br>
-  Hadley, W., 2014, Tidy data. Journal of Statistical Software, 59, 1-23.
+- Hadley, W., 2014, Tidy data. <br>
+  Journal of Statistical Software, 59, 1-23.
 
-## tidy VS messy
+## Tidy VS Messy
 
 "Happy families are all alike; <br>
 every unhappy family is unhappy in its own way."<br>
@@ -121,7 +124,10 @@ tidyr::table2
 
 ```{r tidy}
 tidyr::table2 |>
-  tidyr::pivot_wider(c(country, year), names_from = type, values_from = count)
+  tidyr::pivot_wider(
+    c(country, year), 
+    names_from = type, 
+    values_from = count)
 ```
 
 ## データの種類
@@ -179,9 +185,10 @@ caption <- "量的データの種類"
 
 - 多様性指数：α，β，γ
 - 分類：クラスター分析，TwinSpan，...
-- 序列化(Ordination)：PCA，DCA，CCA，RDA，nMDS，...
+- 序列化(Ordination)：PCA，DCA，nMDS，<br>
+  CCA，RDA，...
 - 指標種分析(ISA：Indicator Species Analsis)
-- その他もいろいろ：Rarefaction Curve, 時系列，GIS，...
+- その他：Rarefaction Curve, 時系列，分布モデル，...
 
 # 多様性指数
 
