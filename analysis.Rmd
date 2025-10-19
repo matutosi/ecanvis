@@ -3,12 +3,13 @@ title: "植生データの解析方法"
 author: "松村 俊和"
 date: "2025-11-21"
 institute: "甲南女子大学"
-
 output:
   revealjs::revealjs_presentation:
     self_contatined: false
     theme: simple
-    transition: slide
+    # transition: none
+    # transition: slide
+    transition: convex
     css: style.css
 ---
 
