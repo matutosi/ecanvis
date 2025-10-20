@@ -11,6 +11,12 @@
   width: 100%;
 }
 
+.reveal h3 {
+  font-size: 100%;
+  font-family: 'Noto Sans CJK JP', 'Hiragino Sans', sans-serif;
+  width: 100%;
+}
+
 .reveal section img {
   margin: auto;
   border: none;
