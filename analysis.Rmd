@@ -4,19 +4,19 @@ author: "松村 俊和"
 date: "2025-11-21"
 institute: "甲南女子大学"
 output:
+  # https://github.com/rstudio/revealjs
   revealjs::revealjs_presentation:
     self_contatined: false
     theme: simple
-    # transition: none
-    # transition: slide
     transition: convex
     css: style.css
+    reveal_options:
+      slideNumber: true
 ---
 
 ```{r, echo = FALSE, eval = FALSE}
-# wd <- "D:/matu/work/todo/ecanvis"; setwd(wd)
-# rmd <- 'analysis.Rmd'
-# rmarkdown::render(rmd)
+  # rmarkdown::render("D:/matu/work/todo/ecanvis/analysis.Rmd")
+  # 
   # https://matutosi.github.io/ecanvis/analysis.html
   # https://matutosi.github.io/ecanvis/analysis.html?print-pdf # PDF印刷用
 ```
@@ -118,8 +118,8 @@ Rを使用しますので，事前にインストールしておいてくださ�
 # 調査資料の取り扱い
 
 - Tidyな形式で保存
-- 地点, 組成, 種で分けて保存
-- 量的データの変換
+- パソコンへの入力方法
+- データの変換
 
 <aside class="notes">
 調査資料をパソコンに保存するときに重要なことは，Tidyな形式で保存することです．
@@ -150,7 +150,7 @@ Tidyとは，整然としたという意味で，データがパソコンが理�
 詳細は，Hadley(2014)をご覧ください．
 </aside>
 
-## Tidy VS Messy
+## Tidy vs Messy
 
 "Happy families are all alike; <br>
 every unhappy family is unhappy in its own way."<br>
@@ -161,6 +161,8 @@ but every messy dataset is messy in its own way."<br>
 — Hadley Wickham
 
 <aside class="notes">
+トルストイの小説『アンナ・カレーニナ』の冒頭に"Happy families are all alike; every unhappy family is unhappy in its own way."という言葉があります．
+データも同じで，Hadley Wickham氏は"Tidy datasets are all alike, but every messy dataset is messy in its own way."と述べています．
 </aside>
 
 ## Messy data
@@ -169,8 +171,11 @@ but every messy dataset is messy in its own way."<br>
 tidyr::table2
 ```
 
-
 <aside class="notes">
+これはmessyデータの例です．
+このデータは結核症例数を示したものです．
+type列にcases(罹患数)とpopulation(人口)という2つの項目があり，その数値がcount列にある点でtidyではありません．
+本来は，casesとpopulationは項目名であり，それぞれが別の列に配置されるべきです．
 </aside>
 
 ## Tidy data
@@ -183,8 +188,8 @@ tidyr::table2 |>
     values_from = count)
 ```
 
-
 <aside class="notes">
+これはtable2のデータを`tidyr::pivot_wider()`でtidyに整理したものです．
 </aside>
 
 ## データの種類
@@ -194,63 +199,122 @@ tidyr::table2 |>
 - 種：種名, 科, 生活型, 機能型, ...
 
 <aside class="notes">
-地点データには, 地形, 天候などもある
-組成データには, 植物の状態(実生, 開花の有無)などもある
-種データには, 系統関係などもある
+地点データには, このほかに地形, 天候などもあります．
+組成データには, このほかに植物の状態(実生, 開花の有無)などもあります．
+種データには, このほかに系統関係などもあります．
 </aside>
-
 
 ## パソコンへの入力
 
 - 1行目は項目名
-- 行や列を空けない
-- テキストファイル(CSV or TSV)で保存(推奨)
-  - 誤変換が起こりにくい
+- 空の行，空の列，空のセルはつくらない
+- テキストファイル(CSV or TSV)で保存を推奨
+  - 誤変換を防ぐ
   - 再利用が容易
-- スプレッドシートで保存するとき
+- スプレッドシートでの保存
   - 組成, 地点, 種を別シートに入力
-  - 誤変換しないように文字列として保存
+  - 文字列として保存(誤変換対策)
 
-## 量的データ
+<aside class="notes">
+調査資料を解析するときには，パソコンにデータを入力します．
+入力には，Excel等のスプレッドシートを使うのが楽です．
+ただし，入力時の注意点が主に3つあります．
+1つ目は，シートの1行目には項目名を入力することです．
+2つ目は，空の行，空の列，空のセルはつくらないことです．
+特に，見やすさを考慮して1行目や1列目を空けたりするかもしれませんが，これは不要です．
+空けないようにしてください．
+また，欠損値を空のセルにしたりするかもしれません．
+空のセルは，後から見たときに欠損値か入力漏れか判別できません．
+欠損値の場合は，"NA"あるいは"-"のような文字列を入力してください．
+使用する文字列は任意ですが，実際のデータに含まれないものを使います．
+3つ目は，保存するときはCSV(Comma Separated Values，カンマ区切りのテキストファイル)あるいはTSV(Tab Separated Values，タブ区切りのテキストファイル)で保存することを推奨します．
+CSVやTSVで保存したデータは，保存・読み込み時に誤変換が起こりにくいです．
+文字コードは，UTF-8が一般的です．
+また，CSVやTSVはOSによらず読み込み可能ですので，再利用が容易です．
 
-- 在・不在
+スプレッドシートで保存する際には，組成, 地点, 種を別シートに入力してください．
+また，セルの書式を文字列にしておくと，誤変換しにくいでしょう．
+</aside>
+
+## データ変換
+
 - Braun-Blanquetの階級値
 - 百分率
-- その他もある(DAVE参照?)
+- 在・不在
+- 平方根
+- 対数
 
-```{r, include = FALSE}
-tbl <- tibble::tribble(
-  ~"在・不在" , ~"B-B階級値", ~"百分率" , ~"百分率の代表値", 
-  "1"         , "5"         , "75-"     , "87.5"         , 
-  "1"         , "4"         , "50-"     , "62.5"         , 
-  "1"         , "3"         , "25-"     , "37.5"         , 
-  "1"         , "2"         , "10-"     , "17.5"         , 
-  "1"         , "1"         , "1-"      ,  "5.0"         , 
-  "1"         , "+"         , " -0"     , "0.1"          , 
-  "1"         , "r"         , " -0"     , "0.01?"        , 
-  "0"         , "-"         , "0"       , "0"            )
-caption <- "量的データの種類"
-  # gen_table(tbl, caption)
+```{r convert-value}
+bb_scale <- c("5", "4", "3", "2", "1", "+", "r", "0")
+percentage <- c(75, 50, 25, 10, 1, 0.1, 0.01, 0) # 百分率
+percen_med <- (percentage + lag(percentage, default = 100)) / 2
+percen_med[length(percen_med)] <- 0
+pa <- purrr::map_dbl(percentage > 0, sum)
+squared <- percentage^0.5
+logged <- log10(percentage + 1) # +1: 1未満を正にするため
+tibble::tibble(bb_scale, percentage, percen_med, pa, squared, logged)
 ```
 
 <aside class="notes">
+植生学では，どの地点に，どの種が，どの程度の量で生育していたのかを記録します．
+地点や種は名義尺度ですので，そのまま記録します．
+どの程度の量生育していたかは，量の測定と記録方法は多くの方法があります．
+個体数を記録することもあれば，被度を記録することもあります．
+ここでは，被度を記録するとします．
+植物社会学では，被度をブラウン・ブランケの階級値を使うことが多いでしょう．
+また，被度を百分率で記録することや有無のみを記録することもあります．
+百分率のままでは差が大きすぎるときに，平方根や対数によってばらつきを小さくすることができます．
+
+取得したデータを解析のために変換することもあります．
+たとえば，階級の中央値への変換や，平方根や対数での変換です．
+
+なお，優占度はここでは扱いません．
+もちろん，未同定種や種の分類の問題はありますが．
+
 生態調査法(鈴木時夫 p61)
 星野(1991), 03479.pdf参照
 </aside>
 
 ## 相対優占度
 
-- 用語の定義
+- 定義
   - nij：n地点における種iの地点jでの優占度
   - Nj：地点jの全種の優占度の合計<br>
   Nj = Σnij
   - Pij：地点jにおける種iの相対優占度算<br>
   Pij = nij / Nj
 
+```{r propotion}
+val <- c(4, 3, 2, 1)
+val / sum(val)
+```
+
+<aside class="notes">
+単純なデータ変換ではなく，相対値を求める変換として相対優占度の算出があります．
+相対優占度とは，ある地点における出現種の優占度(出現量)の相対値で，全出現種の優占度の合計で各出現種の優占度を割ったものです．
+
+ある地点に種aからdまでの4種が生息していたとして，優占度がそれぞれ4,3,2,1であったとします．
+合計は10ですので，それぞれの相対優占度は0.4, 0.3, 0.2, 0.1です．
+相対値に変換することで，地点ごとの優占度のばらつきを取り除きます．
+
+なお，相対優占度は，多様性指数の計算や類似度の計算で利用します．
+</aside>
+
 ## Hellinger変換
 
 - 相対優占度の平方根
 
+```{r propotion}
+val <- c(4, 3, 2, 1)
+proportion <- val / sum(val)
+proportion ^ 0.5
+```
+
+<aside class="notes">
+相対優占度を算出した後で平方根を取ることをHellinger変換といいます．
+相対優占度によって地点間のばらつきを取り除き，Hellinger変換によって地点内のばらつきを小さくします．
+Hellinger変換は，後述するBray-Curtis距離の計算で使用します．
+</aside>
 
 # 解析の種類
 
@@ -263,6 +327,10 @@ caption <- "量的データの種類"
   - 時系列
   - 分布モデル
   - ...
+
+<aside class="notes">
+
+</aside>
 
 # 多様性指数
 
