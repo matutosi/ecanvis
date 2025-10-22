@@ -135,8 +135,7 @@ Rを使用しますので，事前にインストールしておいてくださ�
 - 1つの観測が1つの行
 - 1つのタイプの観測群が1つの表
 - 1つの値が1つのセル
-- Hadley, W., 2014, Tidy data. <br>
-  Journal of Statistical Software, 59, 1-23.
+- Hadley (2014)
 
 <aside class="notes">
 Tidyとは，整然としたという意味で，データがパソコンが理解しやすい状態に整理されていることを意味します．
@@ -147,7 +146,7 @@ Tidyとは，整然としたという意味で，データがパソコンが理�
 1つのタイプの観測群が1つの表とは，地点情報と組成の情報を別々のシートに入力した状態です．
 1つの値が1つのセルとは，A2のセルには1つの値のみが入っている状態です．
 
-詳細は，Hadley(2014)をご覧ください．
+Hadley(2014)をご覧ください．
 </aside>
 
 ## Tidy vs Messy
@@ -304,7 +303,7 @@ val / sum(val)
 
 - 相対優占度の平方根
 
-```{r propotion}
+```{r propotion-square}
 val <- c(4, 3, 2, 1)
 proportion <- val / sum(val)
 proportion ^ 0.5
@@ -313,7 +312,7 @@ proportion ^ 0.5
 <aside class="notes">
 相対優占度を算出した後で平方根を取ることをHellinger変換といいます．
 相対優占度によって地点間のばらつきを取り除き，Hellinger変換によって地点内のばらつきを小さくします．
-Hellinger変換は，後述するBray-Curtis距離の計算で使用します．
+Hellinger変換は，後述するクラスター分析で使用します．
 </aside>
 
 # 解析の種類
@@ -324,24 +323,38 @@ Hellinger変換は，後述するBray-Curtis距離の計算で使用します．
 - 指標種分析(ISA：Indicator Species Analsis)
 - その他
   - Rarefaction Curve
-  - 時系列
+  - 時系列分析
   - 分布モデル
   - ...
 
 <aside class="notes">
+植生調査試料の解析手法は多種多様です．
+基本的な手法には，多様性指数の算出から，クラスター分析などを用いた分類，序列化，指標種分析があります．
+Rarefaction Curve，時系列分析，分布モデルなどもあります．
+目的によって解析手法は異なりますので，自分の研究でしたいことにあった手法を使ってください．
+まずは書籍や論文を読んでどのような手法があるのか学んでください．
 
+目的が明確にできているのなら，それをもとに生成AIに相談しても良いかもしれません．
+ただし，基本的な考え方については理解することと，研究者自身の最終的な判断することが必要です．
 </aside>
 
 # 多様性指数
 
 - α：地点内の多様性<br>
-  - 1地点 / 単位面積あたりの種数
+  - 1地点・単位面積あたりの種数
   - 均等度の考慮の有無
 - γ：地域内の多様性
 - β：地点間の多様性(類似度)
   - β = γ / α
   - β = γ - α
 - 地点・地域の大きさは任意
+
+<aside class="notes">
+多様性指数は，生物群集の豊かさを数値化したものです．
+種数だけでなく均等度を考慮した指数があります．
+一般的に
+
+</aside>
 
 ## α多様性
 
@@ -351,12 +364,18 @@ Hellinger変換は，後述するBray-Curtis距離の計算で使用します．
   - Simpsonの均等度, 1 / d
   - Simpsonの均等度, 1 - d
 
+<aside class="notes">
+</aside>
+
 ## 計算方法
 
 - d =  Σ(Pij)^2
   - 1 - D
   - 1 / d
 - H' = -Σ(Pij・ln(Pij))
+
+<aside class="notes">
+</aside>
 
 ## dの計算
 
@@ -366,6 +385,9 @@ Hellinger変換は，後述するBray-Curtis距離の計算で使用します．
   - 他種も同じ
   - d = 0.2^2 + 0.2^2 + 0.2^2 + 0.2^2 + 0.2^2
 
+<aside class="notes">
+</aside>
+
 ## dの計算
 
 - 種Aが0.6,他が0.1のとき
@@ -374,12 +396,18 @@ Hellinger変換は，後述するBray-Curtis距離の計算で使用します．
   - Pb, Pc, Pd, Pe = 0.1 / 1.0
   - d = 0.6^2 + 0.1^2 + 0.1^2 + 0.1^2 + 0.1^2
 
+<aside class="notes">
+</aside>
+
 ## α多様性の個人的見解
 
 - 基本情報としての種数
 - 均等度考慮：1/dが理解しやすい
   - 最小値：1
   - 最大値：S(全種が均等)
+
+<aside class="notes">
+</aside>
 
 # クラスター分析
 
@@ -388,6 +416,9 @@ Hellinger変換は，後述するBray-Curtis距離の計算で使用します．
   - 「近いもの」を結合していく
   - 類似度と結合方法によって結果が異なる
   - 横方向の並びは意味無し
+
+<aside class="notes">
+</aside>
 
 ## 類似度
 
@@ -413,63 +444,91 @@ Hellinger変換は，後述するBray-Curtis距離の計算で使用します．
   - 群平均法<br>
     非加重, 加重
 
+<aside class="notes">
+</aside>
+
 ## クラスター分析の個人的見解
 
 - 地点や種を結びつけていくイメージ
 - 1次元的
 - 一般的な組み合わせ
-  - Bray-curtis距離 ("bray") + 非荷重群平均法 ("average")
-  - Hellinger距離(Hellinger変換したユークリッド距離) + Ward法("ward.D2")
+  - Bray-curtis距離 + 非荷重群平均法
+  - Hellinger距離 + Ward法 ("ward.D2")
 - TwinSpanは他とちょっと違う
+
+<aside class="notes">
+</aside>
 
 # 序列化, Ordination
 
 - 手法は多種多様(代表的なもの)
-  - PCA(主成分分析)
-  - PCoA
+  - PCA：主成分分析)
+  - PCoA：
   - DCA：植生以外ではあまり使われない
-  - nMDS
-  - CCA：環境軽傾度との対応
-  - RDA：環境軽傾度との対応
+  - nMDS：
+  - CCA：長い環境軽傾度との対応
+  - RDA：短い環境軽傾度との対応
 - 類似度との組み合わせで結果が異なる
 
+<aside class="notes">
+</aside>
+佐々木ほか(2015)p30
 
 ## PCA
 
 - 主成分分析
 
+<aside class="notes">
+</aside>
+
 ## DCA
 
 -  除歪対応分析
+
+<aside class="notes">
+</aside>
 
 ## nMDS
 
 - 非計量多次元尺度法
 
+<aside class="notes">
+</aside>
+
 ## CCA
 
 - 正準相関分析
 
-```{r, echo = FALSE, eval = FALSE}
+<aside class="notes">
   # 生態学における序列化手法は、データの特性と解析の目的に合わせて進化してきました。初期の段階では、ユークリッド距離に基づく線形モデル（PCA、RDA）が中心でしたが、生態学データの非線形性、特に長勾配の普遍性が認識されるにつれて、非ユークリッド距離に基づく手法が主流となりました。
   # 現在、群集構造の全体像を把握し、ベータ多様性を測定する非制約型解析では、生態学的妥当性の高いBray-Curtis距離  を入力としたPCoAまたはNMDSが標準的な選択肢となっています。PCoAは、この非ユークリッド距離を計量的に表現する力を持ち、NMDSはその順序関係に対する堅牢性で優れています。一方、環境要因との関連をモデル化する制約型解析では、線形応答の仮定が成立する場合はRDAが、ユニモーダル応答の仮定が成立する場合、すなわち長勾配データにはカイ二乗距離  を基盤とするCCAが適用されます。
-```
+</aside>
+
 
 ## 序列化の個人的見解
 
 - 2次元への位置づけ<br>
-本当は多次元だが, 実質的には2次元だけ
-- nMDSが多い
+  本当は多次元だが, 実質的には2次元だけ
+- Bray-Curtis距離 + PCoA or nMDS
+
+<aside class="notes">
+</aside>
 
 # 指標種分析
 
 - 特定のグループに特徴的に出現する種を抽出
 - 量も考慮にいれる
-- Dufrene, M. and Legendre, P. 1997. Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecol. Monogr. 67, 345-366.
+- Dufrene and Legendre (1997)
+
+<aside class="notes">
+</aside>
 
 ## 指標値の計算
 
 - 
+
+<aside class="notes">
+</aside>
 
 # データ分析の実演
 
@@ -481,10 +540,16 @@ Hellinger変換は，後述するBray-Curtis距離の計算で使用します．
 - 序列化
 - 指標種分析
 
+<aside class="notes">
+</aside>
+
 ## 参考URL
 
 - https://matutosi.github.io/ecan/ とほぼ同じ内容
 - https://matutosi.shinyapps.io/ecanvis/ でも実行可能
+
+<aside class="notes">
+</aside>
 
 ## 準備：パッケージのインストール
 
@@ -501,6 +566,9 @@ install.packages("ggrepel")  # 図示で使用
 ```
 
 1回実行すればOK
+
+<aside class="notes">
+</aside>
 
 ## 準備：パッケージの呼び出し
 
@@ -521,6 +589,9 @@ library(ecan)
 library(tidyverse)
 ```
 
+<aside class="notes">
+</aside>
+
 ## dune.envデータ(地点)
 
 ```{r dune-env}
@@ -531,6 +602,9 @@ dune_env_df <-
   print(n = 8) # 8行のみ
 ```
 
+<aside class="notes">
+</aside>
+
 ## duneデータ(組成)
 
 ```{r dune}
@@ -540,6 +614,9 @@ tibble(dune) |> # 0-9の値
   print(n = 8) # 8行のみ
 ```
 
+<aside class="notes">
+</aside>
+
 ## duneデータの変換
 
 ```{r dune-df}
@@ -548,6 +625,9 @@ dune_df <-
   ecan::table2df(st = "stand", sp = "species", ab = "cover")
 dune_df
 ```
+
+<aside class="notes">
+</aside>
 
 ## 種データ(ダミー)
 
@@ -559,6 +639,9 @@ sp_dummy <- tibble::tibble(
 print(sp_dummy, n = 8)
 ```
 
+<aside class="notes">
+</aside>
+
 ## 結合
 
 ```{r join}
@@ -567,6 +650,9 @@ df <-
     dplyr::left_join(dune_env_df) |> # 地点
     dplyr::left_join(sp_dummy)       # 種
 ```
+
+<aside class="notes">
+</aside>
 
 ## 結合：基本データの完成!
 
@@ -578,12 +664,18 @@ df <-
 print(df, n = 8)
 ```
 
+<aside class="notes">
+</aside>
+
 ## α多様性(おさらい)
 
 - s: 種数
 - h: Shannon's H'
 - d: Simpson's index (1 - D)
 - i: Simpson's inverse (1 / D)
+
+<aside class="notes">
+</aside>
 
 ## α多様性の計算
 
@@ -592,12 +684,18 @@ div <- ecan::shdi(df)
 print(div, n = 8)
 ```
 
+<aside class="notes">
+</aside>
+
 ## α多様性(地点を結合)
 
 ```{r diversity-add-st}
 dune_env_df <- 
   dplyr::left_join(dune_env_df, div) # 地点を結合
 ```
+
+<aside class="notes">
+</aside>
 
 ## α多様性の平均値
 
@@ -607,6 +705,9 @@ dune_env_df |>
   dplyr::summarise_if(is.numeric, mean)
 ```
 
+
+<aside class="notes">
+</aside>
 
 ## α多様性の図示
 
@@ -619,11 +720,17 @@ diversity_gg <-
   ggplot2::theme_bw() 
 ```
 
+<aside class="notes">
+</aside>
+
 ## α多様性の図示
 
 ```{r diversity-ggplot-show}
 diversity_gg
 ```
+
+<aside class="notes">
+</aside>
 
 ## クラスター分析
 
@@ -631,9 +738,14 @@ diversity_gg
 cls <- 
   df |>
   ecan::df2table() |> # 組成形式に変換
-  ecan::cluster(c_method = "average", d_method = "bray")
+  ecan::cluster(
+    c_method = "average", # 非荷重群平均方
+    d_method = "bray")    # Bray-Curtis距離
 ```
 
+
+<aside class="notes">
+</aside>
 
 ## クラスター分析の結果
 
@@ -641,12 +753,18 @@ cls <-
 cls
 ```
 
+<aside class="notes">
+</aside>
+
 ## クラスター分析結果の図示
 
 ```{r cluster-plot, eval = FALSE}
 library(ggdendro)
 ggdendro::ggdendrogram(cls)
 ```
+
+<aside class="notes">
+</aside>
 
 ## クラスター分析結果の図示
 
@@ -657,6 +775,9 @@ library(ggdendro)
 ggdendro::ggdendrogram(cls)
 ```
 
+<aside class="notes">
+</aside>
+
 ## クラスター分析(図示の準備)
 
 ```{r cluster-plot-group-prep}
@@ -665,12 +786,18 @@ group <- "Use"
 cls_group <- ecan::cls_add_group(cls, dune_env_df, indiv = indiv, group = group)
 ```
 
+<aside class="notes">
+</aside>
+
 ## クラスター分析(グループ別で図示)
 
 
 ```{r cluster-plot-group}
 ggdendro::ggdendrogram(cls_group)
 ```
+
+<aside class="notes">
+</aside>
 
 ## クラスター分析(グループ別で着色)
 
@@ -679,6 +806,9 @@ cls_color <- stats::as.dendrogram(cls_group)
 col <- cls_color(cls, dune_env_df, indiv = indiv, group = group)
   # dendextend::labels_colors(cls_color) <- gray(0)
 ```
+
+<aside class="notes">
+</aside>
 
 ## クラスター分析(グループ別で着色)
 
@@ -689,6 +819,9 @@ par(new = TRUE)
 plot(cls_color)
 ```
 
+<aside class="notes">
+</aside>
+
 ## 序列化：nMDS
 
 ```{r nmds}
@@ -698,11 +831,17 @@ ord_nmds <-
   ordination(o_method = "nmds")
 ```
 
+<aside class="notes">
+</aside>
+
 ## 序列化：地点の図示の準備
 
 ```{r nmds-plot-st-prep-data}
 (ord_nmds_st <- ecan::ord_extract_score(ord_nmds, score = "st_scores"))
 ```
+<aside class="notes">
+</aside>
+
 ## 序列化：地点の図示
 
 ```{r nmds-plot-st-prep}
@@ -712,6 +851,9 @@ ord_nmds_st |>
   ggplot2::theme_bw()
 ```
 
+
+<aside class="notes">
+</aside>
 
 ## 序列化：種の図示の準備
 
@@ -723,11 +865,17 @@ group <- "dummy_1"
 ord_nmds_sp <- ecan::ord_add_group(ord_nmds, score = "sp_scores", df, indiv, group)
 ```
 
+<aside class="notes">
+</aside>
+
 ## 序列化：種の図示用のデータ
 
 ```{r nmds-plot-sp-prep-show}
 ord_nmds_sp
 ```
+
+<aside class="notes">
+</aside>
 
 ## 序列化：種の図示
 
@@ -739,6 +887,9 @@ ord_nmds_sp |>
   ggplot2::theme_bw()
 ```
 
+<aside class="notes">
+</aside>
+
 ## 指標種分析
 
 `row_data = TRUE`でlabdsv::indval()のそのままの結果
@@ -747,11 +898,17 @@ ord_nmds_sp |>
 isa_res_raw <- ind_val(df, group = "Management", row_data = TRUE)
 ```
 
+<aside class="notes">
+</aside>
+
 ## 指標種分析の結果：種の出現頻度
 
 ```{r indval-raw-res-freq}
 isa_res_raw$relfrq
 ```
+
+<aside class="notes">
+</aside>
 
 ## 指標種分析の結果：種の平均出現量
 
@@ -759,11 +916,17 @@ isa_res_raw$relfrq
 isa_res_raw$relabu
 ```
 
+<aside class="notes">
+</aside>
+
 ## 指標種分析の結果：指標値
 
 ```{r indval-raw-res-indval}
 isa_res_raw$indval
 ```
+
+<aside class="notes">
+</aside>
 
 ## 指標種分析の結果：まとめ
 
@@ -775,12 +938,18 @@ tibble(
   p = isa_res_raw$pval)
 ```
 
+<aside class="notes">
+</aside>
+
 ## 指標種分析の結果：整理した結果
 
 ```{r indval-res}
 group <- "Management"
 (isa_res <- ind_val(df, group = group))
 ```
+
+<aside class="notes">
+</aside>
 
 ## 指標種分析の結果：
 
@@ -795,6 +964,9 @@ isa_res |>
     ggplot2::theme(legend.position = "none")
 ```
 
+<aside class="notes">
+</aside>
+
 # 文献
 
 - 原典の論文：細かな計算方法
@@ -808,7 +980,12 @@ isa_res |>
 - 伊藤 秀三(編). 2003. 群落の組成と構造. 朝倉書店. 
   1977年に出版し, 絶版．2003年に復刊し, 絶版．
   中古がネット書店に．
-- Wildi, O. 2017. Data Analysis in Vegetation Ecology, 3rd ed. Cabi.
+- Wildi, Otto. 2017. Data Analysis in Vegetation Ecology, 3rd ed. Cabi.
+
+## 個別の解説
+
+- Hadley, W., 2014, Tidy data. Journal of Statistical Software, 59, 1-23.
+- Dufrene, M. and Legendre, P. 1997. Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecol. Monogr. 67, 345-366.
 
 ## 解説記事
 
@@ -822,4 +999,3 @@ isa_res |>
 - 松村 俊和. 2025. Rによる自動化・効率化レシピ集. 森北出版.
 - https://github.com/matutosi/r-auto (サポートページ)
 - https://www.amazon.co.jp/dp/4627858310/ (Amazon)
-
