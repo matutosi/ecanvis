@@ -644,8 +644,8 @@ set.seed(14)
 n <- 10
 x <- 1:n
 y <- x * 2 + rnorm(n) * 2
-df <- tibble(x = x, y = y) 
-ggplot(df, aes(x, y)) + geom_point()
+df <- tibble::tibble(x = x, y = y) 
+ggplot2::ggplot(df, ggplot2::aes(x, y)) + ggplot2::geom_point()
 lm(df)
 ```
 
@@ -747,17 +747,20 @@ DCAでは馬蹄効果を強制的に除去します．
 <aside class="notes">
 指標種分析は，グループ分けした地点に特徴的に出現する種を明らかにするものです．
 出現の有無を使うこともできますし，量を使うことも可能です．
-また，統計的な検定(?)も可能です．
+また，繰り返し計算による無作為化検定が可能です．
 
 詳細は，Dufrene and Legendre (1997)をご覧ください．
 </aside>
 
 ## 指標値の計算
 
-- 
+- IV = Cij / Ci * Fij/ Fj * 100
+  - Cij：種iのグループjでの平均被度
+  - Ci：種iの全体での平均被度
+  - Fij：種iのグループjでの出現回数
+  - Fj：種iの全体での出現回数
 
 <aside class="notes">
-
 </aside>
 
 # データ分析の実演
