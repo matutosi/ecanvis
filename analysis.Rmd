@@ -894,7 +894,8 @@ dune_env_df <-
 ```
 
 <aside class="notes">
-
+地点データとして，veganのdune.envを使用します．
+地点名が行ラベルとして使われているので，独立した列に変換します．
 </aside>
 
 ## duneデータ(組成)
