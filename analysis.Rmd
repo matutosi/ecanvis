@@ -895,7 +895,7 @@ dune_env_df <-
 
 <aside class="notes">
 地点データとして，veganのdune.envを使用します．
-地点名が行ラベルとして使われているので，独立した列に変換します．
+行ラベルとして使われている地点名を独立した列に変換します．
 </aside>
 
 ## duneデータ(組成)
@@ -908,6 +908,9 @@ tibble(dune) |> # 0-9の値
 ```
 
 <aside class="notes">
+組成データとして，veganのduneを使用します．
+このデータはtidyではありません．
+地点のデータが列に，種のデータが行になっています．
 </aside>
 
 ## duneデータの変換
@@ -920,6 +923,8 @@ dune_df
 ```
 
 <aside class="notes">
+tidyにするために，ecan::table2df()を使います．
+
 </aside>
 
 ## 種データ(ダミー)
