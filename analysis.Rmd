@@ -923,8 +923,8 @@ dune_df
 ```
 
 <aside class="notes">
-tidyにするために，ecan::table2df()を使います．
-
+tidyにするために，ecanのtable2df()を使います．
+地点，種，量のデータがstand，species，coverの列になっています．
 </aside>
 
 ## 種データ(ダミー)
