@@ -1377,7 +1377,7 @@ ecanをインストールするときに同時にインストールされます�
 ## # ℹ 12 more rows</code></pre>
 <aside class="notes">
 地点データとして，veganのdune.envを使用します．
-地点名が行ラベルとして使われているので，独立した列に変換します．
+行ラベルとして使われている地点名を独立した列に変換します．
 </aside>
 </section>
 <section id="duneデータ組成" class="slide level2">
@@ -1399,6 +1399,9 @@ ecanをインストールするときに同時にインストールされます�
 ## 8        0        4        0        5        0
 ## # ℹ 12 more rows</code></pre>
 <aside class="notes">
+組成データとして，veganのduneを使用します．
+このデータはtidyではありません．
+地点のデータが列に，種のデータが行になっています．
 </aside>
 </section>
 <section id="duneデータの変換" class="slide level2">
@@ -1422,6 +1425,7 @@ ecanをインストールするときに同時にインストールされます�
 ## 10 2     Elymrepe     4
 ## # ℹ 187 more rows</code></pre>
 <aside class="notes">
+<p>tidyにするために，ecan::table2df()を使います．</p>
 </aside>
 </section>
 <section id="種データダミー" class="slide level2">
