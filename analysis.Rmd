@@ -421,7 +421,7 @@ Simpsonの均等度指数を実際に計算します．
 簡単な内容ですので，手入力でRで実行してみましょう．
 
 5種全てが均等な場合です．
-わかりやすくするために，合計の量が1になるようにしています．
+わかりやすくするために，合計の出現量が1になるようにしています．
 dが0.2で，1/dが種数と同じ5です．
 </aside>
 
@@ -436,7 +436,7 @@ c(d, 1/d)
 ```
 
 <aside class="notes">
-1種が半分以上の量を占めている場合です．
+1種が半分以上を占めている場合です．
 dが0.4で，1/dが2.5です．
 特定の種が優占しているため，多様性指数が低くなりました．
 </aside>
@@ -742,12 +742,12 @@ DCAでは馬蹄効果を強制的に除去します．
 # 指標種分析
 
 - 特定のグループに特徴的に出現する種を抽出
-- 在・不在，量のどちらでも可能
+- 在・不在，出現量のどちらでも可能
 - Dufrene and Legendre (1997)
 
 <aside class="notes">
 指標種分析は，グループ分けした地点に特徴的に出現する種を明らかにするものです．
-出現の有無を使うこともできますし，量を使うことも可能です．
+出現の有無を使うこともできますし，出現量を使うことも可能です．
 また，繰り返し計算による無作為化検定が可能です．
 
 詳細は，Dufrene and Legendre (1997)をご覧ください．
@@ -876,7 +876,7 @@ library(ggrepel)
 ## dune.envデータ(地点)
 
 ```{r dune-env}
-data(dune.env) # 地点
+data(dune.env, package = "vegan") # 地点
 dune_env_df <- 
   tibble::tibble(dune.env) |> # A1, Moisture, Management, Use, Manure
   tibble::rownames_to_column("stand") |> # 地点名を列に変換
@@ -884,21 +884,21 @@ dune_env_df <-
 ```
 
 <aside class="notes">
-地点データとして，veganのdune.envを使用します．
+地点データとして，veganの`dune.env`を使用します．
 行ラベルとして使われている地点名を独立した列に変換します．
 </aside>
 
 ## duneデータ(組成)
 
 ```{r dune}
-data(dune) # 組成
+data(dune, package = "vegan") # 組成
 tibble(dune) |> # 0-9の値
   dplyr::select(1:5) |> # 5列のみ表示
   print(n = 8) # 8行のみ
 ```
 
 <aside class="notes">
-組成データとして，veganのduneを使用します．
+組成データとして，veganの`dune`を使用します．
 このデータはtidyではありません．
 地点のデータが列に，種のデータが行になっています．
 </aside>
@@ -913,8 +913,8 @@ dune_df
 ```
 
 <aside class="notes">
-tidyにするために，ecanのtable2df()を使います．
-地点，種，量のデータがstand，species，coverの列になっています．
+tidyにするために，ecanの`table2df()`を使います．
+地点，種，出現量のデータが`stand`，`species`，`cover`の列になっています．
 </aside>
 
 ## 種データ(ダミー)
@@ -949,15 +949,15 @@ df <-
 
 ## 結合：基本データの完成!
 
-```{r, echo = FALSE, eval = FALSE}
-  # コードの表示幅をもう少し長くできる?
-```
-
 ```{r joined-show}
-print(df, n = 8)
+df |>
+  dplyr::select(1:6, 9:10) |>
+  print(n = 8)
 ```
 
 <aside class="notes">
+基本データが完成しました．
+なお，列が多いので，`select()`で列を選択しています．
 </aside>
 
 # α多様性(演習)
@@ -968,6 +968,8 @@ print(df, n = 8)
 - i: Simpson's inverse (1 / D)
 
 <aside class="notes">
+まずは，α多様性を計算します．
+種数，ShannonのH'，Simpsonの指数(1-dと1/d)の4つです．
 </aside>
 
 ## α多様性の計算
@@ -978,28 +980,26 @@ print(div, n = 8)
 ```
 
 <aside class="notes">
+ecanの`shdi()`を使うと4つを一度に計算できます．
+なお，ここでは引数にデータフレームのみを指定しています．
+省略するとデータフレームの1列目が地点名，2列が種名，3列名が出現量として扱われます．
+地点名，種名，出現量の列名を指定する場合は，引数`stand`，`species`，`abundance`に文字列で指定します．
 </aside>
 
-## α多様性(地点を結合)
-
-```{r diversity-add-st}
-dune_env_df <- 
-  dplyr::left_join(dune_env_df, div) # 地点を結合
-```
-
-<aside class="notes">
-</aside>
-
-## α多様性の平均値
+## α多様性(グループ別の平均値)
 
 ```{r diversity-group}
+dune_env_df <- 
+  dplyr::left_join(dune_env_df, div) # 地点を結合
 dune_env_df |>
-  dplyr::group_by(Management) |>
-  dplyr::summarise_if(is.numeric, mean)
+  dplyr::group_by(Management) |> # Managementでグループ化
+  dplyr::summarise_if(is.numeric, mean) # 数値の列で平均
 ```
 
-
 <aside class="notes">
+ここでは地点の属性別での平均値を求めます．
+そのためには，まず地点データを結合します．
+その後で`group_by()`でグループ化して，`summarise_if()`で数値の列で平均値を求めます．
 </aside>
 
 ## α多様性の図示
@@ -1007,13 +1007,18 @@ dune_env_df |>
 ```{r diversity-ggplot}
 diversity_gg <- 
   dune_env_df |>
-  ggplot2::ggplot(aes(x = Management, y = i)) + # 1 / d
+  ggplot2::ggplot(ggplot::aes(x = Management, y = i)) + # 1 / d
   ggplot2::geom_boxplot(outlier.shape = NA) +  # 外れ値非表示
   ggplot2::geom_jitter(height = 0, width = 0.1) + 
   ggplot2::theme_bw() 
 ```
 
 <aside class="notes">
+平均値も大事ですが，全体の様子を確認するために，1 / dの箱ひげ図を作成します．
+箱ひげ図では，個別の点が表示されませんので，あわせて地点別のデータも図示します．
+`ggplot()`でx軸にManagementを，y軸にi(1/d)を指定します．
+箱ひげ図を描画する`geom_boxplot()`では引数で`outlier.shape = NA`を指定して外れ地を非表示にします．
+外れ地を非表示にするのは，`geom_jitter()`による個別の点の表示との重複を避けるためです．
 </aside>
 
 ## α多様性の図示
@@ -1023,6 +1028,12 @@ diversity_gg
 ```
 
 <aside class="notes">
+作図したものを図示します．
+論文で使うときには，作図全体のテーマや軸ラベルなどを変更する必要があります．
+ggplot2の詳細は，ggplot2のページを参考にしてください．
+https://ggplot2-book.org/
+日本語板は，今のところ初版分しかなくて，ちょっと情報が古いです．
+『Rグラフィックスクックブック 第2版』が良いかもしれません．
 </aside>
 
 # クラスター分析(演習)
@@ -1036,8 +1047,9 @@ cls <-
     d_method = "bray")    # Bray-Curtis距離
 ```
 
-
 <aside class="notes">
+クラスター分析
+`df2table()'
 </aside>
 
 ## クラスター分析の結果
