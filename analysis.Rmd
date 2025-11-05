@@ -655,8 +655,8 @@ lm(df)
 - 長い環境軽度
 - アーチ状に配置
 - 入れ替わりが一定のデータ
-  - 類似度だけなら，直線上にならぶはず
-  - 類似度が低いはずの地点が近くに配置される
+    - 類似度だけなら，直線上にならぶはず
+    - 類似度が低いはずの地点が近くに配置される
 
 <aside>
 馬蹄効果とは，種の入れ替わりのある長い環境軽度のデータを序列化によって配置したときに，馬蹄(馬のひづめ)形，つまりアーチ状になってしまうことです．
@@ -1007,7 +1007,7 @@ dune_env_df |>
 ```{r diversity-ggplot}
 diversity_gg <- 
   dune_env_df |>
-  ggplot2::ggplot(ggplot::aes(x = Management, y = i)) + # 1 / d
+  ggplot2::ggplot(ggplot2::aes(x = Management, y = i)) + # 1 / d
   ggplot2::geom_boxplot(outlier.shape = NA) +  # 外れ値非表示
   ggplot2::geom_jitter(height = 0, width = 0.1) + 
   ggplot2::theme_bw() 
@@ -1127,7 +1127,7 @@ plot(cls_color)
 <aside class="notes">
 </aside>
 
-## 序列化(演習)
+# 序列化(演習)
 
 
 
@@ -1263,7 +1263,8 @@ group <- "Management"
 ## 指標種分析の結果：
 
 ```{r indval-plot}
-isa_res |>
+isa_gg <- 
+  isa_res |>
    ggplot2::ggplot(aes(x = .data[[group]], y = .data[["ind.val"]],
              size = log(1 / (.data[["p.value"]] * 10)),
              label = .data[["species"]])) + 
@@ -1271,6 +1272,15 @@ isa_res |>
     ggrepel::geom_text_repel(aes(size = log(1 / (.data[["p.value"]] * 10), base = 5))) + 
     ggplot2::theme_bw() + 
     ggplot2::theme(legend.position = "none")
+```
+
+<aside class="notes">
+</aside>
+
+## 指標種分析の結果：
+
+```{r indval-plot-show}
+isa_gg
 ```
 
 <aside class="notes">
@@ -1311,4 +1321,4 @@ isa_res |>
 
 - 松村 俊和. 2025. <br>Rによる自動化・効率化レシピ集. 森北出版.
 - https://github.com/matutosi/r-auto<br>(サポートページ)
-- https://www.amazon.co.jp/dp/4627858310/<br>>(Amazon)
+- https://www.amazon.co.jp/dp/4627858310/<br>(Amazon)
