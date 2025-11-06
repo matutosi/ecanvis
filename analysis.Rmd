@@ -915,7 +915,45 @@ library(ggrepel)
 
 # 基本データの準備(演習)
 
+- データの読み込み
+- 前処理
+- 結合
 
+<aside class="notes">
+解析をするときには，データの準備が必要です．
+データの読み込みをした後に前処理が必要です．
+はじめからtidyなデータであれば難しくありません．
+でもmessyなデータの場合や，他人のデータを使うときなどはデータの構造がわからず，前処理にかなりの時間と労力がかかることがあります．
+地点，組成，種に関するデータがtidyなものになれば，あとは結合をすれば準備が完了します．
+</aside>
+
+## CSVの読み込み(例)
+
+```{r read-csv, eval = FALSE}
+path_stand <- "c:/hoge/huga/stand.csv"
+df_st <- readr::read_csv(path_stand)
+```
+
+<aside class="notes">
+CSVからデータを読み込むときはreadrの`read_csv()`を使うのが良いでしょう．
+引数として各データの種類やスキップする行なども指定できます．
+詳しくはドキュメントを見てください．
+</aside>
+
+## Excelデータの読み込み(例)
+
+```{r read-csv, eval = FALSE}
+path_stand <- "c:/hoge/huga/data.xlsx"
+  # 引数sheetでシート名を番号か文字列で指定
+df_st <- openxlsx::read.xlsx(path_stand, sheet = 1)
+```
+
+<aside class="notes">
+Excel形式のデータを読み込むときはopenxlsxの`read.xlsx()`を使うのが良いでしょう．
+シート名が複数あるときは，引数`sheet`でシート番号がシート名を指定してください．
+こちらも，詳しくはドキュメントを見てください．
+すべてのシートを読み込むときは，松村(2025)の第2章の関数を参考にしてください．
+</aside>
 
 ## dune.envデータ(地点)
 
