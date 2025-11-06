@@ -942,7 +942,7 @@ CSVからデータを読み込むときはreadrの`read_csv()`を使うのが良
 
 ## Excelデータの読み込み(例)
 
-```{r read-csv, eval = FALSE}
+```{r read-excel, eval = FALSE}
 path_stand <- "c:/hoge/huga/data.xlsx"
   # 引数sheetでシート名を番号か文字列で指定
 df_st <- openxlsx::read.xlsx(path_stand, sheet = 1)
