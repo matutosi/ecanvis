@@ -596,7 +596,7 @@ Rを使用しますので，事前にインストールしておいてくださ�
 <ul>
 <li>Tidyな形式で保存</li>
 <li>パソコンへの入力方法</li>
-<li>データの変換</li>
+<li>データの種類と変換</li>
 </ul>
 <aside class="notes">
 調査資料をパソコンに保存するときに重要なことは，Tidyな形式で保存することです．
@@ -740,14 +740,16 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 また，セルの書式を文字列にしておくと，誤変換しにくいでしょう．
 </aside>
 </section>
-<section id="データ変換" class="slide level2">
-<h2>データ変換</h2>
+<section id="データの種類と変換" class="slide level2">
+<h2>データの種類と変換</h2>
 <ul>
-<li>Braun-Blanquetの階級値</li>
 <li>百分率</li>
+<li>Braun-Blanquetの階級値</li>
 <li>在・不在</li>
-<li>平方根</li>
-<li>対数</li>
+<li>相対優占度</li>
+<li>Hellinger変換</li>
+<li>平方根変換</li>
+<li>対数変換</li>
 </ul>
 <aside class="notes">
 <p>植生学では，どの地点に，どの種が，どの程度の量で生育していたのかを記録します．
@@ -766,16 +768,38 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 03479.pdf
 </aside>
 </section>
-<section id="データ変換-1" class="slide level2">
+<section id="相対優占度" class="slide level2">
+<h2>相対優占度</h2>
+<ul>
+<li>定義
+<ul>
+<li>nij：地点jでの種iの量(被度や個体数)</li>
+<li>Nj：地点jの全種の量の合計<br> Nj = Σnij</li>
+<li>Pij：地点jでの種iの相対優占度<br> Pij = nij / Nj</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>val <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>val <span class="sc">/</span> <span class="fu">sum</span>(val)</span></code></pre></div>
+<pre><code>## [1] 0.4 0.3 0.2 0.1</code></pre>
+<aside class="notes">
+<p>単純なデータ変換ではなく，相対値を求める変換として相対優占度の算出があります．
+相対優占度とは，ある地点における出現種の量(被度や個体数)の相対値で，全出現種の優占度の合計で各出現種の優占度を割ったものです．</p>
+<p>ある地点に種aからdまでの4種が生息していたとして，優占度がそれぞれ4,3,2,1であったとします．
+合計は10ですので，それぞれの相対優占度は0.4, 0.3, 0.2, 0.1です．
+相対値に変換することで，地点ごとの優占度のばらつきを取り除きます．</p>
+なお，相対優占度は，多様性指数の計算や類似度の計算で利用します．
+</aside>
+</section>
+<section id="データ変換" class="slide level2">
 <h2>データ変換</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bb_scale <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;5&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;+&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;0&quot;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>percentage <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">75</span>, <span class="dv">50</span>, <span class="dv">25</span>, <span class="dv">10</span>, <span class="dv">1</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="dv">0</span>) <span class="co"># 百分率</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>percen_med <span class="ot">&lt;-</span> (percentage <span class="sc">+</span> <span class="fu">lag</span>(percentage, <span class="at">default =</span> <span class="dv">100</span>)) <span class="sc">/</span> <span class="dv">2</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>percen_med[<span class="fu">length</span>(percen_med)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>pa <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(percentage <span class="sc">&gt;</span> <span class="dv">0</span>, sum)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>squared <span class="ot">&lt;-</span> percentage<span class="sc">^</span><span class="fl">0.5</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>logged <span class="ot">&lt;-</span> <span class="fu">log10</span>(percentage <span class="sc">+</span> <span class="dv">1</span>) <span class="co"># +1: 1未満を正にするため</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(bb_scale, percentage, percen_med, pa, squared, logged)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>bb_scale <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;5&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;+&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;0&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>percentage <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">75</span>, <span class="dv">50</span>, <span class="dv">25</span>, <span class="dv">10</span>, <span class="dv">1</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="dv">0</span>) <span class="co"># 百分率</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>percen_med <span class="ot">&lt;-</span> (percentage <span class="sc">+</span> <span class="fu">lag</span>(percentage, <span class="at">default =</span> <span class="dv">100</span>)) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>percen_med[<span class="fu">length</span>(percen_med)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>pa <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(percentage <span class="sc">&gt;</span> <span class="dv">0</span>, sum)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>squared <span class="ot">&lt;-</span> percentage<span class="sc">^</span><span class="fl">0.5</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>logged <span class="ot">&lt;-</span> <span class="fu">log10</span>(percentage <span class="sc">+</span> <span class="dv">1</span>) <span class="co"># +1: 1未満を正にするため</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(bb_scale, percentage, percen_med, pa, squared, logged)</span></code></pre></div>
 <pre><code>## # A tibble: 8 × 6
 ##   bb_scale percentage percen_med    pa squared  logged
 ##   &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
@@ -787,28 +811,6 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 ## 6 +              0.1        0.1      1   0.316 0.0414 
 ## 7 r              0.01       0.01     1   0.1   0.00432
 ## 8 0              0          0        0   0     0</code></pre>
-</section>
-<section id="相対優占度" class="slide level2">
-<h2>相対優占度</h2>
-<ul>
-<li>定義
-<ul>
-<li>nij：地点jでの種iの量(被度や個体数)</li>
-<li>Nj：地点jの全種の量の合計<br> Nj = Σnij</li>
-<li>Pij：地点jでの種iの相対優占度<br> Pij = nij / Nj</li>
-</ul></li>
-</ul>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>val <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>val <span class="sc">/</span> <span class="fu">sum</span>(val)</span></code></pre></div>
-<pre><code>## [1] 0.4 0.3 0.2 0.1</code></pre>
-<aside class="notes">
-<p>単純なデータ変換ではなく，相対値を求める変換として相対優占度の算出があります．
-相対優占度とは，ある地点における出現種の量(被度や個体数)の相対値で，全出現種の優占度の合計で各出現種の優占度を割ったものです．</p>
-<p>ある地点に種aからdまでの4種が生息していたとして，優占度がそれぞれ4,3,2,1であったとします．
-合計は10ですので，それぞれの相対優占度は0.4, 0.3, 0.2, 0.1です．
-相対値に変換することで，地点ごとの優占度のばらつきを取り除きます．</p>
-なお，相対優占度は，多様性指数の計算や類似度の計算で利用します．
-</aside>
 </section>
 <section id="hellinger変換" class="slide level2">
 <h2>Hellinger変換</h2>
