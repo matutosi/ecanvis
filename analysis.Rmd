@@ -119,7 +119,7 @@ Rを使用しますので，事前にインストールしておいてくださ�
 
 - Tidyな形式で保存
 - パソコンへの入力方法
-- データの変換
+- データの種類と変換
 
 <aside class="notes">
 調査資料をパソコンに保存するときに重要なことは，Tidyな形式で保存することです．
@@ -237,13 +237,15 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 また，セルの書式を文字列にしておくと，誤変換しにくいでしょう．
 </aside>
 
-## データ変換
+## データの種類と変換
 
-- Braun-Blanquetの階級値
 - 百分率
+- Braun-Blanquetの階級値
 - 在・不在
-- 平方根
-- 対数
+- 相対優占度
+- Hellinger変換
+- 平方根変換
+- 対数変換
 
 <aside class="notes">
 植生学では，どの地点に，どの種が，どの程度の量で生育していたのかを記録します．
@@ -265,19 +267,6 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 
 03479.pdf
 </aside>
-
-## データ変換
-
-```{r convert-value}
-bb_scale <- c("5", "4", "3", "2", "1", "+", "r", "0")
-percentage <- c(75, 50, 25, 10, 1, 0.1, 0.01, 0) # 百分率
-percen_med <- (percentage + lag(percentage, default = 100)) / 2
-percen_med[length(percen_med)] <- 0
-pa <- purrr::map_dbl(percentage > 0, sum)
-squared <- percentage^0.5
-logged <- log10(percentage + 1) # +1: 1未満を正にするため
-tibble::tibble(bb_scale, percentage, percen_med, pa, squared, logged)
-```
 
 ## 相対優占度
 
@@ -303,6 +292,19 @@ val / sum(val)
 
 なお，相対優占度は，多様性指数の計算や類似度の計算で利用します．
 </aside>
+
+## データ変換
+
+```{r convert-value}
+bb_scale <- c("5", "4", "3", "2", "1", "+", "r", "0")
+percentage <- c(75, 50, 25, 10, 1, 0.1, 0.01, 0) # 百分率
+percen_med <- (percentage + lag(percentage, default = 100)) / 2
+percen_med[length(percen_med)] <- 0
+pa <- purrr::map_dbl(percentage > 0, sum)
+squared <- percentage^0.5
+logged <- log10(percentage + 1) # +1: 1未満を正にするため
+tibble::tibble(bb_scale, percentage, percen_med, pa, squared, logged)
+```
 
 ## Hellinger変換
 
