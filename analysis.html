@@ -624,7 +624,7 @@ Rを使用しますので，事前にインストールしておいてくださ�
 詳細は，Hadley(2014)をご覧ください．</p>
 <p>言葉だけみてもわかりにくいので，Excelなどのスプレッドシートに地点情報を入力するとします．
 1つの変数が1つの列とは，A列に地点名が，B列に調査日をそれぞれ入力した状態です．
-1つの観測が1つの行とは，2行目に1地点目の情報である地点名，調査日，緯度，軽度などを入力した状態です．
+1つの観測が1つの行とは，2行目に1地点目の情報である地点名，調査日，緯度，傾度などを入力した状態です．
 なお，1行目には項目名を入力するのが一般的です．
 1つのタイプの観測群が1つの表とは，地点情報と組成の情報を別々のシートに入力した状態です．
 1つの値が1つのセルとは，A2のセルには1つの値のみが入っている状態です．</p>
@@ -746,10 +746,10 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 <li>百分率</li>
 <li>Braun-Blanquetの階級値</li>
 <li>在・不在</li>
-<li>相対優占度</li>
-<li>Hellinger変換</li>
 <li>平方根変換</li>
 <li>対数変換</li>
+<li>相対優占度</li>
+<li>Hellinger変換</li>
 </ul>
 <aside class="notes">
 <p>植生学では，どの地点に，どの種が，どの程度の量で生育していたのかを記録します．
@@ -768,38 +768,16 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 03479.pdf
 </aside>
 </section>
-<section id="相対優占度" class="slide level2">
-<h2>相対優占度</h2>
-<ul>
-<li>定義
-<ul>
-<li>nij：地点jでの種iの量(被度や個体数)</li>
-<li>Nj：地点jの全種の量の合計<br> Nj = Σnij</li>
-<li>Pij：地点jでの種iの相対優占度<br> Pij = nij / Nj</li>
-</ul></li>
-</ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>val <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>val <span class="sc">/</span> <span class="fu">sum</span>(val)</span></code></pre></div>
-<pre><code>## [1] 0.4 0.3 0.2 0.1</code></pre>
-<aside class="notes">
-<p>単純なデータ変換ではなく，相対値を求める変換として相対優占度の算出があります．
-相対優占度とは，ある地点における出現種の量(被度や個体数)の相対値で，全出現種の優占度の合計で各出現種の優占度を割ったものです．</p>
-<p>ある地点に種aからdまでの4種が生息していたとして，優占度がそれぞれ4,3,2,1であったとします．
-合計は10ですので，それぞれの相対優占度は0.4, 0.3, 0.2, 0.1です．
-相対値に変換することで，地点ごとの優占度のばらつきを取り除きます．</p>
-なお，相対優占度は，多様性指数の計算や類似度の計算で利用します．
-</aside>
-</section>
-<section id="データ変換" class="slide level2">
-<h2>データ変換</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>bb_scale <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;5&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;+&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;0&quot;</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>percentage <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">75</span>, <span class="dv">50</span>, <span class="dv">25</span>, <span class="dv">10</span>, <span class="dv">1</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="dv">0</span>) <span class="co"># 百分率</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>percen_med <span class="ot">&lt;-</span> (percentage <span class="sc">+</span> <span class="fu">lag</span>(percentage, <span class="at">default =</span> <span class="dv">100</span>)) <span class="sc">/</span> <span class="dv">2</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>percen_med[<span class="fu">length</span>(percen_med)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>pa <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(percentage <span class="sc">&gt;</span> <span class="dv">0</span>, sum)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>squared <span class="ot">&lt;-</span> percentage<span class="sc">^</span><span class="fl">0.5</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>logged <span class="ot">&lt;-</span> <span class="fu">log10</span>(percentage <span class="sc">+</span> <span class="dv">1</span>) <span class="co"># +1: 1未満を正にするため</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(bb_scale, percentage, percen_med, pa, squared, logged)</span></code></pre></div>
+<section id="データの種類と変換-1" class="slide level2">
+<h2>データの種類と変換</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bb_scale <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;5&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;+&quot;</span>, <span class="st">&quot;r&quot;</span>, <span class="st">&quot;0&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>percentage <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">75</span>, <span class="dv">50</span>, <span class="dv">25</span>, <span class="dv">10</span>, <span class="dv">1</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="dv">0</span>) <span class="co"># 百分率</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>percen_med <span class="ot">&lt;-</span> (percentage <span class="sc">+</span> <span class="fu">lag</span>(percentage, <span class="at">default =</span> <span class="dv">100</span>)) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>percen_med[<span class="fu">length</span>(percen_med)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>pa <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(percentage <span class="sc">&gt;</span> <span class="dv">0</span>, sum)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>squared <span class="ot">&lt;-</span> percentage<span class="sc">^</span><span class="fl">0.5</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>logged <span class="ot">&lt;-</span> <span class="fu">log10</span>(percentage <span class="sc">+</span> <span class="dv">1</span>) <span class="co"># +1: 1未満を正にするため</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(bb_scale, percentage, percen_med, pa, squared, logged)</span></code></pre></div>
 <pre><code>## # A tibble: 8 × 6
 ##   bb_scale percentage percen_med    pa squared  logged
 ##   &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
@@ -811,6 +789,28 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 ## 6 +              0.1        0.1      1   0.316 0.0414 
 ## 7 r              0.01       0.01     1   0.1   0.00432
 ## 8 0              0          0        0   0     0</code></pre>
+</section>
+<section id="相対優占度" class="slide level2">
+<h2>相対優占度</h2>
+<ul>
+<li>定義
+<ul>
+<li>nij：地点jでの種iの出現量(被度や個体数)</li>
+<li>Nj：地点jの全種の出現量の合計<br> Nj = Σnij</li>
+<li>Pij：地点jでの種iの相対優占度<br> Pij = nij / Nj</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>val <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>val <span class="sc">/</span> <span class="fu">sum</span>(val)</span></code></pre></div>
+<pre><code>## [1] 0.4 0.3 0.2 0.1</code></pre>
+<aside class="notes">
+<p>単純なデータ変換ではなく，相対値を求める変換として相対優占度の算出があります．
+相対優占度とは，ある地点における出現種の出現量(被度や個体数)の相対値で，全出現種の優占度の合計で各出現種の優占度を割ったものです．</p>
+<p>ある地点に種aからdまでの4種が生息していたとして，優占度がそれぞれ4,3,2,1であったとします．
+合計は10ですので，それぞれの相対優占度は0.4, 0.3, 0.2, 0.1です．
+相対値に変換することで，地点ごとの優占度のばらつきを取り除きます．</p>
+なお，相対優占度は，多様性指数の計算や類似度の計算で利用します．
+</aside>
 </section>
 <section id="hellinger変換" class="slide level2">
 <h2>Hellinger変換</h2>
@@ -988,8 +988,6 @@ dが0.2で，1/dが種数と同じ5です．
 <section id="クラスター分析" class="title-slide slide level1">
 <h1>クラスター分析</h1>
 <ul>
-<li>概要
-<ul>
 <li>地点あるいは種を分類</li>
 <li>地点の分類：種の出現の仕方(類似度)を算出</li>
 <li>方法
@@ -998,8 +996,7 @@ dが0.2で，1/dが種数と同じ5です．
 <li>「近いもの」を結合</li>
 </ul></li>
 <li>類似度と結合方法によって結果が異なる</li>
-<li>グループ内での順序は無意味</li>
-</ul></li>
+<li>グループ内での並び順は無意味</li>
 </ul>
 <aside class="notes">
 クラスター分析は，地点あるいは種をその出現の仕方に基づいて，クラスターというまとまりに結合していき，地点あるいは種を分類する手法です．
@@ -1015,11 +1012,17 @@ dが0.2で，1/dが種数と同じ5です．
 <section id="類似度" class="slide level2">
 <h2>類似度</h2>
 <ul>
+<li>メトリック
+<ul>
 <li>ユークリッド距離<br> ((x1-x2)^2 + (y1-y2)<sup>2)</sup>0.5</li>
 <li>Hellinger距離<br> Hellinger変換してからユークリッド距離を計算</li>
 <li>マンハッタン距離(碁盤の目の移動)<br> |x1-x2| + |y1-y2|</li>
-<li>Bray-Curtis距離：マンハッタン距離を標準化<br> |x1-x2| / (x1+x2) +
-|y1-y2| / (y1+y2)</li>
+</ul></li>
+<li>非メトリック
+<ul>
+<li>Bray-Curtis距離：マンハッタン距離を標準化<br> (|x1-x2| + |y1-y2|) /
+((x1+x2) + (y1+y2))</li>
+</ul></li>
 </ul>
 <aside class="notes">
 <p>類似度は，各地点での種の出現量をもとに計算します．
@@ -1047,15 +1050,27 @@ Similarity)は，出現量を在・不在データに変換したものと同じ
 <section id="主な結合方法" class="slide level2">
 <h2>主な結合方法</h2>
 <ul>
-<li>最近隣法</li>
-<li>非加重群平均法(UPGMA)</li>
-<li>Ward法</li>
+<li>最近隣法
+<ul>
+<li>説明でよく使われる</li>
+<li>欠点：鎖状につながりやすい</li>
+</ul></li>
+<li>非加重群平均法(UPGMA)
+<ul>
+<li>グループ結合後に距離を再計算</li>
+<li>非メトリックな距離も可能</li>
+</ul></li>
+<li>Ward法
+<ul>
+<li>クラスター内の分散を最小化</li>
+<li>メトリックな距離のみ</li>
+</ul></li>
 </ul>
 <aside class="notes">
 <p>説明でよく使われる結合方法として最近隣法があります．
 グループの結合後も，グループ間で最も近い地点のあるグループを結びつけます．
 一度だけ類似度を計算すれば良いので，計算量が少ないという利点があります．
-グループ結合後に，鎖状あるいは帯状に細長くつながってしまう減少が起こりやすいという欠点があります．</p>
+グループ結合後に，鎖状あるいは帯状に細長くつながりやすいという欠点があります．</p>
 <p>非加重群平均法(UPGMA)は，グループ結合後にグループ間の距離を再計算します．
 計算量は多くなるものの，よほど多くの地点でない限り問題になることはほとんどありません．
 UPGMAで用いる距離は，メトリックな指標でなくても構いません．</p>
@@ -1097,11 +1112,12 @@ Bray-Curtis距離をもとに非荷重群平均法で結合する方法と，Hel
 <li>手法は多種多様
 <ul>
 <li>PCA：主成分分析</li>
+<li>CA：対応分析</li>
 <li>DCA：除歪対応分析</li>
 <li>PCoA：主座標分析</li>
 <li>nMDS：非計量多次元尺度法</li>
-<li>CCA：正準相関分析<br> 長い環境軽傾度との対応</li>
-<li>RDA：冗長性分析<br> 短い環境軽傾度との対応</li>
+<li>CCA：正準相関分析<br> 長い環境傾度との対応</li>
+<li>RDA：冗長性分析<br> 短い環境傾度との対応</li>
 </ul></li>
 <li>類似度との組み合わせで結果が異なる</li>
 </ul>
@@ -1109,9 +1125,11 @@ Bray-Curtis距離をもとに非荷重群平均法で結合する方法と，Hel
 <p>序列化の手法は，Ordinationとも言われます．</p>
 <p>その方法は本当に色々とあります．
 PCA(主成分分析)自体を使うことはほとんどありませんが，基本的な考え方ですので，最初に説明します．
+CA(Correspondence
+Analysis)の説明は省略しますが，CCAとの関係で必要があれば，別途学んでください．
 DCAは場合によって使われることがあります．
 PCoAとnMDSは比較的よく用いられます．</p>
-<p>環境軽傾度との対応関係を明らかにする手法としてCCAとRDAがあり，それぞれ長い環境軽度と短い環境軽度のときに用いられます．</p>
+<p>環境傾度との対応関係を明らかにする手法としてCCAとRDAがあり，それぞれ長い環境傾度と短い環境傾度のときに用いられます．</p>
 <p>クラスター分析と同様に，類似度との組み合わせで結果がことなります．
 また，手法によっては使える距離に制限があります．</p>
 詳しくは，佐々木ほか(2015)のp30を参考にしてください．
@@ -1162,7 +1180,7 @@ PCoAとnMDSは比較的よく用いられます．</p>
 <section id="馬蹄アーチ効果" class="slide level2">
 <h2>馬蹄(アーチ)効果</h2>
 <ul>
-<li>長い環境軽度</li>
+<li>長い環境傾度</li>
 <li>アーチ状に配置</li>
 <li>入れ替わりが一定のデータ
 <ul>
@@ -1171,7 +1189,7 @@ PCoAとnMDSは比較的よく用いられます．</p>
 </ul></li>
 </ul>
 <aside class="notes">
-馬蹄効果とは，種の入れ替わりのある長い環境軽度のデータを序列化によって配置したときに，馬蹄(馬のひづめ)形，つまりアーチ状になってしまうことです．
+馬蹄効果とは，種の入れ替わりのある長い環境傾度のデータを序列化によって配置したときに，馬蹄(馬のひづめ)形，つまりアーチ状になってしまうことです．
 もし，入れ替わりが一定のデータがあったときに，類似度だけを考えるなら直線上に配置されるはずです．
 しかし，PCAの第1軸と第2軸で実際に配置すると，全体の配置が馬蹄形になります．
 その結果，類似度が低いはずの地点が近くに配置されてしまいます．
@@ -1277,12 +1295,13 @@ gemini：PCoAは，非ユークリッド距離であるBray-Curtis距離を計�
 <ul>
 <li>2次元座標への配置<br> 本当は多次元だが, 実質的には2次元が多い</li>
 <li>Bray-Curtis距離 + PCoA or nMDS</li>
+<li>環境要因対応版 広い傾度：CCA 狭い傾度：RDA</li>
 </ul>
 <aside class="notes">
 <p>序列化は，主要な成分として多次元への配置をするものです．</p>
 <p>実際によく使われる序列化手法は，Bray-Curtis距離をもとにしたPCoAとBray-Curtis距離をもとにしたnMDSです．</p>
-環境軽度との関係を分析する場合は，CCAかRDAを使います．
-環境軽度が長いときはCCAを，短いときにはRDAを使うことが多いです．
+環境傾度との関係を分析する場合は，CCAかRDAを使います．
+環境傾度が長いときはCCAを，短いときにはRDAを使うことが多いです．
 ただし，これは相対的なものですので，まずは両方を試して考えても良いかもしれません．
 </aside>
 </section></section>
@@ -1293,26 +1312,36 @@ gemini：PCoAは，非ユークリッド距離であるBray-Curtis距離を計�
 <li>特定のグループに特徴的に出現する種を抽出</li>
 <li>在・不在，出現量のどちらでも可能</li>
 <li>Dufrene and Legendre (1997)</li>
+<li>無作為化検定(Permutation test)が可能</li>
 </ul>
 <aside class="notes">
 <p>指標種分析は，グループ分けした地点に特徴的に出現する種を明らかにするものです．
-出現の有無を使うこともできますし，出現量を使うことも可能です．
-また，繰り返し計算による無作為化検定が可能です．</p>
+出現の有無を使うこともできますし，出現量を使うことも可能です．</p>
+<p>Indicator Species Analysisは，無作為化検定(Permutation
+test)によって統計的な有意性を計算できます．
+なお，無作為化検定とはランダムに並べ替えることを繰り返して統計量の分布を求めるノンパラメトリック検定です．</p>
 詳細は，Dufrene and Legendre (1997)をご覧ください．
 </aside>
 </section>
 <section id="指標値の計算" class="slide level2">
 <h2>指標値の計算</h2>
 <ul>
-<li>IV = Cij / Ci * Fij/ Fj * 100
+<li>IV = (Cij / Ci) * (Fij/ Fj) * 100
 <ul>
-<li>Cij：種iのグループjでの平均被度</li>
-<li>Ci：種iの全体での平均被度</li>
+<li>Cij：種iのグループjでの出現量</li>
+<li>Ci：種iの全体での出現量</li>
 <li>Fij：種iのグループjでの出現回数</li>
 <li>Fj：種iの全体での出現回数</li>
 </ul></li>
 </ul>
 <aside class="notes">
+<p>種iのグループjでの指標値を計算するとします．</p>
+<p>種iのグループjでの出現量を種iの全体での出現量で割ります．
+これは，グループjでの出現量が高いほど大きな値になります．</p>
+<p>また，種iのグループjでの出現回数を種iの全体での出現回数で割ります．
+これは，グループjでの出現頻度が高いほど大きな値になります．</p>
+つまり，グループjでの出現量や出現頻度が高いほど大きな値になります．
+この値は，0-1の間になりますので，%で示すには100倍します．
 </aside>
 </section></section>
 <section>
