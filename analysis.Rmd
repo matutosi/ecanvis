@@ -765,7 +765,7 @@ dplyr::select(tbl_arch, 1:10)
 
 ## 馬蹄効果の例
 
-```{r pca-arch, include = FALSE}
+```{r pca-arch-plot, include = FALSE}
 pca_arch <- 
   tbl_arch |>
   ecan::ordination(o_method = "pca")
