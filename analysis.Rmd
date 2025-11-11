@@ -647,22 +647,80 @@ PCoAとnMDSは比較的よく用いられます．
 
 PCAはその手法の結果として馬蹄効果が現れることがあります．
 これは別途説明します．
-
-説明を簡単にするために，xとyの2次元で考えます．
-この配置を説明するのに最も良い次元はxでもyでもなく，
-
 </aside>
 
+## PCAの考え方
 
-```{r}
-set.seed(14)
-n <- 10
-x <- 1:n
-y <- x * 2 + rnorm(n) * 2
-df <- tibble::tibble(x = x, y = y) 
-ggplot2::ggplot(df, ggplot2::aes(x, y)) + ggplot2::geom_point()
-lm(df)
+```{r pca-x-y, include = FALSE}
+  # --- 1. データの定義とPCAパラメータ ---
+  # 元のデータ点
+x <- c(160, 165, 170, 175, 190, 172, 168, 185, 162, 171)
+y <- c( 61,  70,  79,  74,  78,  80,  61,  82,  67,  75)
+  # 平均点
+mu_x <- mean(x) # 171.8
+mu_y <- mean(y) # 72.8
+  # 負荷量 (固有ベクトル)
+a11 <-  0.826
+a12 <-  0.563
+a21 <- -0.563
+a22 <-  0.826
+  # --- 2. データフレームの作成とセンタリング ---
+df_pca <- tibble(x = x, y = y) |> 
+  dplyr::mutate(  # センタリング
+    x_c = x - mu_x,
+    y_c = y - mu_y
+  )
+  # --- 3. 投影点の計算関数 ---
+calculate_pc1_score <- function(x_c, y_c) {  # PC1スコアを計算する関数
+  return(a11 * x_c + a12 * y_c)
+}
+calculate_pc2_score <- function(x_c, y_c) { # PC2スコアを計算する関数
+  return(a21 * x_c + a22 * y_c)
+}
+  # --- 4. 投影点の計算実行 ---
+df_pca <- 
+  df_pca |> 
+  dplyr::mutate(      # PCスコアの計算
+    Z1 = calculate_pc1_score(x_c, y_c),
+    Z2 = calculate_pc2_score(x_c, y_c),
+    # 1. PC1軸への投影点 (PC2軸に平行な垂線がPC1軸と交差する点)
+    x1 = mu_x + Z1 * a11,   # 投影点 x1 = mu_x + Z1 * a11
+    y1 = mu_y + Z1 * a12,   # 投影点 y1 = mu_y + Z1 * a12
+    # 2. PC2軸への投影点 (PC1軸に平行な垂線がPC2軸と交差する点)
+    x2 = mu_x + Z2 * a21, # 投影点 x2 = mu_x + Z2 * a21
+    y2 = mu_y + Z2 * a22  # 投影点 y2 = mu_y + Z2 * a22
+  ) |>
+  print()
+
+df_pca |>
+  ggplot2::ggplot(ggplot2::aes(x, y)) + # 直線は丸め誤差あり
+  ggplot2::geom_abline(intercept = -44.4, slope = 0.6816, color = "black", linetype = "solid") +
+  ggplot2::geom_abline(intercept = 324.8, slope = -1.467, color = "black", linetype = "dashed") +
+  # --- 2. 垂線の描画 ---
+  ggplot2::geom_segment(aes(x = x, y = y, xend = x1, yend = y1), color = "red") +
+  ggplot2::geom_segment(aes(x = x, y = y, xend = x2, yend = y2), color = "blue") +
+  # --- 3. 点の描画 ---
+  ggplot2::geom_point(size = 3) +  # 元の点 (黒)
+  ggplot2::geom_point(aes(x1, y1), col = "red", size = 2, shape = 1) +  # PC1への投影点 (赤)
+  ggplot2::geom_point(aes(x2, y2), col = "blue", size = 2, shape = 1) +  # PC2への投影点 (青)
+    # --- 4. テーマ設定 ---
+  ggplot2::coord_fixed() + # 軸のスケールを固定し、PC1とPC2の直交性を視覚的に正しく表現
+  ggplot2::theme_bw()
 ```
+
+<aside class="notes">
+説明を簡単にするために，上のようにxとyの2変数のデータがあるとします．
+この配置を説明するのに最も良い軸はx軸でもy軸でもありません．
+
+左下から右上への実線をひいていますが，これがxとyの両方を説明をするよい軸です．
+PCAでは第1軸といいます．
+第1軸と直行する点線が第2軸で第1軸の次に説明の程度の大きい軸です．
+今回は2変数でしたので，2軸で全てを説明できましたが，多変量の場合はその変数分の軸があります．
+
+ただし，実際には第1軸と第2軸で多くを説明することができます．
+説明する量を寄与率といい，この例では第1軸の寄与率が0.96で，第2軸が0.04です．
+</aside>
+
 
 ## 馬蹄(アーチ)効果
 
@@ -682,6 +740,44 @@ lm(df)
 しかし，これを直接克服することはできません．
 </aside>
 
+## 馬蹄効果の例
+
+```{r pca-arch, include = FALSE}
+val <- rep(c(1,2,3,2,1), 10)
+sp <- paste0("sp_", stringr::str_pad(unlist(purrr::map2(1:10, 5:14, `:`)), 2, "left", "0"))
+st <- paste0("st_", stringr::str_pad(rep(1:10, each = 5), 2, "left", "0"))
+df_arch <- tibble::tibble(stand = st, species = sp, val = val)
+tbl_arch <- ecan::df2table(df_arch, ab = "val")
+```
+
+```{r pca-arch-show, echo = FALSE}
+tbl_arch
+dplyr::select(tbl_arch, 1:10)
+```
+
+<aside class="notes">
+たとえば，10地点，14種からなるデータがあるとします．
+なお，表示は10種に省略しています．
+地点1から地点10まではきれいな環境傾度に並んでいて，1と2のように隣接した地点の類似度はそれれぞれ同じです．
+ですので，1軸上にきれいな地点にならぶことを想定します．
+しかし，PCAで解析すると異なる結果になります．
+</aside>
+
+## 馬蹄効果の例
+
+```{r pca-arch, include = FALSE}
+pca_arch <- 
+  tbl_arch |>
+  ecan::ordination(o_method = "pca")
+ecan::ord_plot(pca_arch)
+```
+
+<aside class="notes">
+PCAでプロットすると，上のように，地点1から地点10が馬蹄のようにプロットされます．
+環境傾度上では地点1と地点10は最も異なると考えます．
+しかし，PCAでは地点1と共通種のない地点6から地点10はどれも類似度は0です．
+そのため，このような結果になってしまいます．
+</aside>
 
 ## DCA：除歪対応分析
 
@@ -1246,7 +1342,7 @@ plot(cls_color)
 ord_nmds <- 
   df  |>
   df2table() |>
-  ordination(o_method = "nmds")
+  ecan::ordination(o_method = "nmds")
 ```
 
 <aside class="notes">
