@@ -19,6 +19,10 @@ output:
   # 
   # https://matutosi.github.io/ecanvis/analysis.html
   # https://matutosi.github.io/ecanvis/analysis.html?print-pdf # PDF印刷用
+
+  # ローカル
+  # D:/matu/work/ToDo/ecanvis/analysis.html
+  # D:/dropbox/ToDo/ecanvis/analysis.html?print-pdf/#  # pdfダメ
 ```
 
 ```{r setup, include = FALSE}
@@ -75,6 +79,7 @@ str2tbl <- function(str, ncol){
 - 生成AIに質問すれば教えてくれる
   - 基本的な考え方の理解が重要
   - ブラックボックスではダメ
+- 間違いがあればご指摘ください
 
 <aside class="notes">
 植生学では現地調査によって収集した調査資料を解析することで，植物群集の特徴などを明らかにします．
@@ -260,7 +265,7 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 取得したデータを解析のために変換することもあります．
 たとえば，階級の中央値への変換や，平方根や対数での変換です．
 
-なお，優占度はここでは扱いません．
+なお，群度はここでは扱いません．
 もちろん，未同定種や種の分類の問題はありますが．
 
 その他，鈴木(1954)のp61，星野(1991)，小林(1995)のp53,54も参考になります．
@@ -272,13 +277,15 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 
 ```{r convert-value}
 bb_scale <- c("5", "4", "3", "2", "1", "+", "r", "0")
-percentage <- c(75, 50, 25, 10, 1, 0.1, 0.01, 0) # 百分率
-percen_med <- (percentage + lag(percentage, default = 100)) / 2
+percentage <- c(75, 50, 25, 10, 1, 0.1, 0.01, 0)
+percen_med <- 
+  (percentage + lag(percentage, default = 100)) / 2
 percen_med[length(percen_med)] <- 0
 pa <- purrr::map_dbl(percentage > 0, sum)
 squared <- percentage^0.5
-logged <- log10(percentage + 1) # +1: 1未満を正にするため
-tibble::tibble(bb_scale, percentage, percen_med, pa, squared, logged)
+logged <- log10(percentage + 1) # +1: 1未満を正
+tibble::tibble(
+  bb_scale, percentage, percen_med, pa, squared, logged)
 ```
 
 ## 相対優占度
@@ -443,7 +450,7 @@ dが0.4で，1/dが2.5です．
 特定の種が優占しているため，多様性指数が低くなりました．
 </aside>
 
-## α多様性の個人的見解
+## α多様性のまとめ
 
 - 基本情報としての種数
 - 均等度と種数を考慮：1/dが理解しやすい
@@ -566,7 +573,7 @@ Ward法で用いる距離は，メトリックな指標であることが必要�
 https://iit.kke.co.jp/marketingscience/analysis/method/analysis_cluster.html
 </aside>
 
-## クラスター分析の個人的見解
+## クラスター分析のまとめ
 
 - 地点や種を結合
 - 1次元的
@@ -582,8 +589,6 @@ https://iit.kke.co.jp/marketingscience/analysis/method/analysis_cluster.html
 
 結局どの組み合わせを使えば良いのかですが，手法として妥当かつよく使われる組み合わせは2つあります．
 Bray-Curtis距離をもとに非荷重群平均法で結合する方法と，Hellinger距離をもとにWard法で結合する方法です．
-
-
 
 Bray-Curtis距離はマンハッタン距離の標準化であるため，生態学的な意味が理解しやすいです．
 ただし，Bray-Curtis距離は厳密にはメトリックではないので，
@@ -651,7 +656,7 @@ PCAはその手法の結果として馬蹄効果が現れることがありま�
 
 ## PCAの考え方
 
-```{r pca-x-y, include = FALSE}
+```{r pca-x-y-1, echo = FALSE}
   # --- 1. データの定義とPCAパラメータ ---
   # 元のデータ点
 x <- c(160, 165, 170, 175, 190, 172, 168, 185, 162, 171)
@@ -689,21 +694,11 @@ df_pca <-
     # 2. PC2軸への投影点 (PC1軸に平行な垂線がPC2軸と交差する点)
     x2 = mu_x + Z2 * a21, # 投影点 x2 = mu_x + Z2 * a21
     y2 = mu_y + Z2 * a22  # 投影点 y2 = mu_y + Z2 * a22
-  ) |>
-  print()
+  )
 
 df_pca |>
   ggplot2::ggplot(ggplot2::aes(x, y)) + # 直線は丸め誤差あり
-  ggplot2::geom_abline(intercept = -44.4, slope = 0.6816, color = "black", linetype = "solid") +
-  ggplot2::geom_abline(intercept = 324.8, slope = -1.467, color = "black", linetype = "dashed") +
-  # --- 2. 垂線の描画 ---
-  ggplot2::geom_segment(ggplot2::aes(x = x, y = y, xend = x1, yend = y1), color = "red") +
-  ggplot2::geom_segment(ggplot2::aes(x = x, y = y, xend = x2, yend = y2), color = "blue") +
-  # --- 3. 点の描画 ---
   ggplot2::geom_point(size = 3) +  # 元の点 (黒)
-  ggplot2::geom_point(ggplot2::aes(x1, y1), col = "red", size = 2, shape = 1) +  # PC1への投影点 (赤)
-  ggplot2::geom_point(ggplot2::aes(x2, y2), col = "blue", size = 2, shape = 1) +  # PC2への投影点 (青)
-    # --- 4. テーマ設定 ---
   ggplot2::coord_fixed() + # 軸のスケールを固定し、PC1とPC2の直交性を視覚的に正しく表現
   ggplot2::theme_bw()
 ```
@@ -711,9 +706,51 @@ df_pca |>
 <aside class="notes">
 説明を簡単にするために，上のようにxとyの2変数のデータがあるとします．
 この配置を説明するのに最も良い軸はx軸でもy軸でもありません．
+</aside>
 
-左下から右上への実線をひいていますが，これがxとyの両方を説明をするよい軸です．
+
+## PCAの考え方
+
+```{r pca-x-y-2, echo = FALSE}
+df_pca |>
+  ggplot2::ggplot(ggplot2::aes(x, y)) + # 直線は丸め誤差あり
+  ggplot2::geom_abline(intercept = -44.4, slope = 0.6816, color = "black", linetype = "solid") +
+  # --- 2. 垂線の描画 ---
+  ggplot2::geom_segment(ggplot2::aes(x = x, y = y, xend = x1, yend = y1), color = "red") +
+  # --- 3. 点の描画 ---
+  ggplot2::geom_point(size = 3) +  # 元の点 (黒)
+  ggplot2::geom_point(ggplot2::aes(x1, y1), col = "red", size = 2, shape = 1) +  # PC1への投影点 (赤)
+    # --- 4. テーマ設定 ---
+  ggplot2::coord_fixed() + # 軸のスケールを固定し、PC1とPC2の直交性を視覚的に正しく表現
+  ggplot2::theme_bw()
+```
+
+<aside class="notes">
+左下から右上への実線をひいていますが，これがxとyの両方を説明をする最適な軸です．
 PCAでは第1軸といいます．
+</aside>
+
+
+## PCAの考え方
+
+```{r pca-x-y-3, echo = FALSE}
+df_pca |>
+  ggplot2::ggplot(ggplot2::aes(x, y)) + # 直線は丸め誤差あり
+  ggplot2::geom_abline(intercept = -44.4, slope = 0.6816, color = "black", linetype = "solid") +
+  ggplot2::geom_abline(intercept = 324.8, slope = -1.467, color = "black", linetype = "dashed") +
+  # --- 2. 垂線の描画 ---
+  #   ggplot2::geom_segment(ggplot2::aes(x = x, y = y, xend = x1, yend = y1), color = "red") +
+  ggplot2::geom_segment(ggplot2::aes(x = x, y = y, xend = x2, yend = y2), color = "blue") +
+  # --- 3. 点の描画 ---
+  ggplot2::geom_point(size = 3) +  # 元の点 (黒)
+  #   ggplot2::geom_point(ggplot2::aes(x1, y1), col = "red", size = 2, shape = 1) +  # PC1への投影点 (赤)
+  ggplot2::geom_point(ggplot2::aes(x2, y2), col = "blue", size = 2, shape = 1) +  # PC2への投影点 (青)
+    # --- 4. テーマ設定 ---
+  ggplot2::coord_fixed() + # 軸のスケールを固定し、PC1とPC2の直交性を視覚的に正しく表現
+  ggplot2::theme_bw()
+```
+
+<aside class="notes">
 第1軸と直行する点線が第2軸で第1軸の次に説明の程度の大きい軸です．
 今回は2変数でしたので，2軸で全てを説明できましたが，多変量の場合はその変数分の軸があります．
 
@@ -742,7 +779,7 @@ PCAでは第1軸といいます．
 
 ## 馬蹄効果の例
 
-```{r pca-arch, include = FALSE}
+```{r pca-arch, echo = FALSE}
 val <- rep(c(1,2,3,2,1), 10)
 sp <- paste0("sp_", stringr::str_pad(unlist(purrr::map2(1:10, 5:14, `:`)), 2, "left", "0"))
 st <- paste0("st_", stringr::str_pad(rep(1:10, each = 5), 2, "left", "0"))
@@ -751,7 +788,6 @@ tbl_arch <- ecan::df2table(df_arch, ab = "val")
 ```
 
 ```{r pca-arch-show, echo = FALSE}
-tbl_arch
 dplyr::select(tbl_arch, 1:10)
 ```
 
@@ -765,7 +801,7 @@ dplyr::select(tbl_arch, 1:10)
 
 ## 馬蹄効果の例
 
-```{r pca-arch-plot, include = FALSE}
+```{r pca-arch-plot, echo = FALSE}
 pca_arch <- 
   tbl_arch |>
   ecan::ordination(o_method = "pca")
@@ -873,7 +909,7 @@ RDAはPCAの環境要因対応版です．
 </aside>
 
 
-## 序列化の個人的見解
+## 序列化のまとめ
 
 - 2次元座標への配置<br>
   本当は多次元だが, 実質的には2次元が多い
@@ -1009,7 +1045,7 @@ ecanをインストールするときに同時にインストールされます�
 
 ## 準備：パッケージの呼び出し
 
-```{r, include = FALSE}
+```{r, echo = FALSE}
 library(vegan)
 library(ecan)
 library(tibble)
@@ -1050,28 +1086,21 @@ library(ggrepel)
 地点，組成，種に関するデータがtidyなものになれば，あとは結合をすれば準備が完了します．
 </aside>
 
-## CSVの読み込み(例)
+## データの読み込み(例)
 
-```{r read-csv, eval = FALSE}
+```{r read-data, eval = FALSE}
 path_stand <- "c:/hoge/huga/stand.csv"
 df_st <- readr::read_csv(path_stand)
+
+path_data <- "c:/hoge/huga/data.xlsx"
+df_st <- openxlsx::read.xlsx(path_data, sheet = 1)
 ```
 
 <aside class="notes">
 CSVからデータを読み込むときはreadrの`read_csv()`を使うのが良いでしょう．
 引数として各データの種類やスキップする行なども指定できます．
 詳しくはドキュメントを見てください．
-</aside>
 
-## Excelデータの読み込み(例)
-
-```{r read-excel, eval = FALSE}
-path_stand <- "c:/hoge/huga/data.xlsx"
-  # 引数sheetでシート名を番号か文字列で指定
-df_st <- openxlsx::read.xlsx(path_stand, sheet = 1)
-```
-
-<aside class="notes">
 Excel形式のデータを読み込むときはopenxlsxの`read.xlsx()`を使うのが良いでしょう．
 シート名が複数あるときは，引数`sheet`でシート番号がシート名を指定してください．
 こちらも，詳しくはドキュメントを見てください．
@@ -1207,7 +1236,7 @@ dune_env_df |>
 その後で`group_by()`でグループ化して，`summarise_if()`で数値の列で平均値を求めます．
 </aside>
 
-## α多様性の図示
+## α多様性の図示(コード)
 
 ```{r diversity-ggplot}
 diversity_gg <- 
@@ -1268,7 +1297,7 @@ cls
 
 ## クラスター分析結果の図示
 
-```{r cluster-plot, eval = FALSE}
+```{r cluster-plot}
 library(ggdendro)
 ggdendro::ggdendrogram(cls)
 ```
@@ -1276,24 +1305,16 @@ ggdendro::ggdendrogram(cls)
 <aside class="notes">
 </aside>
 
-## クラスター分析結果の図示
-
-```{r cluster-plot-show, echo = FALSE}
-  # echo = FALSEでコード非表示
-  # include = FALSE # 実行のみで, コード・出力・図は非表示
-library(ggdendro)
-ggdendro::ggdendrogram(cls)
-```
-
-<aside class="notes">
-</aside>
-
-## クラスター分析(図示の準備)
+## クラスター分析(グループ追加)
 
 ```{r cluster-plot-group-prep}
 indiv <- "stand"
 group <- "Use"
-cls_group <- ecan::cls_add_group(cls, dune_env_df, indiv = indiv, group = group)
+cls_group <- 
+  ecan::cls_add_group(
+    cls, dune_env_df, 
+    indiv = indiv, 
+    group = group)
 ```
 
 <aside class="notes">
@@ -1309,7 +1330,7 @@ ggdendro::ggdendrogram(cls_group)
 <aside class="notes">
 </aside>
 
-## クラスター分析(グループ別で着色)
+## クラスター分析(グループで着色)
 
 ```{r cluster-plot-group-color}
 cls_color <- stats::as.dendrogram(cls_group)
@@ -1320,11 +1341,33 @@ col <- cls_color(cls, dune_env_df, indiv = indiv, group = group)
 <aside class="notes">
 </aside>
 
-## クラスター分析(グループ別で着色)
+## クラスター分析(着色して図示，コード)
 
-```{r cluster-plot-group-color-plot}
+```{r cluster-plot-group-color-plot-prep, eval = FALSE}
 plot(cls_color)
-dendextend::colored_bars(colors = col, cls_color, group, y_shift = 0,  y_scale = 3)
+dendextend::colored_bars(
+  colors = col, 
+  cls_color, 
+  group, 
+  y_shift = 0, 
+  y_scale = 3)
+par(new = TRUE)
+plot(cls_color)
+```
+
+<aside class="notes">
+</aside>
+
+## クラスター分析(着色して図示)
+
+```{r cluster-plot-group-color-plot, echo = FALSE}
+plot(cls_color)
+dendextend::colored_bars(
+  colors = col, 
+  cls_color, 
+  group, 
+  y_shift = 0, 
+  y_scale = 3)
 par(new = TRUE)
 plot(cls_color)
 ```
@@ -1334,15 +1377,20 @@ plot(cls_color)
 
 # 序列化(演習)
 
+- nMDS
+- Bray-Curtis距離
+- 地点でプロット
+- 種でプロット + 色付き
 
-
-## 序列化：nMDS
+## 序列化：nMDS，Bray-Curtis距離
 
 ```{r nmds}
 ord_nmds <- 
   df  |>
   df2table() |>
-  ecan::ordination(o_method = "nmds")
+  ecan::ordination(
+    o_method = "nmds", 
+    d_method = "bray")
 ```
 
 <aside class="notes">
@@ -1356,9 +1404,22 @@ ord_nmds <-
 <aside class="notes">
 </aside>
 
+## 序列化：地点の図示(コード)
+
+```{r nmds-plot-st-prep, eval = FALSE}
+ord_nmds_st |>
+  ggplot2::ggplot(ggplot2::aes(V1, V2, label = .data[["rowname"]])) +
+  ggplot2::geom_text() +
+  ggplot2::theme_bw()
+```
+
+
+<aside class="notes">
+</aside>
+
 ## 序列化：地点の図示
 
-```{r nmds-plot-st-prep}
+```{r nmds-plot-st, echo = FALSE}
 ord_nmds_st |>
   ggplot2::ggplot(ggplot2::aes(V1, V2, label = .data[["rowname"]])) +
   ggplot2::geom_text() +
@@ -1371,12 +1432,12 @@ ord_nmds_st |>
 
 ## 序列化：種の図示の準備
 
-ord_add_group()で抽出も実行
-
 ```{r nmds-plot-sp-prep}
 indiv <- "species"
 group <- "dummy_1"
-ord_nmds_sp <- ecan::ord_add_group(ord_nmds, score = "sp_scores", df, indiv, group)
+ord_nmds_sp <- 
+  ecan::ord_add_group(ord_nmds, # 抽出も実行
+    score = "sp_scores", df, indiv, group)
 ```
 
 <aside class="notes">
@@ -1393,7 +1454,21 @@ ord_nmds_sp
 
 ## 序列化：種の図示
 
-```{r nmds-plot-sp-plot}
+```{r nmds-plot-sp-plot-prep, eval = FALSE}
+ord_nmds_sp |>
+  ggplot2::ggplot(ggplot2::aes(V1, V2, label = .data[[indiv]])) +
+  geom_point(
+    ggplot2::aes(col = .data[[group]]), alpha = 0.4, size = 7) +
+  ggplot2::geom_text() +
+  ggplot2::theme_bw()
+```
+
+<aside class="notes">
+</aside>
+
+## 序列化：種の図示
+
+```{r nmds-plot-sp-plot, echo = FALSE}
 ord_nmds_sp |>
   ggplot2::ggplot(ggplot2::aes(V1, V2, label = .data[[indiv]])) +
   geom_point(ggplot2::aes(col = .data[[group]]), alpha = 0.4, size = 7) +
@@ -1406,53 +1481,20 @@ ord_nmds_sp |>
 
 # 指標種分析(演習)
 
-`row_data = TRUE`でlabdsv::indval()のそのままの結果
-
-```{r indval}
+```{r indval, eval = FALSE}
+  # `row_data = TRUE`でlabdsv::indval()のそのままの結果
 isa_res_raw <- ind_val(df, group = "Management", row_data = TRUE)
-```
-
-<aside class="notes">
-</aside>
-
-## 指標種分析の結果：種の出現頻度
-
-```{r indval-raw-res-freq}
-isa_res_raw$relfrq
-```
-
-<aside class="notes">
-</aside>
-
-## 指標種分析の結果：種の平均出現量
-
-```{r indval-raw-res-abundance}
-isa_res_raw$relabu
-```
-
-<aside class="notes">
-</aside>
-
-## 指標種分析の結果：指標値
-
-```{r indval-raw-res-indval}
-isa_res_raw$indval
-```
-
-<aside class="notes">
-</aside>
-
-## 指標種分析の結果：まとめ
-
-```{r indval-raw-res-summary}
-  # 最大値のクラス(区分), その指標値とp値
+isa_res_raw$relfrq # 種の出現頻度
+isa_res_raw$relabu # 種の平均出現量
+isa_res_raw$indval # 指標値
 tibble(
-  cls = isa_res_raw$maxcls, 
-  ind_val = isa_res_raw$indcls, 
-  p = isa_res_raw$pval)
+  cls = isa_res_raw$maxcls,     # 最大値のクラス
+  ind_val = isa_res_raw$indcls, # 指標値
+  p = isa_res_raw$pval)         # p値
 ```
 
 <aside class="notes">
+
 </aside>
 
 ## 指標種分析の結果：整理した結果
@@ -1463,26 +1505,32 @@ group <- "Management"
 ```
 
 <aside class="notes">
+
 </aside>
 
-## 指標種分析の結果：
+## 指標種分析の結果の図示(コード)
 
 ```{r indval-plot}
 isa_gg <- 
   isa_res |>
-   ggplot2::ggplot(ggplot2::aes(x = .data[[group]], y = .data[["ind.val"]],
-             size = log(1 / (.data[["p.value"]] * 10)),
-             label = .data[["species"]])) + 
-    ggplot2::geom_point() + 
-    ggrepel::geom_text_repel(ggplot2::aes(size = log(1 / (.data[["p.value"]] * 10), base = 5))) + 
-    ggplot2::theme_bw() + 
+   ggplot2::ggplot(
+    ggplot2::aes(
+      x = .data[[group]], 
+      y = .data[["ind.val"]],
+      size = log(1 / (.data[["p.value"]] * 10)),
+      label = .data[["species"]])) + 
+  ggplot2::geom_point() + 
+  ggrepel::geom_text_repel(
+    ggplot2::aes(
+      size = log(1 / (.data[["p.value"]] * 10), base = 5))) + 
+  ggplot2::theme_bw() + 
     ggplot2::theme(legend.position = "none")
 ```
 
 <aside class="notes">
 </aside>
 
-## 指標種分析の結果：
+## 指標種分析の結果の図示
 
 ```{r indval-plot-show}
 isa_gg
