@@ -1360,7 +1360,7 @@ ord_nmds <-
 
 ```{r nmds-plot-st-prep}
 ord_nmds_st |>
-  ggplot2::ggplot(aes(V1, V2, label = .data[["rowname"]])) +
+  ggplot2::ggplot(ggplot2::aes(V1, V2, label = .data[["rowname"]])) +
   ggplot2::geom_text() +
   ggplot2::theme_bw()
 ```
@@ -1395,8 +1395,8 @@ ord_nmds_sp
 
 ```{r nmds-plot-sp-plot}
 ord_nmds_sp |>
-  ggplot2::ggplot(aes(V1, V2, label = .data[[indiv]])) +
-  geom_point(aes(col = .data[[group]]), alpha = 0.4, size = 7) +
+  ggplot2::ggplot(ggplot2::aes(V1, V2, label = .data[[indiv]])) +
+  geom_point(ggplot2::aes(col = .data[[group]]), alpha = 0.4, size = 7) +
   ggplot2::geom_text() +
   ggplot2::theme_bw()
 ```
@@ -1470,11 +1470,11 @@ group <- "Management"
 ```{r indval-plot}
 isa_gg <- 
   isa_res |>
-   ggplot2::ggplot(aes(x = .data[[group]], y = .data[["ind.val"]],
+   ggplot2::ggplot(ggplot2::aes(x = .data[[group]], y = .data[["ind.val"]],
              size = log(1 / (.data[["p.value"]] * 10)),
              label = .data[["species"]])) + 
     ggplot2::geom_point() + 
-    ggrepel::geom_text_repel(aes(size = log(1 / (.data[["p.value"]] * 10), base = 5))) + 
+    ggrepel::geom_text_repel(ggplot2::aes(size = log(1 / (.data[["p.value"]] * 10), base = 5))) + 
     ggplot2::theme_bw() + 
     ggplot2::theme(legend.position = "none")
 ```
