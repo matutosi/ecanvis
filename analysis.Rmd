@@ -697,12 +697,12 @@ df_pca |>
   ggplot2::geom_abline(intercept = -44.4, slope = 0.6816, color = "black", linetype = "solid") +
   ggplot2::geom_abline(intercept = 324.8, slope = -1.467, color = "black", linetype = "dashed") +
   # --- 2. 垂線の描画 ---
-  ggplot2::geom_segment(aes(x = x, y = y, xend = x1, yend = y1), color = "red") +
-  ggplot2::geom_segment(aes(x = x, y = y, xend = x2, yend = y2), color = "blue") +
+  ggplot2::geom_segment(ggplot2::aes(x = x, y = y, xend = x1, yend = y1), color = "red") +
+  ggplot2::geom_segment(ggplot2::aes(x = x, y = y, xend = x2, yend = y2), color = "blue") +
   # --- 3. 点の描画 ---
   ggplot2::geom_point(size = 3) +  # 元の点 (黒)
-  ggplot2::geom_point(aes(x1, y1), col = "red", size = 2, shape = 1) +  # PC1への投影点 (赤)
-  ggplot2::geom_point(aes(x2, y2), col = "blue", size = 2, shape = 1) +  # PC2への投影点 (青)
+  ggplot2::geom_point(ggplot2::aes(x1, y1), col = "red", size = 2, shape = 1) +  # PC1への投影点 (赤)
+  ggplot2::geom_point(ggplot2::aes(x2, y2), col = "blue", size = 2, shape = 1) +  # PC2への投影点 (青)
     # --- 4. テーマ設定 ---
   ggplot2::coord_fixed() + # 軸のスケールを固定し、PC1とPC2の直交性を視覚的に正しく表現
   ggplot2::theme_bw()
