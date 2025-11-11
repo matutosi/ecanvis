@@ -665,7 +665,7 @@ a12 <-  0.563
 a21 <- -0.563
 a22 <-  0.826
   # --- 2. データフレームの作成とセンタリング ---
-df_pca <- tibble(x = x, y = y) |> 
+df_pca <- tibble::tibble(x = x, y = y) |> 
   dplyr::mutate(  # センタリング
     x_c = x - mu_x,
     y_c = y - mu_y
