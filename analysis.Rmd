@@ -23,6 +23,7 @@ output:
   # ローカル
   # D:/matu/work/ToDo/ecanvis/analysis.html
   # D:/dropbox/ToDo/ecanvis/analysis.html?print-pdf/#  # pdfダメ
+  # D:/matu/work/ToDo/ecanvis/analysis.html?print-pdf
 ```
 
 ```{r setup, include = FALSE}
@@ -269,6 +270,7 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 もちろん，未同定種や種の分類の問題はありますが．
 
 その他，鈴木(1954)のp61，星野(1991)，小林(1995)のp53,54も参考になります．
+星野 義延. 1991. 種多様性算出のためのBraun-Blanquetの優占度階級値のパーセント被度値への変換方法. 環境科学会誌, 4, 193-205.
 
 03479.pdf
 </aside>
@@ -788,12 +790,12 @@ tbl_arch <- ecan::df2table(df_arch, ab = "val")
 ```
 
 ```{r pca-arch-show, echo = FALSE}
-dplyr::select(tbl_arch, 1:10)
+dplyr::select(tbl_arch, 1:9)
 ```
 
 <aside class="notes">
 たとえば，10地点，14種からなるデータがあるとします．
-なお，表示は10種に省略しています．
+なお，表示は9種に省略しています．
 地点1から地点10まではきれいな環境傾度に並んでいて，1と2のように隣接した地点の類似度はそれれぞれ同じです．
 ですので，1軸上にきれいな地点にならぶことを想定します．
 しかし，PCAで解析すると異なる結果になります．
@@ -915,8 +917,8 @@ RDAはPCAの環境要因対応版です．
   本当は多次元だが, 実質的には2次元が多い
 - Bray-Curtis距離 + PCoA or nMDS
 - 環境要因対応版
-  広い傾度：CCA
-  狭い傾度：RDA
+  - 広い傾度：CCA
+  - 狭い傾度：RDA
 
 <aside class="notes">
 序列化は，主要な成分として多次元への配置をするものです．
@@ -1008,16 +1010,12 @@ shinyを使ったページでも同じようなことを実行可能です．
 
 # 準備：パッケージのインストール
 
-- tidyverse: コードを明快に
-- vegan: 植生データ解析の定番
-- ecan: 各種関数を簡単に実行
-
 ```{r install-packages, eval = FALSE}
-install.packages("tidyverse")
-install.packages("ecan")
-install.packages("vegan")    # ecanと同時にインストールされる
-install.packages("ggdendro") # 図示で使用
-install.packages("ggrepel")  # 図示で使用
+install.packages("tidyverse") # コードを明快に
+install.packages("vegan")     # 植生解析の定番
+install.packages("ecan")      # 解析を簡単に
+install.packages("ggdendro")  # 図示で使用
+install.packages("ggrepel")   # 図示で使用
 ```
 
 <aside class="notes">
@@ -1089,9 +1087,10 @@ library(ggrepel)
 ## データの読み込み(例)
 
 ```{r read-data, eval = FALSE}
+  # CSVのとき
 path_stand <- "c:/hoge/huga/stand.csv"
 df_st <- readr::read_csv(path_stand)
-
+  # Excelのとき
 path_data <- "c:/hoge/huga/data.xlsx"
 df_st <- openxlsx::read.xlsx(path_data, sheet = 1)
 ```
@@ -1112,9 +1111,9 @@ Excel形式のデータを読み込むときはopenxlsxの`read.xlsx()`を使う
 ```{r dune-env}
 data(dune.env, package = "vegan") # 地点
 dune_env_df <- 
-  tibble::tibble(dune.env) |> # A1, Moisture, Management, Use, Manure
+  tibble::tibble(dune.env) |> # A1, Moistureなどの情報
   tibble::rownames_to_column("stand") |> # 地点名を列に変換
-  print(n = 8) # 8行のみ
+  print(n = 8)                           # 8行のみ
 ```
 
 <aside class="notes">
@@ -1126,9 +1125,9 @@ dune_env_df <-
 
 ```{r dune}
 data(dune, package = "vegan") # 組成
-tibble(dune) |> # 0-9の値
+tibble(dune) |>         # 0-9の値
   dplyr::select(1:5) |> # 5列のみ表示
-  print(n = 8) # 8行のみ
+  print(n = 8)          # 8行のみ
 ```
 
 <aside class="notes">
@@ -1141,8 +1140,11 @@ tibble(dune) |> # 0-9の値
 
 ```{r dune-df}
 dune_df <- 
-  dune |>  # 組成表形式からdf形式に変換
-  ecan::table2df(st = "stand", sp = "species", ab = "cover")
+  dune |>         # 組成表形式
+  ecan::table2df( # df形式に変換
+    st = "stand", 
+    sp = "species", 
+    ab = "cover")
 dune_df
 ```
 
@@ -1153,7 +1155,7 @@ tidyにするために，ecanの`table2df()`を使います．
 
 ## 種データ(ダミー)
 
-```{r sp-dammy}
+```{r sp-dummy}
 sp_dummy <- tibble::tibble(
   "species" = colnames(dune), 
   "dummy_1" = stringr::str_sub(colnames(dune), 1, 1), # 1文字目
@@ -1185,7 +1187,7 @@ df <-
 
 ```{r joined-show}
 df |>
-  dplyr::select(1:6, 9:10) |>
+  dplyr::select(1:5, 9:10) |>
   print(n = 8)
 ```
 
@@ -1241,8 +1243,9 @@ dune_env_df |>
 ```{r diversity-ggplot}
 diversity_gg <- 
   dune_env_df |>
-  ggplot2::ggplot(ggplot2::aes(x = Management, y = i)) + # 1 / d
-  ggplot2::geom_boxplot(outlier.shape = NA) +  # 外れ値非表示
+  ggplot2::ggplot(
+    ggplot2::aes(x = Management, y = i)) + # 1 / d
+  ggplot2::geom_boxplot(outlier.shape = NA) +
   ggplot2::geom_jitter(height = 0, width = 0.1) + 
   ggplot2::theme_bw() 
 ```
@@ -1251,8 +1254,8 @@ diversity_gg <-
 平均値も大事ですが，全体の様子を確認するために，1 / dの箱ひげ図を作成します．
 箱ひげ図では，個別の点が表示されませんので，あわせて地点別のデータも図示します．
 `ggplot()`でx軸にManagementを，y軸にi(1/d)を指定します．
-箱ひげ図を描画する`geom_boxplot()`では引数で`outlier.shape = NA`を指定して外れ地を非表示にします．
-外れ地を非表示にするのは，`geom_jitter()`による個別の点の表示との重複を避けるためです．
+箱ひげ図を描画する`geom_boxplot()`では引数で`outlier.shape = NA`を指定して外れ値を非表示にします．
+外れ値を非表示にするのは，`geom_jitter()`による個別の点の表示との重複を避けるためです．
 </aside>
 
 ## α多様性の図示
@@ -1334,11 +1337,17 @@ ggdendro::ggdendrogram(cls_group)
 
 ```{r cluster-plot-group-color}
 cls_color <- stats::as.dendrogram(cls_group)
-col <- cls_color(cls, dune_env_df, indiv = indiv, group = group)
-  # dendextend::labels_colors(cls_color) <- gray(0)
+col <- 
+  cls_color(
+    cls, 
+    dune_env_df, 
+    indiv = indiv, 
+    group = group)
 ```
 
 <aside class="notes">
+dendextend::labels_colors(cls_color) <- gray(0)
+
 </aside>
 
 ## クラスター分析(着色して図示，コード)
@@ -1399,7 +1408,10 @@ ord_nmds <-
 ## 序列化：地点の図示の準備
 
 ```{r nmds-plot-st-prep-data}
-(ord_nmds_st <- ecan::ord_extract_score(ord_nmds, score = "st_scores"))
+ord_nmds_st <- 
+  ecan::ord_extract_score(ord_nmds, score = "st_scores") |>
+  tibble::tibble() |>
+  print(n = 10)
 ```
 <aside class="notes">
 </aside>
@@ -1408,7 +1420,8 @@ ord_nmds <-
 
 ```{r nmds-plot-st-prep, eval = FALSE}
 ord_nmds_st |>
-  ggplot2::ggplot(ggplot2::aes(V1, V2, label = .data[["rowname"]])) +
+  ggplot2::ggplot(
+    ggplot2::aes(V1, V2, label = .data[["rowname"]])) +
   ggplot2::geom_text() +
   ggplot2::theme_bw()
 ```
@@ -1421,7 +1434,8 @@ ord_nmds_st |>
 
 ```{r nmds-plot-st, echo = FALSE}
 ord_nmds_st |>
-  ggplot2::ggplot(ggplot2::aes(V1, V2, label = .data[["rowname"]])) +
+  ggplot2::ggplot(
+    ggplot2::aes(V1, V2, label = .data[["rowname"]])) +
   ggplot2::geom_text() +
   ggplot2::theme_bw()
 ```
@@ -1446,7 +1460,7 @@ ord_nmds_sp <-
 ## 序列化：種の図示用のデータ
 
 ```{r nmds-plot-sp-prep-show}
-ord_nmds_sp
+tibble::tibble(ord_nmds_sp)
 ```
 
 <aside class="notes">
@@ -1456,9 +1470,13 @@ ord_nmds_sp
 
 ```{r nmds-plot-sp-plot-prep, eval = FALSE}
 ord_nmds_sp |>
-  ggplot2::ggplot(ggplot2::aes(V1, V2, label = .data[[indiv]])) +
+  ggplot2::ggplot(
+    ggplot2::aes(V1, V2, 
+      label = .data[[indiv]])) +
   geom_point(
-    ggplot2::aes(col = .data[[group]]), alpha = 0.4, size = 7) +
+    ggplot2::aes(
+      col = .data[[group]]), 
+      alpha = 0.4, size = 7) +
   ggplot2::geom_text() +
   ggplot2::theme_bw()
 ```
@@ -1483,7 +1501,10 @@ ord_nmds_sp |>
 
 ```{r indval, eval = FALSE}
   # `row_data = TRUE`でlabdsv::indval()のそのままの結果
-isa_res_raw <- ind_val(df, group = "Management", row_data = TRUE)
+isa_res_raw <- 
+  ind_val(df, 
+          group = "Management", 
+          row_data = TRUE)
 isa_res_raw$relfrq # 種の出現頻度
 isa_res_raw$relabu # 種の平均出現量
 isa_res_raw$indval # 指標値
@@ -1539,11 +1560,6 @@ isa_gg
 <aside class="notes">
 </aside>
 
-# 文献
-
-- 原典の論文：細かな計算方法
-- 書籍, 解説記事：全体的なこと
-
 ## 書籍
 
 - 佐々木 雄大・小山 明日香・小柳 知代・古川 拓哉・内田 圭. 2015. 生物群集の構造と多様性の解析. 共立出版. 
@@ -1559,7 +1575,6 @@ isa_gg
 
 - Hadley, W., 2014, Tidy data. Journal of Statistical Software, 59, 1-23.
 - Dufrene, M. and Legendre, P. 1997. Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecol. Monogr. 67, 345-366.
-- 星野 義延. 1991. 種多様性算出のためのBraun-Blanquetの優占度階級値のパーセント被度値への変換方法. 環境科学会誌, 4, 193-205.
 - Helene H. Wagner, Otto Wildi and Klaus C. Ewald. 2000. Additive partitioning of plant species diversity in an agricultural mosaic landscape. Landscape Ecology, 15. 219-227.
 
 
