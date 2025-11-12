@@ -381,6 +381,7 @@ Rarefaction Curve，時系列分析，分布モデルなどもあります．
 β多様性は地点間の多様性であり，γ多様性とα多様性との比率と定義するときと，γ多様性とα多様性との差として定義することがあります．
 
 さらに，地点，地点の複数の集まり，複数の地点の集まりの景観規模，景観規模の集まりの市町村単位，市町村の集まりのの都道府県単位のように入れ子状に考えることもありますWagner(2000)．
+- Helene H. Wagner, Otto Wildi and Klaus C. Ewald. 2000. Additive partitioning of plant species diversity in an agricultural mosaic landscape. Landscape Ecology, 15. 219-227.
 </aside>
 
 ## α多様性
@@ -783,19 +784,18 @@ df_pca |>
 
 ```{r pca-arch, echo = FALSE}
 val <- rep(c(1,2,3,2,1), 10)
-sp <- paste0("sp_", stringr::str_pad(unlist(purrr::map2(1:10, 5:14, `:`)), 2, "left", "0"))
-st <- paste0("st_", stringr::str_pad(rep(1:10, each = 5), 2, "left", "0"))
+sp <- paste0("sp", stringr::str_pad(unlist(purrr::map2(1:10, 5:14, `:`)), 2, "left", "0"))
+st <- paste0("st", stringr::str_pad(rep(1:10, each = 5), 2, "left", "0"))
 df_arch <- tibble::tibble(stand = st, species = sp, val = val)
 tbl_arch <- ecan::df2table(df_arch, ab = "val")
 ```
 
 ```{r pca-arch-show, echo = FALSE}
-dplyr::select(tbl_arch, 1:9)
+t(tbl_arch)
 ```
 
 <aside class="notes">
 たとえば，10地点，14種からなるデータがあるとします．
-なお，表示は9種に省略しています．
 地点1から地点10まではきれいな環境傾度に並んでいて，1と2のように隣接した地点の類似度はそれれぞれ同じです．
 ですので，1軸上にきれいな地点にならぶことを想定します．
 しかし，PCAで解析すると異なる結果になります．
@@ -1270,7 +1270,8 @@ diversity_gg
 ggplot2の詳細は，ggplot2のページを参考にしてください．
 https://ggplot2-book.org/
 日本語板は，今のところ初版分しかなくて，ちょっと情報が古いです．
-『Rグラフィックスクックブック 第2版』が良いかもしれません．
+ggplot2について詳しく知りたいときは，『Rグラフィックスクックブック 第2版』が良いかもしれません．
+概要であれば，『Rによる自動化・効率化レシピ集』にも掲載しています．
 </aside>
 
 # クラスター分析(演習)
@@ -1282,20 +1283,33 @@ cls <-
   ecan::cluster(
     c_method = "average", # 非荷重群平均方
     d_method = "bray")    # Bray-Curtis距離
+cls # 結果の表示(実施方法のみ)
 ```
 
 <aside class="notes">
-クラスター分析
-`df2table()'
+次に，クラスター分析の演習です．
+クラスター分析はecanの関数`cluster()`で実行できます．
+`cluster()`の引数には組成表の形式がを渡す必要があります．
+ただし，この組成表の形式は通常の組成表とは縦横を転置したものです．
+ですので，実行前に`df2table()'で変換します．
+結合方法として`c_method = "average"`で非荷重群平均方を，距離を`d_method = "bray"`でBray-Curtis距離を指定します．
+
+クラスター分析の結果を表示するには，`cluster()`の結果を代入したオブジェクトを表示させます．
+ただし，そのままでは大した情報は得られません．
 </aside>
 
 ## クラスター分析の結果
 
 ```{r cluster-result}
-cls
+str(cls)
 ```
 
 <aside class="notes">
+詳細な情報を得るには，関数`str()`を使います．
+`str()`はstruscureの省略で，オブジェクトの構造を出力します．
+そのため，どのようなデータが入っているのかわかります．
+とはいっても，これだけでは結果はよく分かりません．
+やはり図示する必要があります．
 </aside>
 
 ## クラスター分析結果の図示
@@ -1306,6 +1320,8 @@ ggdendro::ggdendrogram(cls)
 ```
 
 <aside class="notes">
+クラスター分析の結果を図示するには単に`plot()`とするだけでも可能です．
+ただし，ここでは，ggdendroの`ggdendrogram()`を使います．
 </aside>
 
 ## クラスター分析(グループ追加)
@@ -1315,12 +1331,21 @@ indiv <- "stand"
 group <- "Use"
 cls_group <- 
   ecan::cls_add_group(
-    cls, dune_env_df, 
+    cls = cls, 
+    df = dune_env_df, 
     indiv = indiv, 
     group = group)
 ```
 
 <aside class="notes">
+地点をグループ分けしたときには，どの地点がどのグループに属しているのかわかりやすく表示したいものです．
+そこで，地点名にグループ名を追加して表示させます．
+ここでは，
+第1引数にクラスター分析の結果である`cls`を，
+第2引数に分析前の地点データである`dune_env_df`を，
+第3引数に`dune_env_df`での個別の地点名を示す列名として`"stand"`を，
+第4引数に`dune_env_df`でのグルー名を示す列名として`"Use"`を指定します．
+
 </aside>
 
 ## クラスター分析(グループ別で図示)
@@ -1331,54 +1356,73 @@ ggdendro::ggdendrogram(cls_group)
 ```
 
 <aside class="notes">
+`ggdendrogram()`で図示すると，グループ名を含む
+
+なお，地点名とグループ名と地点名のそれぞれの文字列の長さを調整するためにアンダースコア`_`が入っています．
+でも，英文字では等幅フォントではないので，それほどうまく機能していません．フォントを等幅のものにしていすれば，より綺麗な表示になるはずです．
+
+Rでのフォントの話をするとややこしいので，ここでは省略します．
+Rでのggplot2でのフォントの使い方の詳細は，松村(2025)の第2章第7節を参照してください．
 </aside>
 
 ## クラスター分析(グループで着色)
 
 ```{r cluster-plot-group-color}
-cls_color <- stats::as.dendrogram(cls_group)
 col <- 
-  cls_color(
-    cls, 
-    dune_env_df, 
+  ecan::cls_color(
+    cls = cls, 
+    df = dune_env_df, 
     indiv = indiv, 
     group = group)
+cls_colored <- stats::as.dendrogram(cls_group)
 ```
 
 <aside class="notes">
-dendextend::labels_colors(cls_color) <- gray(0)
+さらに見やすくするために，グループ別で着色する場合は，ecanの`cls_color()`を使います．
+また，グループ名を追加したオブジェクト`cls_group`を`as.dendrogram()`で樹状図の形式に変換しておきます．
 
+このあたりの変換は，パッケージecanを作ったときに色々と試した結果です．
+ただ，正直なところ詳細は忘れてしまいました．
+
+<!-- dendextend::labels_colors(cls_colored) <- gray(0) # 必要? -->
 </aside>
 
 ## クラスター分析(着色して図示，コード)
 
 ```{r cluster-plot-group-color-plot-prep, eval = FALSE}
-plot(cls_color)
+plot(cls_colored)
 dendextend::colored_bars(
   colors = col, 
-  cls_color, 
+  cls_colored, 
   group, 
   y_shift = 0, 
   y_scale = 3)
 par(new = TRUE)
-plot(cls_color)
+plot(cls_colored)
 ```
 
 <aside class="notes">
+着色した結果を表示するときは，`plot()`を使います．
+まず，1つ目の`plot()`でプロットします．
+その後，dendextendの`colored_bars()`で着色します．
+さらに，2つ目の`plot()`で地点名のところを上書きします．
+
+たしか，そんな感じだと思いますが，このあたりの詳細も忘れてしまっています．
+すみません．
 </aside>
 
 ## クラスター分析(着色して図示)
 
 ```{r cluster-plot-group-color-plot, echo = FALSE}
-plot(cls_color)
+plot(cls_colored)
 dendextend::colored_bars(
   colors = col, 
-  cls_color, 
+  cls_colored, 
   group, 
   y_shift = 0, 
   y_scale = 3)
 par(new = TRUE)
-plot(cls_color)
+plot(cls_colored)
 ```
 
 <aside class="notes">
@@ -1391,11 +1435,18 @@ plot(cls_color)
 - 地点でプロット
 - 種でプロット + 色付き
 
+<aside class="notes">
+ここでは序列化手法として，nMDSをBray-Curtis距離で実行します．
+その結果を地点でプロットします．
+また，種でプロットしてグループごとで色をつけます．
+同様の方法で地点のプロットにもグループ別で着色可能です．
+</aside>
+
 ## 序列化：nMDS，Bray-Curtis距離
 
 ```{r nmds}
 ord_nmds <- 
-  df  |>
+  df |>
   df2table() |>
   ecan::ordination(
     o_method = "nmds", 
@@ -1403,6 +1454,17 @@ ord_nmds <-
 ```
 
 <aside class="notes">
+序列化を実行するには，ecanの関数`ordination()`を使います．
+`cluster()`と同様に，事前に組成表を転置した形式に変換します．
+`o_method = "nmds"`で序列化手法としてnMDSを，`d_method = "bray"`でBray-Curtis距離を指定します．
+
+`ordination()`は，指定した序列化手法に従って，別のパッケージを使ってPCA，PCoA，nMDSなどを実行します．
+また，実行結果を整理して返します．
+
+なお，PCAを実行結果を表示したときに，`distance_method`が`"bray"`と表示されます．
+PCAでは距離を指定する必要がありませんので，これは間違いです．
+いつになるか分かりませんが，ecanの次の更新時に修正します．
+
 </aside>
 
 ## 序列化：地点の図示の準備
@@ -1414,6 +1476,8 @@ ord_nmds_st <-
   print(n = 10)
 ```
 <aside class="notes">
+序列化の結果の一部を取り出すにはecanの関数`ord_extract_score()`を使います．
+ここでは，`score = "st_scores"`と地点データを取得します．
 </aside>
 
 ## 序列化：地点の図示(コード)
@@ -1426,8 +1490,9 @@ ord_nmds_st |>
   ggplot2::theme_bw()
 ```
 
-
 <aside class="notes">
+`ord_extract_score()`で抽出した`ord_nmds_st`は単なるデータフレームです．
+そのため，ggplot2でプロットするのは容易です．
 </aside>
 
 ## 序列化：地点の図示
@@ -1440,7 +1505,6 @@ ord_nmds_st |>
   ggplot2::theme_bw()
 ```
 
-
 <aside class="notes">
 </aside>
 
@@ -1450,11 +1514,26 @@ ord_nmds_st |>
 indiv <- "species"
 group <- "dummy_1"
 ord_nmds_sp <- 
-  ecan::ord_add_group(ord_nmds, # 抽出も実行
-    score = "sp_scores", df, indiv, group)
+  ecan::ord_add_group( # 抽出も実行
+    ord = ord_nmds, 
+    score = "sp_scores", 
+    df = df, 
+    indiv = indiv, 
+    group = group)
 ```
 
 <aside class="notes">
+次に，種をグループで着色してプロットします．
+ecanの関数`ord_add_group()`で序列化の結果にグループ名を追加します．
+第1引数に`ord = ord_nmds`として序列化の結果を，
+第2引数に`score = "sp_scores"`として種のデータを，
+第3引数に`df = df`として地点とグループ名の対応のあるもとのデータフレームを，
+第4引数に`indiv = indiv`として個別の種名を示す列名`"species"`
+第5引数に`group = group`としてグルー名を示す列名`"dummy_1"`を指定します．
+
+余談ですが，今回の資料を準備していてecanのバグを見つけました．
+上では`group = group`としてグループ名を指定していますが，関数の中では使っていませんでした．
+このあたりの次回のecanの更新で修正します(引数から除外するか，ちゃんと使うか)．
 </aside>
 
 ## 序列化：種の図示用のデータ
@@ -1464,6 +1543,8 @@ tibble::tibble(ord_nmds_sp)
 ```
 
 <aside class="notes">
+`ord_add_group()`で得た結果は，データフレームです．
+そのため，ggplot2でプロットするのは簡単です．
 </aside>
 
 ## 序列化：種の図示
@@ -1473,15 +1554,21 @@ ord_nmds_sp |>
   ggplot2::ggplot(
     ggplot2::aes(V1, V2, 
       label = .data[[indiv]])) +
-  geom_point(
+  ggplot2::geom_point(
     ggplot2::aes(
       col = .data[[group]]), 
-      alpha = 0.4, size = 7) +
+      alpha = 0.4, 
+      size = 7) +
   ggplot2::geom_text() +
   ggplot2::theme_bw()
 ```
 
 <aside class="notes">
+種名をラベルとして表示するために，`label = .data[[indiv]]`としています．
+さらに，種名に丸で色付けするために`geom_point()`を使います．
+引数として，`col = .data[[group]]` でグループ別に色をつけるようにして，
+`alpha = 0.4`で透明度を，`size = 7`で大きさを指定します．
+`ggplot2::geom_text()`は`geom_point()`の後にすることで，丸印を先に描画してその上に種名を描画します．
 </aside>
 
 ## 序列化：種の図示
@@ -1505,6 +1592,7 @@ isa_res_raw <-
   ind_val(df, 
           group = "Management", 
           row_data = TRUE)
+  # 以下の出力は省略
 isa_res_raw$relfrq # 種の出現頻度
 isa_res_raw$relabu # 種の平均出現量
 isa_res_raw$indval # 指標値
@@ -1516,6 +1604,7 @@ tibble(
 
 <aside class="notes">
 
+<!-- # editing now -->
 </aside>
 
 ## 指標種分析の結果：整理した結果
@@ -1560,6 +1649,11 @@ isa_gg
 <aside class="notes">
 </aside>
 
+# 引用文献
+
+- Hadley, W., 2014, Tidy data. Journal of Statistical Software, 59, 1-23.
+- Dufrene, M. and Legendre, P. 1997. Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecol. Monogr. 67, 345-366.
+
 ## 書籍
 
 - 佐々木 雄大・小山 明日香・小柳 知代・古川 拓哉・内田 圭. 2015. 生物群集の構造と多様性の解析. 共立出版. 
@@ -1571,14 +1665,7 @@ isa_gg
 - Wildi, Otto. 2017. Data Analysis in Vegetation Ecology, 3rd ed. Cabi.
 - 鈴木時夫. 1954. 生態調査法. 古今書院. 
 
-## 個別の解説
-
-- Hadley, W., 2014, Tidy data. Journal of Statistical Software, 59, 1-23.
-- Dufrene, M. and Legendre, P. 1997. Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecol. Monogr. 67, 345-366.
-- Helene H. Wagner, Otto Wildi and Klaus C. Ewald. 2000. Additive partitioning of plant species diversity in an agricultural mosaic landscape. Landscape Ecology, 15. 219-227.
-
-
-## 解説記事
+## 全般的な解説
 
 - 加藤 和弘. 1996. 生物群集の多変量解析とその地域環境計画への応用. ランドスケープ研究, 60, 46-55.
 - 大垣俊一. 1999. 群集組成の多変量解析. Argonauta, 1, 15-26.
