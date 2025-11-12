@@ -154,7 +154,6 @@ Tidyとは，整然としたという意味で，データがパソコンが理�
 なお，1行目には項目名を入力するのが一般的です．
 1つのタイプの観測群が1つの表とは，地点情報と組成の情報を別々のシートに入力した状態です．
 1つの値が1つのセルとは，A2のセルには1つの値のみが入っている状態です．
-
 </aside>
 
 ## Tidy vs Messy
@@ -270,9 +269,11 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 もちろん，未同定種や種の分類の問題はありますが．
 
 その他，鈴木(1954)のp61，星野(1991)，小林(1995)のp53,54も参考になります．
-星野 義延. 1991. 種多様性算出のためのBraun-Blanquetの優占度階級値のパーセント被度値への変換方法. 環境科学会誌, 4, 193-205.
 
+<!-- 
+星野 義延. 1991. 種多様性算出のためのBraun-Blanquetの優占度階級値のパーセント被度値への変換方法. 環境科学会誌, 4, 193-205.
 03479.pdf
+-->
 </aside>
 
 ## データの種類と変換
@@ -381,7 +382,9 @@ Rarefaction Curve，時系列分析，分布モデルなどもあります．
 β多様性は地点間の多様性であり，γ多様性とα多様性との比率と定義するときと，γ多様性とα多様性との差として定義することがあります．
 
 さらに，地点，地点の複数の集まり，複数の地点の集まりの景観規模，景観規模の集まりの市町村単位，市町村の集まりのの都道府県単位のように入れ子状に考えることもありますWagner(2000)．
+<!--
 - Helene H. Wagner, Otto Wildi and Klaus C. Ewald. 2000. Additive partitioning of plant species diversity in an agricultural mosaic landscape. Landscape Ecology, 15. 219-227.
+-->
 </aside>
 
 ## α多様性
@@ -542,7 +545,7 @@ Bray-Curtis距離では，論理的には三角不等式を満たさないこと
 
 gemini：なお，生態学データの非線形性、特に長勾配の普遍性が認識されるにつれて、非ユークリッド距離に基づく手法が主流となりました。現在、群集構造の全体像を把握し、ベータ多様性を測定する非制約型解析では、生態学的妥当性の高いBray-Curtis距離を入力としたPCoAまたはnMDSが標準的な選択肢となっています。
 
-小林(1995)のp26
+<!-- 小林(1995)のp26 -->
 </aside>
 
 
@@ -572,8 +575,9 @@ Ward法はクラスター内での分散が小さくなるようにグループ�
 分類感度がよく，外れ値の影響を受けにくいとされます．
 Ward法で用いる距離は，メトリックな指標であることが必要です．
 
-
+<!--
 https://iit.kke.co.jp/marketingscience/analysis/method/analysis_cluster.html
+-->
 </aside>
 
 ## クラスター分析のまとめ
@@ -780,7 +784,7 @@ df_pca |>
 しかし，これを直接克服することはできません．
 </aside>
 
-## 馬蹄効果の例
+## 馬蹄効果の例(データ)
 
 ```{r pca-arch, echo = FALSE}
 val <- rep(c(1,2,3,2,1), 10)
@@ -807,7 +811,9 @@ t(tbl_arch)
 pca_arch <- 
   tbl_arch |>
   ecan::ordination(o_method = "pca")
-ecan::ord_plot(pca_arch)
+gg_arch <- ecan::ord_plot(pca_arch)
+gg_arch$layers <- NULL
+gg_arch + ggplot2::geom_text(size = 8)
 ```
 
 <aside class="notes">
@@ -1345,7 +1351,6 @@ cls_group <-
 第2引数に分析前の地点データである`dune_env_df`を，
 第3引数に`dune_env_df`での個別の地点名を示す列名として`"stand"`を，
 第4引数に`dune_env_df`でのグルー名を示す列名として`"Use"`を指定します．
-
 </aside>
 
 ## クラスター分析(グループ別で図示)
@@ -1464,7 +1469,6 @@ ord_nmds <-
 なお，PCAを実行結果を表示したときに，`distance_method`が`"bray"`と表示されます．
 PCAでは距離を指定する必要がありませんので，これは間違いです．
 いつになるか分かりませんが，ecanの次の更新時に修正します．
-
 </aside>
 
 ## 序列化：地点の図示の準備
@@ -1589,7 +1593,7 @@ ord_nmds_sp |>
 ```{r indval, eval = FALSE}
   # `row_data = TRUE`でlabdsv::indval()のそのままの結果
 isa_res_raw <- 
-  ind_val(df, 
+  ecan::ind_val(df, 
           group = "Management", 
           row_data = TRUE)
   # 以下の出力は省略
@@ -1603,19 +1607,23 @@ tibble(
 ```
 
 <aside class="notes">
-
-<!-- # editing now -->
+指標種分析にはecanの関数`ind_val()`を使います．
+引数に`row_data = TRUE`を指定するとlabdsvの関数`indval()`をそのまま返します．
+返り値の詳細は，`indval()`のヘルプを参照してください．
 </aside>
 
 ## 指標種分析の結果：整理した結果
 
 ```{r indval-res}
 group <- "Management"
-(isa_res <- ind_val(df, group = group))
+(isa_res <- ecan::ind_val(df, group = group))
 ```
 
 <aside class="notes">
-
+論文や図示で使うには，`indval()`から得た情報から必要なものを抽出する必要があります．
+その場合には，`row_data = TRUE`を指定せず既定値(`row_data = FALSE`)のまま実行します．
+ここでは，グループ名として`group <- "Management"`を指定します．
+整理した結果として，グループ名，種名，指標値，p値からなるデータフレームを返します．
 </aside>
 
 ## 指標種分析の結果の図示(コード)
@@ -1638,6 +1646,9 @@ isa_gg <-
 ```
 
 <aside class="notes">
+指標種分析の結果を図化します．
+x軸にグループ名を，y軸に指標値を，p値を点と文字列の大きさにして，種名をプロットします．
+ここでは，作図オブジェクトを`isa_gg`に代入します．
 </aside>
 
 ## 指標種分析の結果の図示
@@ -1647,6 +1658,7 @@ isa_gg
 ```
 
 <aside class="notes">
+isa_ggを入力すると，図が表示されます．
 </aside>
 
 # 引用文献
@@ -1654,16 +1666,29 @@ isa_gg
 - Hadley, W., 2014, Tidy data. Journal of Statistical Software, 59, 1-23.
 - Dufrene, M. and Legendre, P. 1997. Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecol. Monogr. 67, 345-366.
 
+<aside class="notes">
+Hadley(2014)は，Tidyデータについてです．
+Dufrene and Legendre(1997)は，指標種分析の説明です．
+</aside>
+
 ## 書籍
 
 - 佐々木 雄大・小山 明日香・小柳 知代・古川 拓哉・内田 圭. 2015. 生物群集の構造と多様性の解析. 共立出版. 
+- Wildi, Otto. 2017. Data Analysis in Vegetation Ecology, 3rd ed. Cabi.
 - 小林 四郎. 1995. 生物群集の多変量解析. 蒼樹書房. 
   絶版．中古がネット書店に．
 - 伊藤 秀三(編). 2003. 群落の組成と構造. 朝倉書店. 
   1977年に出版し, 絶版．2003年に復刊し, 絶版．
   中古がネット書店に．
-- Wildi, Otto. 2017. Data Analysis in Vegetation Ecology, 3rd ed. Cabi.
-- 鈴木時夫. 1954. 生態調査法. 古今書院. 
+
+<aside class="notes">
+佐々木ほか(2015)では植生をはじめとする植物群集の解析全般が解説されています．
+小林(1995)は，クラスター分析や序列化の手法について詳しい解説があります．
+Wildi(2017)も多変量解析について解説しています．
+伊藤(2003)は多変量解析についてではありませんが，参考になります．
+
+<!-- - 鈴木時夫. 1954. 生態調査法. 古今書院.  -->
+</aside>
 
 ## 全般的な解説
 
@@ -1672,8 +1697,19 @@ isa_gg
 - 大垣俊一. 2008. 多様度と類似度、分類学的新指標. Argonauta. 15, 10-22.
 - 土居 秀幸・岡村 寛. 2011. 生物群集解析のための類似度とその応用: Rを使った類似度の算出, グラフ化, 検定. 日本生態学会誌, 61, 3-20. 
 
+<aside class="notes">
+多変量解析などについて全般的な解説が総説などであります．
+これらも参考にしてください．
+</aside>
+
 # Rで自動化・効率化(宣伝)
 
 - 松村 俊和. 2025. <br>Rによる自動化・効率化レシピ集. 森北出版.
-- https://github.com/matutosi/r-auto<br>(サポートページ)
-- https://www.amazon.co.jp/dp/4627858310/<br>(Amazon)
+  - https://github.com/matutosi/r-auto<br>(サポートページ)
+  - https://www.amazon.co.jp/dp/4627858310/<br>(Amazon)
+
+<aside class="notes">
+最後に宣伝です．
+多変量解析については書いていませんが，Rでいろいろなことをするのに役立つと思ます．
+興味があれば，お求めください．
+</aside>
