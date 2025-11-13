@@ -281,14 +281,12 @@ CSVやTSVで保存したデータは，保存・読み込み時に誤変換が�
 ```{r convert-value}
 bb_scale <- c("5", "4", "3", "2", "1", "+", "r", "0")
 percentage <- c(75, 50, 25, 10, 1, 0.1, 0.01, 0)
-percen_med <- 
-  (percentage + lag(percentage, default = 100)) / 2
+percen_med <- (percentage + lag(percentage, default = 100)) / 2
 percen_med[length(percen_med)] <- 0
 pa <- purrr::map_dbl(percentage > 0, sum)
 squared <- percentage^0.5
 logged <- log10(percentage + 1) # +1: 1未満を正
-tibble::tibble(
-  bb_scale, percentage, percen_med, pa, squared, logged)
+tibble::tibble(bb_scale, percentage, percen_med, pa, squared, logged)
 ```
 
 ## 相対優占度
@@ -344,7 +342,6 @@ Hellinger変換は，後述するクラスター分析で使用します．
   - Rarefaction Curve
   - 時系列分析
   - 分布モデル
-  - ...
 
 <aside class="notes">
 植生調査試料の解析手法は多種多様です．
@@ -511,7 +508,7 @@ dが0.4で，1/dが2.5です．
 
 - メトリック
   - ユークリッド距離<br>
-    ((x1-x2)^2 + (y1-y2)^2)^0.5
+    ( (x1 - x2)^2 + (y1 - y2)^2 )^0.5
   - Hellinger距離<br>
     Hellinger変換してからユークリッド距離を計算
   - マンハッタン距離(碁盤の目の移動)<br>
@@ -812,8 +809,9 @@ pca_arch <-
   tbl_arch |>
   ecan::ordination(o_method = "pca")
 gg_arch <- ecan::ord_plot(pca_arch)
-gg_arch$layers <- NULL
-gg_arch + ggplot2::geom_text(size = 8)
+gg_arch
+  # gg_arch$layers <- NULL
+  # gg_arch + ggplot2::geom_text(size = 8)
 ```
 
 <aside class="notes">
@@ -897,20 +895,20 @@ gemini：PCoAは，非ユークリッド距離であるBray-Curtis距離を計�
 - Canonical Correspondence Analysis
     - CAの環境要因対応版
     - 任意の距離
-    - 環境変数の幅が広いとき
+    - 環境変数の幅が長いとき
 - Redundancy Analysis
     - PCAの環境変数対応版
     - メトリックな距離
-    - 環境変数の幅が狭いとき
+    - 環境変数の幅が短いとき
 
 <aside class="notes">
 CCAとRDAは環境要因などの説明変数を用いて、種の組成や地点の類似性などの応答変数の変動を分析・可視化するために使われます．
 
 CCAはCA(Correspondence Analysis：対応分析)の環境要因対応版です．
-任意の距離を使用することができ，環境変数の幅が広いときに使います．
+任意の距離を使用することができ，環境変数の幅が長いときに使います．
 
 RDAはPCAの環境要因対応版です．
-メトリックな距離のみを使うことができ，環境変数の幅が狭いときに追加います．
+メトリックな距離のみを使うことができ，環境変数の幅が短いときに追加います．
 
 ベータ多様性が低く，つまり地点間の類似度が高いときにはRDAを使います．
 ベータ多様性が高くて，ゼロが多く含まれるようなな地点間の類似度が低いときにCCAを使います．
@@ -923,8 +921,8 @@ RDAはPCAの環境要因対応版です．
   本当は多次元だが, 実質的には2次元が多い
 - Bray-Curtis距離 + PCoA or nMDS
 - 環境要因対応版
-  - 広い傾度：CCA
-  - 狭い傾度：RDA
+  - 長い傾度：CCA
+  - 短い傾度：RDA
 
 <aside class="notes">
 序列化は，主要な成分として多次元への配置をするものです．
