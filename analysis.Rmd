@@ -22,8 +22,7 @@ output:
 
   # ローカル
   # D:/matu/work/ToDo/ecanvis/analysis.html
-  # D:/dropbox/ToDo/ecanvis/analysis.html?print-pdf/#  # pdfダメ
-  # D:/matu/work/ToDo/ecanvis/analysis.html?print-pdf
+  # file:///D:/dropbox/ToDo/ecanvis/analysis.html?Fprint-pdf#/title-slide
 ```
 
 ```{r setup, include = FALSE}
@@ -37,7 +36,6 @@ pkg <- "ggdendro" ; if(!require(pkg, character.only = TRUE)) install.packages(pk
 pkg <- "ggrepel"  ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
 pkg <- "ggsci"    ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
 pkg <- "cowplot"  ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
-
 
 knitr::opts_chunk$set( # 警告, メッセージ, エラーの非表示
   warning = FALSE,
@@ -531,7 +529,7 @@ dが0.4で，1/dが2.5です．
 また，グループ内での順序の並びは無意味です．
 </aside>
 
-# クラスター分析
+## クラスター分析の考え方：データ
 
 ```{r cluster-concept-data}
 data(USArrests)
@@ -543,7 +541,7 @@ ggdendroパッケージで紹介されているデータを例として取り上
 このデータは，アメリカの各州における逮捕者数です．
 </aside>
 
-# クラスター分析
+## クラスター分析の考え方：類似度の計算
 
 ```{r cluster-concept-dist}
 USArrests |>
@@ -557,7 +555,7 @@ USArrests |>
 ここでは最初の8つだけを計算しています．
 </aside>
 
-# クラスター分析
+## クラスター分析の考え方：プロット
 
 ```{r cluster-concept-plot, echo = FALSE}
 hc <- 
@@ -682,7 +680,7 @@ https://iit.kke.co.jp/marketingscience/analysis/method/analysis_cluster.html
 -->
 </aside>
 
-## 
+## 結合方法の比較
 
 ```{r cluster-method-compare, echo = FALSE}
 ggd_min <- 
@@ -1831,6 +1829,18 @@ Wildi(2017)も多変量解析について解説しています．
 多変量解析などについて全般的な解説が総説などであります．
 これらも参考にしてください．
 </aside>
+
+# 植生学会の入会案内
+
+- [植生学会](http://shokusei.jp/baser/)
+- [入会案内](http://shokusei.jp/baser/contact/admission-and-withdrawal)
+
+# アンケートのお願い
+
+- 匿名式
+- URL(2つとも同じ)
+  - https://forms.gle/WPXZ6p94dvDoJxQB6
+  - https://docs.google.com/forms/d/e/1FAIpQLScXq-97_MIAFc30VLl6v5HQj8HEebAf__y_oTn7si2t2bSo6Q/viewform
 
 # Rで自動化・効率化(宣伝)
 
