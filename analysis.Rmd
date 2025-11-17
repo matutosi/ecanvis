@@ -35,6 +35,9 @@ pkg <- "ecan"     ; if(!require(pkg, character.only = TRUE)) install.packages(pk
 pkg <- "vegan"    ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # ecanと同時にインストールされる
 pkg <- "ggdendro" ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
 pkg <- "ggrepel"  ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
+pkg <- "ggsci"    ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
+pkg <- "cowplot"  ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
+
 
 knitr::opts_chunk$set( # 警告, メッセージ, エラーの非表示
   warning = FALSE,
@@ -291,11 +294,10 @@ tibble::tibble(bb_scale, percentage, percen_med, pa, squared, logged)
 
 ## 相対優占度
 
-- 定義
-  - nij：地点jでの種iの出現量(被度や個体数)
-  - Nj：地点jの全種の出現量の合計<br>
+- nij：地点jでの種iの出現量(被度や個体数)
+- Nj：地点jの全種の出現量の合計<br>
   Nj = Σnij
-  - Pij：地点jでの種iの相対優占度<br>
+- Pij：地点jでの種iの相対優占度<br>
   Pij = nij / Nj
 
 ```{r propotion}
@@ -428,6 +430,19 @@ d <- sum(pi^2)
 c(d, 1/d)
 ```
 
+```{r d-inv-1-ggplot, echo = FALSE}
+tibble::tibble(x = letters[seq(val)], val = val) |>
+  ggplot2::ggplot(ggplot2::aes(1, val, fill = x)) + 
+  ggplot2::geom_bar(stat = "identity", position = "fill") + 
+  ggplot2::coord_flip() + 
+  ggplot2::labs(x = NULL, y = NULL) + 
+  ggsci::scale_fill_nejm() + 
+  ggplot2::theme_void() + 
+  ggplot2::theme(legend.position = "none") + 
+  ggplot2::theme(aspect.ratio = 1/4)
+```
+
+
 <aside class="notes">
 Simpsonの均等度指数を実際に計算します．
 簡単な内容ですので，手入力でRで実行してみましょう．
@@ -445,6 +460,18 @@ nj <- sum(val)     # 出現量の合計
 pi <- val / nj     # 相対優占度
 d <- sum(pi^2)
 c(d, 1/d)
+```
+
+```{r d-inv-2-ggplot, echo = FALSE}
+tibble::tibble(x = letters[seq(val)], val = val) |>
+  ggplot2::ggplot(ggplot2::aes(1, val, fill = x)) + 
+  ggplot2::geom_bar(stat = "identity", position = "fill") + 
+  ggplot2::coord_flip() + 
+  ggplot2::labs(x = NULL, y = NULL) + 
+  ggsci::scale_fill_nejm() + 
+  ggplot2::theme_void() + 
+  ggplot2::theme(legend.position = "none") + 
+  ggplot2::theme(aspect.ratio = 1/4)
 ```
 
 <aside class="notes">
@@ -504,6 +531,50 @@ dが0.4で，1/dが2.5です．
 また，グループ内での順序の並びは無意味です．
 </aside>
 
+# クラスター分析
+
+```{r cluster-concept-data}
+data(USArrests)
+tibble::tibble(USArrests)
+```
+
+<aside class="notes">
+ggdendroパッケージで紹介されているデータを例として取り上げます．
+このデータは，アメリカの各州における逮捕者数です．
+</aside>
+
+# クラスター分析
+
+```{r cluster-concept-dist}
+USArrests |>
+  head(8) |>
+  stats::dist()
+```
+
+<aside class="notes">
+犯罪傾向が似た州を明らかにするためにクラスター分析をします．
+そのためには，まずは`dist()`類似度を計算します．
+ここでは最初の8つだけを計算しています．
+</aside>
+
+# クラスター分析
+
+```{r cluster-concept-plot, echo = FALSE}
+hc <- 
+  USArrests |>
+  stats::dist() |>
+  stats::hclust("average")
+ggdendro::ggdendrogram(hc, rotate = FALSE, size = 2)
+```
+
+<aside class="notes">
+次に，`hclust()`でクラスター分析を実行します．
+ここでは群平均法を用いています．
+最後に`ggdendrogram()`でプロットしています．
+この時にどの類似度でグループを区分するかは任意です．
+また，横の並び順は無意味です．
+</aside>
+
 ## 類似度
 
 - メトリック
@@ -546,6 +617,40 @@ gemini：なお，生態学データの非線形性、特に長勾配の普遍�
 </aside>
 
 
+## ユークリッド距離とマンハッタン距離
+
+```{r cluster-distaince-compare, echo = FALSE}
+df <- tibble::tibble(x = c(1,2), y = c(1,3))
+dist_euc <- 
+  df |>
+  ggplot2::ggplot(ggplot2::aes(x, y)) + 
+  ggplot2::geom_point(aes(size = 1)) + 
+  ggplot2::geom_path() + 
+  ggplot2::coord_fixed() + 
+  ggplot2::theme_bw() + 
+  ggplot2::theme(legend.position = "none")
+df <- tibble::tibble(x = c(1,2,2), y = c(1,1,3), size = c(1,0,1))
+dist_man <- 
+  df |>
+  ggplot2::ggplot(ggplot2::aes(x, y)) + 
+  ggplot2::geom_point(aes(size = size)) + 
+  ggplot2::geom_path() + 
+  ggplot2::coord_fixed() + 
+  ggplot2::theme_bw() + 
+  ggplot2::theme(legend.position = "none")
+cowplot::plot_grid(
+  dist_euc, dist_man, 
+  labels = c('ユークリッド距離', 'マンハッタン距離'))
+```
+
+<aside class="notes">
+ユークリッド距離とマンハッタン距離は上の図のような違いです．
+ユークリッド距離は，いわゆる直線距離です．
+マンハッタン距離は，碁盤の目のような道路をとおる時の距離です．
+京都の碁盤の目を想像すればわかりやすいと思います．
+なお，ニューヨークのマンハッタンが東西の格子状に道路が配置されていることから命名されました．
+</aside>
+
 ## 主な結合方法
 
 - 最近隣法
@@ -576,6 +681,31 @@ Ward法で用いる距離は，メトリックな指標であることが必要�
 https://iit.kke.co.jp/marketingscience/analysis/method/analysis_cluster.html
 -->
 </aside>
+
+## 
+
+```{r cluster-method-compare, echo = FALSE}
+ggd_min <- 
+  USArrests |>
+  stats::dist() |>
+  stats::hclust("single") |>
+  ggdendro::ggdendrogram()
+ggd_ave <- 
+  USArrests |>
+  stats::dist() |>
+  stats::hclust("average") |>
+  ggdendro::ggdendrogram()
+cowplot::plot_grid(
+  ggd_min, ggd_ave, 
+  labels = c('最近隣法', '群平均法'))
+```
+
+<aside class="notes">
+アメリカでの犯罪傾向について，最近隣法と群平均法を比較したのがこの図です．
+最近隣法では，一旦繋がったものが近いものを吸収するように鎖状に繋がっていく傾向にあります．
+そのため取り残されたものがあれば，左端の方に1つだけからなるクラスターが発生しやすいです．
+</aside>
+
 
 ## クラスター分析のまとめ
 
@@ -1020,6 +1150,8 @@ install.packages("vegan")     # 植生解析の定番
 install.packages("ecan")      # 解析を簡単に
 install.packages("ggdendro")  # 図示で使用
 install.packages("ggrepel")   # 図示で使用
+install.packages("ggsci")     # 図示で使用
+install.packages("cowplot")   # 図示で使用
 ```
 
 <aside class="notes">
