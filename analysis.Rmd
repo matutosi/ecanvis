@@ -211,16 +211,18 @@ tidyr::table2 |>
 種データには, このほかに系統関係などもあります．
 </aside>
 
-## パソコンへの入力
+## パソコンへの入力・保存
 
 - 1行目は項目名
 - 空の行，空の列，空のセルはつくらない
 - テキストファイル(CSV or TSV)で保存(推奨)
   - 誤変換を防ぐ
   - 再利用が容易
+  - `readx::read.xlsx()`，`readr::write_csv()`
 - スプレッドシートでの保存
   - 組成, 地点, 種を別シートに入力
   - 文字列として保存(誤変換対策)
+  - `openxlsx::write.xlsx()`
 
 <aside class="notes">
 調査資料を解析するときには，パソコンにデータを入力します．
@@ -1830,10 +1832,12 @@ Wildi(2017)も多変量解析について解説しています．
 これらも参考にしてください．
 </aside>
 
-# 植生学会の入会案内
+# 植生学会への入会案内
 
-- [植生学会](http://shokusei.jp/baser/)
-- [入会案内](http://shokusei.jp/baser/contact/admission-and-withdrawal)
+- 植生学会<br>
+  http://shokusei.jp/baser/
+- 入会案内<br>
+  http://shokusei.jp/baser/contact/admission-and-withdrawal
 
 # アンケートのお願い
 
