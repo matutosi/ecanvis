@@ -423,7 +423,7 @@ Shannonの情報量指数は，各種の相対優占度に相対優占度の対�
 ## Simpsonの均等度指数
 
 ```{r d-inv-1}
-val <- rep(0.2, 5) # 5種とも全て0.2のとき
+val <- rep(20, 5)  # 5種とも全て20のとき
 nj <- sum(val)     # 出現量の合計
 pi <- val / nj     # 相対優占度
 d <- sum(pi^2)
@@ -431,11 +431,11 @@ c(d, 1/d)
 ```
 
 ```{r d-inv-1-ggplot, echo = FALSE}
-tibble::tibble(x = letters[seq(val)], val = val) |>
-  ggplot2::ggplot(ggplot2::aes(1, val, fill = x)) + 
-  ggplot2::geom_bar(stat = "identity", position = "fill") + 
-  ggplot2::coord_flip() + 
-  ggplot2::labs(x = NULL, y = NULL) + 
+x <- seq(val)
+label <- letters[x]
+tibble::tibble(x = x, y = 1, val = val, label = label) |>
+  ggplot2::ggplot(ggplot2::aes(x, y, color = label)) + 
+  ggplot2::geom_point(size = (val^0.5) * 5) + 
   ggsci::scale_fill_nejm() + 
   ggplot2::theme_void() + 
   ggplot2::theme(legend.position = "none") + 
@@ -448,14 +448,14 @@ Simpsonの均等度指数を実際に計算します．
 簡単な内容ですので，手入力でRで実行してみましょう．
 
 5種全てが均等な場合です．
-わかりやすくするために，合計の出現量が1になるようにしています．
+わかりやすくするために，合計の出現量が100になるようにしています．
 dが0.2で，1/dが種数と同じ5です．
 </aside>
 
 ## Simpsonの均等度指数
 
 ```{r d-inv-2}
-val <- c(0.6, 0.1, 0.1, 0.1, 0.1) # 1種が0.6,他が0.1
+val <- c(10, 10, 60, 10, 10) # 1種が60,他が10
 nj <- sum(val)     # 出現量の合計
 pi <- val / nj     # 相対優占度
 d <- sum(pi^2)
@@ -463,11 +463,11 @@ c(d, 1/d)
 ```
 
 ```{r d-inv-2-ggplot, echo = FALSE}
-tibble::tibble(x = letters[seq(val)], val = val) |>
-  ggplot2::ggplot(ggplot2::aes(1, val, fill = x)) + 
-  ggplot2::geom_bar(stat = "identity", position = "fill") + 
-  ggplot2::coord_flip() + 
-  ggplot2::labs(x = NULL, y = NULL) + 
+x <- seq(val)
+label <- letters[x]
+tibble::tibble(x = x, y = 1, val = val, label = label) |>
+  ggplot2::ggplot(ggplot2::aes(x, y, color = label)) + 
+  ggplot2::geom_point(size = (val^0.5) * 5) + 
   ggsci::scale_fill_nejm() + 
   ggplot2::theme_void() + 
   ggplot2::theme(legend.position = "none") + 
