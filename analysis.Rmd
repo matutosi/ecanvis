@@ -20,6 +20,9 @@ output:
   # https://matutosi.github.io/ecanvis/analysis.html
   # https://matutosi.github.io/ecanvis/analysis.html?print-pdf # PDF印刷用
 
+  # ソースコード
+  # https://matutosi.github.io/ecanvis/analysis.Rmd
+
   # ローカル
   # D:/matu/work/ToDo/ecanvis/analysis.html
   # file:///D:/dropbox/ToDo/ecanvis/analysis.html?Fprint-pdf#/title-slide
@@ -436,7 +439,7 @@ label <- letters[x]
 tibble::tibble(x = x, y = 1, val = val, label = label) |>
   ggplot2::ggplot(ggplot2::aes(x, y, color = label)) + 
   ggplot2::geom_point(size = (val^0.5) * 5) + 
-  ggplot2::geom_text(aes(label = label), size = 10, color = "white") + 
+  ggplot2::geom_text(ggplot2::aes(label = label), size = 10, color = "white") + 
   ggsci::scale_fill_nejm() + 
   ggplot2::theme_void() + 
   ggplot2::theme(legend.position = "none") + 
@@ -469,7 +472,7 @@ label <- letters[x]
 tibble::tibble(x = x, y = 1, val = val, label = label) |>
   ggplot2::ggplot(ggplot2::aes(x, y, color = label)) + 
   ggplot2::geom_point(size = (val^0.5) * 5) + 
-  ggplot2::geom_text(aes(label = label), size = 10, color = "white") + 
+  ggplot2::geom_text(ggplot2::aes(label = label), size = 10, color = "white") + 
   ggsci::scale_fill_nejm() + 
   ggplot2::theme_void() + 
   ggplot2::theme(legend.position = "none") + 
