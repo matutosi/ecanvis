@@ -221,7 +221,7 @@ tidyr::table2 |>
 - テキストファイル(CSV or TSV)で保存(推奨)
   - 誤変換を防ぐ
   - 再利用が容易
-  - `readx::read.xlsx()`，`readr::write_csv()`
+  - `openxlsx::read.xlsx()`，`readr::write_csv()`
 - スプレッドシートでの保存
   - 組成, 地点, 種を別シートに入力
   - 文字列として保存(誤変換対策)
@@ -552,8 +552,9 @@ ggdendroパッケージで紹介されているデータを例として取り上
 
 ```{r cluster-concept-dist}
 USArrests |>
-  head(8) |>
-  stats::dist()
+  head(6) |>
+  stats::dist() |>
+  round(2)
 ```
 
 <aside class="notes">
