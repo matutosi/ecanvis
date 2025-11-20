@@ -21,7 +21,7 @@ output:
   # https://matutosi.github.io/ecanvis/analysis.html?print-pdf # PDF印刷用
 
   # ソースコード
-  # https://matutosi.github.io/ecanvis/analysis.Rmd
+  # https://github.com/matutosi/ecanvis/blob/main/analysis.Rmd
 
   # ローカル
   # D:/matu/work/ToDo/ecanvis/analysis.html
@@ -552,7 +552,7 @@ ggdendroパッケージで紹介されているデータを例として取り上
 
 ```{r cluster-concept-dist}
 USArrests |>
-  head(6) |>
+  head(7) |>
   stats::dist() |>
   round(2)
 ```
@@ -560,7 +560,7 @@ USArrests |>
 <aside class="notes">
 犯罪傾向が似た州を明らかにするためにクラスター分析をします．
 そのためには，まずは`dist()`類似度を計算します．
-ここでは最初の8つだけを計算しています．
+ここでは最初の部分だけを計算しています．
 </aside>
 
 ## クラスター分析の考え方：プロット
