@@ -29,16 +29,17 @@ output:
 ```
 
 ```{r setup, include = FALSE}
-pkg <- "tidyverse"; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
-pkg <- "knitr"    ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
-pkg <- "flextable"; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
-pkg <- "magrittr" ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
-pkg <- "ecan"     ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
-pkg <- "vegan"    ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # ecanと同時にインストールされる
-pkg <- "ggdendro" ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
-pkg <- "ggrepel"  ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
-pkg <- "ggsci"    ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
-pkg <- "cowplot"  ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
+pkg <- "tidyverse" ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
+pkg <- "knitr"     ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
+pkg <- "flextable" ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
+pkg <- "magrittr"  ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
+pkg <- "ecan"      ; if(!require(pkg, character.only = TRUE)) install.packages(pkg)
+pkg <- "vegan"     ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # ecanと同時にインストールされる
+pkg <- "ggdendro"  ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
+pkg <- "ggrepel"   ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
+pkg <- "dendextend"; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
+pkg <- "ggsci"     ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
+pkg <- "cowplot"   ; if(!require(pkg, character.only = TRUE)) install.packages(pkg) # 図示で使用
 
 knitr::opts_chunk$set( # 警告, メッセージ, エラーの非表示
   warning = FALSE,
@@ -961,7 +962,7 @@ PCAでプロットすると，上のように，地点1から地点10が馬蹄�
 
 ## DCA：除歪対応分析
 
-- Dtrended Component Analysis
+- Detrended Component Analysis
 - 植生以外ではあまり使われない
 
 <aside class="notes">
