@@ -1500,7 +1500,8 @@ cls_group <-
 
 
 ```{r cluster-plot-group}
-ggdendro::ggdendrogram(cls_group)
+ggdendro::ggdendrogram(cls_group) + 
+  ggplot2::theme(text = element_text(family = "mono")) # 等幅フォント
 ```
 
 <aside class="notes">
