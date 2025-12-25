@@ -1539,6 +1539,7 @@ cls_colored <- stats::as.dendrogram(cls_group)
 ## クラスター分析(着色して図示，コード)
 
 ```{r cluster-plot-group-color-plot-prep, eval = FALSE}
+par(family = "mono")  # 等幅フォント
 plot(cls_colored)
 dendextend::colored_bars(
   colors = col, 
