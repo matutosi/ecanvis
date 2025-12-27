@@ -194,7 +194,7 @@ type列にcases(罹患数)とpopulation(人口)という2つの項目があり�
 ```{r tidy}
 tidyr::table2 |>
   tidyr::pivot_wider(
-    c(country, year), 
+    id_cols = c(country, year), 
     names_from = type, 
     values_from = count)
 ```
