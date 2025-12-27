@@ -1154,13 +1154,14 @@ shinyを使ったページでも同じようなことを実行可能です．
 # 準備：パッケージのインストール
 
 ```{r install-packages, eval = FALSE}
-install.packages("tidyverse") # コードを明快に
-install.packages("vegan")     # 植生解析の定番
-install.packages("ecan")      # 解析を簡単に
-install.packages("ggdendro")  # 図示で使用
-install.packages("ggrepel")   # 図示で使用
-install.packages("ggsci")     # 図示で使用
-install.packages("cowplot")   # 図示で使用
+install.packages("tidyverse")  # コードを明快に
+install.packages("vegan")      # 植生解析の定番
+install.packages("ecan")       # 解析を簡単に
+install.packages("dendextend") # 図示で使用
+install.packages("ggdendro")   # 図示で使用
+install.packages("ggrepel")    # 図示で使用
+install.packages("ggsci")      # 図示で使用
+install.packages("cowplot")    # 図示で使用
 ```
 
 <aside class="notes">
@@ -1197,6 +1198,7 @@ library(dplyr)
 library(purrr)
 library(ggplot2)
 library(ggdendro)
+library(dendextend)
 library(ggrepel)
 ```
 
