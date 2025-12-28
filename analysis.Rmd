@@ -626,36 +626,25 @@ gemini：なお，生態学データの非線形性、特に長勾配の普遍�
 </aside>
 
 
-## ユークリッド距離とマンハッタン距離
+## ユークリッド距離(実践)とマンハッタン距離(点線)
 
 ```{r cluster-distaince-compare, echo = FALSE}
-df <- tibble::tibble(x = c(1,2), y = c(1,3))
-dist_euc <- 
-  df |>
-  ggplot2::ggplot(ggplot2::aes(x, y)) + 
-  ggplot2::geom_point(ggplot2::aes(size = 1)) + 
-  ggplot2::geom_path() + 
-  ggplot2::coord_fixed() + 
-  ggplot2::theme_bw() + 
-  ggplot2::theme(legend.position = "none")
-df <- tibble::tibble(x = c(1,2,2), y = c(1,1,3), size = c(1,0,1))
-dist_man <- 
-  df |>
+df_euc <- tibble::tibble(x = c(1,3), y = c(1,2), size = c(1,1))
+df_man <- tibble::tibble(x = c(1,3,3), y = c(1,1,2), size = c(1, 0, 1))
+df_euc |>
   ggplot2::ggplot(ggplot2::aes(x, y)) + 
   ggplot2::geom_point(ggplot2::aes(size = size)) + 
   ggplot2::geom_path() + 
+  ggplot2::geom_path(data = df_man, linetype = "dashed") + 
   ggplot2::coord_fixed() + 
   ggplot2::theme_bw() + 
   ggplot2::theme(legend.position = "none")
-cowplot::plot_grid(
-  dist_euc, dist_man, 
-  labels = c('ユークリッド距離', 'マンハッタン距離'))
 ```
 
 <aside class="notes">
 ユークリッド距離とマンハッタン距離は上の図のような違いです．
-ユークリッド距離は，いわゆる直線距離です．
-マンハッタン距離は，碁盤の目のような道路をとおる時の距離です．
+ユークリッド距離は，実践で表しており，直線距離です．
+マンハッタン距離は，点線で表しており，碁盤の目のような道路をとおる時の距離です．
 京都の碁盤の目を想像すればわかりやすいと思います．
 なお，ニューヨークのマンハッタンが東西の格子状に道路が配置されていることから命名されました．
 </aside>
