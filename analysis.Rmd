@@ -684,22 +684,24 @@ https://iit.kke.co.jp/marketingscience/analysis/method/analysis_cluster.html
 
 ```{r cluster-method-compare, echo = FALSE}
 ggd_min <- 
-  USArrests |>
-  stats::dist() |>
+  stats::dist(USArrests) |>
   stats::hclust("single") |>
   ggdendro::ggdendrogram()
 ggd_ave <- 
-  USArrests |>
-  stats::dist() |>
+  stats::dist(USArrests) |>
   stats::hclust("average") |>
   ggdendro::ggdendrogram()
+ggd_wrd <- 
+  stats::dist(USArrests) |>
+  stats::hclust("ward.D2") |>
+  ggdendro::ggdendrogram()
 cowplot::plot_grid(
-  ggd_min, ggd_ave, 
-  labels = c('最近隣法', '群平均法'))
+  ggd_min, ggd_ave, ggd_wrd, 
+  labels = c('最近隣法', '群平均法', 'Ward法'))
 ```
 
 <aside class="notes">
-アメリカでの犯罪傾向について，最近隣法と群平均法を比較したのがこの図です．
+アメリカでの犯罪傾向について，最近隣法，群平均法，Ward法を比較したのがこの図です．
 最近隣法では，一旦繋がったものが近いものを吸収するように鎖状に繋がっていく傾向にあります．
 そのため取り残されたものがあれば，左端の方に1つだけからなるクラスターが発生しやすいです．
 </aside>
