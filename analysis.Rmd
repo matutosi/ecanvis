@@ -1421,7 +1421,8 @@ ggplot2について詳しく知りたいときは，『Rグラフィックスク
 ```{r cluster}
 cls <- 
   df |>
-  ecan::df2table() |> # 組成形式に変換
+  # 組成形式に
+  ecan::df2table(st = "stand", sp = "species", ab = "cover") |>
   ecan::cluster(
     c_method = "average", # 非荷重群平均方
     d_method = "bray")    # Bray-Curtis距離
