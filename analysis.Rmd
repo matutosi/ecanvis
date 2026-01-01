@@ -1351,7 +1351,11 @@ df |>
 ## α多様性の計算
 
 ```{r diversity}
-div <- ecan::shdi(df)
+div <- 
+  ecan::shdi(df,
+             stand = "stand", 
+             species = "species", 
+             abundance = "cover")
 print(div, n = 8)
 ```
 
