@@ -1595,7 +1595,7 @@ plot(cls_colored)
 ```{r nmds}
 ord_nmds <- 
   df |>
-  df2table(st = "stand", sp = "species", ab = "cover") |>
+  ecan::df2table(st = "stand", sp = "species", ab = "cover") |>
   ecan::ordination(
     o_method = "nmds", 
     d_method = "bray")
