@@ -47,7 +47,6 @@ install.packages("dendextend") # 図示で使用
 install.packages("ggrepel")    # 図示で使用
 install.packages("ggsci")      # 図示で使用
 install.packages("cowplot")    # 図示で使用
-
   ## (省略)
 
 
