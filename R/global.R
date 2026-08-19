@@ -1,31 +1,29 @@
-  # Install packages (need only once)
-if(!require("devtools"))        install.packages("devtools")
-                                devtools::install_github("matutosi/ecan", force = TRUE)
-if(!require("cluster"))         install.packages("cluster")
-if(!require("dave"))            install.packages("dave")
-if(!require("dendextend"))      install.packages("dendextend")
-if(!require("ggdendro"))        install.packages("ggdendro")
-if(!require("graphics"))        install.packages("graphics")
-if(!require("ggrepel"))         install.packages("ggrepel")
-if(!require("labdsv"))          install.packages("labdsv")
-if(!require("magrittr"))        install.packages("magrittr")
-if(!require("pkgload"))         install.packages("pkgload")
-if(!require("reactable"))       install.packages("reactable")
-if(!require("rlang"))           install.packages("rlang")
-if(!require("rmarkdown"))       install.packages("rmarkdown")
-if(!require("shiny"))           install.packages("shiny")
-if(!require("shinycssloaders")) install.packages("shinycssloaders")
-if(!require("tidyverse"))       install.packages("tidyverse")
-if(!require("vegan"))           install.packages("vegan")
+  # Packages to attach.  The modules call shiny, reactable and magrittr
+  # functions without a namespace, so they have to be on the search path.
+pkgs <- c("cluster", "dave", "dendextend", "ggdendro", "ggrepel", "graphics",
+          "labdsv", "magrittr", "pkgload", "reactable", "rlang", "rmarkdown",
+          "shiny", "shinycssloaders", "tidyverse", "vegan")
 
-  # ui.R
-  # server.R
-  # source("server.R")
-  # source("ui.R")
-source("cluster.R")
-source("data_download.R")
-source("diversity.R")
-source("ind_val.R")
-source("load_data.R")
-source("ordination.R")
-source("utils.R")
+  # Install what is missing (base packages such as graphics are always there).
+  # require() alone does not attach a package it has just installed, so the
+  # install and the attach are kept apart.
+for(pkg in setdiff(pkgs, rownames(utils::installed.packages()))){
+  utils::install.packages(pkg)
+}
+
+  # ecan is on GitHub only.  Install it once: force = TRUE on every start
+  # re-installed it each time the app was launched.
+if(!requireNamespace("ecan", quietly = TRUE)){
+  if(!requireNamespace("devtools", quietly = TRUE)) utils::install.packages("devtools")
+  devtools::install_github("matutosi/ecan")
+}
+
+for(pkg in pkgs) library(pkg, character.only = TRUE)
+
+  # Module files.  shiny sources ui.R and server.R itself.
+  # shiny sets the working directory to the app directory (this directory),
+  # but fall back to R/ so that the file also works from the project root.
+app_dir <- if(file.exists("cluster.R")) "." else "R"
+app_files <- c("utils.R", "data_download.R", "load_data.R",
+               "diversity.R", "ind_val.R", "cluster.R", "ordination.R")
+for(f in app_files) source(file.path(app_dir, f))
