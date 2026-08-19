@@ -13,3 +13,6 @@ URL: https://matutosi.shinyapps.io/ecanvis (app)
 Imports: 
     pkgload,
     shiny
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
