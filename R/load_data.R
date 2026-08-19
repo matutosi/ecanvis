@@ -1,7 +1,10 @@
 ## Generate example data
 gen_example_data <- function(){
-  data(dune)
-  data(dune.env)
+  env <- new.env()
+  utils::data("dune",     package = "vegan", envir = env)
+  utils::data("dune.env", package = "vegan", envir = env)
+  dune     <- env[["dune"]]
+  dune_env <- env[["dune.env"]]
   sp_dummy <- 
     tibble::tibble(
       "species" = colnames(dune), 
@@ -11,8 +14,8 @@ gen_example_data <- function(){
   example <- 
     dune %>%
     ecan::table2df(st = "stand", sp = "species", ab = "cover") %>%
-    dplyr::left_join(tibble::rownames_to_column(dune.env, "stand")) %>%
-    dplyr::left_join(sp_dummy)
+    dplyr::left_join(tibble::rownames_to_column(dune_env, "stand"), by = "stand") %>%
+    dplyr::left_join(sp_dummy, by = "species")
   return(example)
 }
 
@@ -95,9 +98,9 @@ load_dataServer <- function(id, example_data){
     })
     # check dupulicated columns
     output$dupulicated_caution <- renderUI({
-      req(input$s, input$sp, input$ab)
-      if(input$st == input$sp | input$st == input$ab | input$sp == input$ab){
-        tags$h3("Unit, item, and abundance should NOT be dupulicated!")
+      req(input$st, input$sp, input$ab)
+      if(has_duplicated_cols(input$st, input$sp, input$ab)){
+        tags$h3("Unit, item, and abundance should NOT be duplicated!")
       } else {
         NULL
       }

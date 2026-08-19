@@ -48,8 +48,8 @@ clusterSever <- function(id, data_in, tbl){
 
     # Update group select
     indiv <- eventReactive(c(input$cls_show_group, input$cls_with_sp), {
-      if(input$cls_show_group){
-        indiv <- if(input$cls_with_sp){ sp() } else { st() }
+      indiv <- pick_indiv(input$cls_with_sp, st(), sp())
+      if(isTRUE(input$cls_show_group)){
         choices <- ecan::cols_one2multi(data_in, indiv, inculde_self = FALSE)
         updateSelectInput(session, "cls_group", choices = choices)
       }
@@ -68,10 +68,10 @@ clusterSever <- function(id, data_in, tbl){
         col <- ecan::cls_color(cls, data_in, indiv = indiv(), group = input$cls_group)  # need BEFORE add group
         cls <- ecan::cls_add_group(cls, data_in, indiv = indiv(), group = input$cls_group)
         cls <- stats::as.dendrogram(cls)
-        labels_colors(cls) <- gray(input$cls_label_gray)
+        cls <- dendextend::`labels_colors<-`(cls, value = grDevices::gray(input$cls_label_gray))
         plot(cls)
         dendextend::colored_bars(colors = col, cls, input$cls_group, y_shift = 0,  y_scale = 2)
-        par(new = TRUE)
+        graphics::par(new = TRUE)
         plot(cls)
       } else {
         cls <- stats::as.dendrogram(cls)

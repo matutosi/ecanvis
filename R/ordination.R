@@ -66,8 +66,8 @@ ordinationSever <- function(id, data_in, com_table){
 
     # Update group select
     indiv <- eventReactive(c(input$ord_show_group, input$ord_use_species_scores), {
-      if(input$ord_show_group){
-        indiv <- if(input$ord_use_species_scores){ sp() } else { st() }
+      indiv <- pick_indiv(input$ord_use_species_scores, st(), sp())
+      if(isTRUE(input$ord_show_group)){
         choices <- ecan::cols_one2multi(data_in, indiv, inculde_self = FALSE)
         updateSelectInput(session, "ord_group", choices = choices)
       }
@@ -75,33 +75,34 @@ ordinationSever <- function(id, data_in, com_table){
     })
 
     # Compute
+    score <- reactive({
+      if(isTRUE(input$ord_use_species_scores)) "sp_scores" else "st_scores"
+    })
+
     ord_scores <- reactive({
         ord <-
           com_table %>%
           ecan::ordination(o_method = input$ord_o_method, d_method = input$ord_d_method)
 
-        score <- if(input$ord_use_species_scores) "sp_scores" else "st_scores"
-        ord_scores <- 
-          if(input$ord_show_group){
-            ecan::ord_add_group(
-              ord    = ord, 
-              score  = score,
-              df     = data_in,
-              indiv = indiv(),    # need "()": indiv is reactive
-              group  = input$ord_group)
-          } else {
-            row_name <- if(input$ord_use_species_scores){ sp() } else { st() }
-            ecan::ord_extract_score(ord, score, row_name)
-          }
-
-        # Download data
-        data_download_tsvServer("download_tsv", 
-          data = ord_scores,
-          filename = paste("ord", score, st(), sp(), ab(), input$ord_o_method, input$ord_d_method, sep = "_"))
-
-        # return
-        ord_scores
+        if(input$ord_show_group){
+          ecan::ord_add_group(
+            ord    = ord, 
+            score  = score(),
+            df     = data_in,
+            indiv = indiv(),    # need "()": indiv is reactive
+            group  = input$ord_group)
+        } else {
+          row_name <- pick_indiv(input$ord_use_species_scores, st(), sp())
+          ecan::ord_extract_score(ord, score(), row_name)
+        }
     })
+
+    # Download data (registered once, values are forced at download time)
+    data_download_tsvServer("download_tsv", 
+      data = ord_scores,
+      filename = reactive(
+        paste("ord", score(), st(), sp(), ab(),
+              input$ord_o_method, input$ord_d_method, sep = "_")))
 
     # Plot
     gg <- reactive({
@@ -116,7 +117,7 @@ ordinationSever <- function(id, data_in, com_table){
 
         gg <- 
           ggplot2::ggplot(ord_scores(), ggplot2::aes(.data[[x]], .data[[y]], label = rownames(ord_scores()))) +
-          ggplot2::geom_point(aes(col = .data[[input$ord_group]]), alpha = alpha, size = size) +
+          ggplot2::geom_point(ggplot2::aes(col = .data[[input$ord_group]]), alpha = alpha, size = size) +
           ggplot2::geom_text() +
           ggplot2::theme_bw()
       } else {

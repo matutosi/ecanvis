@@ -11,7 +11,7 @@ ind_valUI <- function(id){
 
         # Plot settings
         selectInput(ns("p_val_max"),   "Maximum p.value",
-          choices = c("1", "0.1", "0.05", "0.01", "0.001", "0.001")),
+          choices = c("1", "0.1", "0.05", "0.01", "0.001")),
         sliderInput(ns("ind_val_range"), "Range of ind.val", 
           min = 0, max = 1,  value = c(0, 1), step = 0.05),
 
@@ -56,7 +56,7 @@ ind_valSever <- function(id, data_in){
     # Compute
     ind_val_res <- reactive({
       req(data_in)
-      if(st() != sp() & is.numeric(data_in[[ab()]])){
+      if(has_valid_cols(data_in, st(), sp(), ab())){
         output$caution <- renderUI(character(0)) # No caution
         ecan::ind_val(df        = data_in, 
                 stand     = st(), 
@@ -65,7 +65,8 @@ ind_valSever <- function(id, data_in){
                 group     = input$ind_val_st_group) %>%
         dplyr::mutate_if(is.numeric, round, digit = 6)
       } else {
-        output$caution <- renderUI("Select correct set of unit, item and abundance. Unit and item must not be duplicated. Abundance must be numeric.")
+        output$caution <- renderUI(msg_invalid_cols())
+        NULL
       }
     })
 
@@ -73,33 +74,27 @@ ind_valSever <- function(id, data_in){
     output$ind_val_plot <- renderPlot(res = 96, {
       req(ind_val_res())
 
-      selected_group <- colnames(ind_val_res()[1])
+      selected_group <- colnames(ind_val_res())[1]
 
-      # group setting
+      # group setting, then filter by p.value and ind.val
       ind <- 
-        if(is.double(ind_val_res()[[selected_group]])){
-          dplyr::mutate(ind_val_res(), {{selected_group}} := cut_conti(.data[[selected_group]]))
-        } else {
-          ind_val_res()
-        } %>%
-        # filter by p.value and ind.val
-        dplyr::filter(.data[["p.value"]] < as.numeric(input$p_val_max)) %>%
-        dplyr::filter(.data[["ind.val"]] > input$ind_val_range[1]) %>%
-        dplyr::filter(.data[["ind.val"]] < input$ind_val_range[2])
+        ind_val_res() %>%
+        cut_conti_col(selected_group) %>%
+        filter_ind_val(input$p_val_max, input$ind_val_range)
       ind %>%
-        ggplot(aes(x = .data[[selected_group]], y = .data[["ind.val"]], 
+        ggplot2::ggplot(ggplot2::aes(x = .data[[selected_group]], y = .data[["ind.val"]], 
                    size = log(1 / (.data[["p.value"]] * 10)),
                    label = .data[[sp()]])) + 
           ggplot2::geom_point() + 
-          ggrepel::geom_text_repel(aes(size = log(1 / (.data[["p.value"]] * 10), base = 5))) + 
+          ggrepel::geom_text_repel(ggplot2::aes(size = log(1 / (.data[["p.value"]] * 10), base = 5))) + 
           ggplot2::theme_bw() + 
-          theme(legend.position = "none")
+          ggplot2::theme(legend.position = "none")
     })
 
     # Download data
     data_download_tsvServer("download_tsv", 
-      data = ind_val_res(),
-      filename = paste("ind_val", st(), sp(), ab(), input$ind_val_st_group, sep = "_"))
+      data = ind_val_res,
+      filename = reactive(paste("ind_val", st(), sp(), ab(), input$ind_val_st_group, sep = "_")))
 
     # Table
     output$ind_val_table <- renderReactable({

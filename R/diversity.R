@@ -10,7 +10,7 @@ calculate_diversity <- function(df, st, sp, ab){
       df %>%
       ecan::select_one2multi(st, inculde_self = TRUE)
 
-    dplyr::left_join(diversity, extra_data)
+    dplyr::left_join(diversity, extra_data, by = st)
 }
 
 ## UI module 
@@ -67,14 +67,12 @@ diversitySever <- function(id, data_in){
 
     # Compute
     diversity <- reactive({
-      
-      if(st() != sp() & is.numeric(data_in[[ab()]])){
+      if(has_valid_cols(data_in, st(), sp(), ab())){
         output$caution <- renderUI(character(0)) # No caution
-        if(st() != "" & sp() != "" & ab() != "" & !is.null(data_in[[ab()]]))
         calculate_diversity(data_in, st(), sp(), ab())
       } else {
-        output$caution <-
-          renderUI("Select correct set of unit, item and abundance. Unit and item must not be duplicated. Abundance must be numeric.")
+        output$caution <- renderUI(msg_invalid_cols())
+        NULL
       }
     })
 
@@ -86,8 +84,8 @@ diversitySever <- function(id, data_in){
 
     # Download data
     data_download_tsvServer("download_tsv", 
-      data = diversity(),
-      filename = paste("diversity", st(), sp(), ab(), sep = "_"))
+      data = diversity,
+      filename = reactive(paste("diversity", st(), sp(), ab(), sep = "_")))
 
     # Plot
     output$diversity_plot_s <- renderPlot(res = 96, {
@@ -97,15 +95,10 @@ diversitySever <- function(id, data_in){
       all_data <- "all_data"
       selected_group <- if(input$div_show_st_group) { input$div_st_group } else { all_data }
 
-      div <- 
-        if(is.double(diversity()[[selected_group]])){
-            dplyr::mutate(diversity(), {{selected_group}} := cut_conti(.data[[selected_group]]))
-        } else {
-          diversity()
-        }
+      div <- cut_conti_col(diversity(), selected_group)
       div %>%
         dplyr::mutate({{all_data}} := 1) %>%
-        ggplot(aes(x = .data[[selected_group]], y = .data[[input$div_index]])) + 
+        ggplot2::ggplot(ggplot2::aes(x = .data[[selected_group]], y = .data[[input$div_index]])) + 
           ggplot2::geom_boxplot(outlier.shape = NA) +  # do not show outer point
           ggplot2::geom_jitter(height = 0, width = 0.1) + 
           ggplot2::theme_bw()
