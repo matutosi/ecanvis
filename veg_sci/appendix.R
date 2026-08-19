@@ -34,7 +34,7 @@ sessionInfo() # 以下の ## から右側は出力
   ## [25] magrittr_2.0.3     Matrix_1.7-3       withr_3.0.2       
   ## [28] gtable_0.3.6      
 
-
+
   # Appendix 2：パッケージのインストール
 install.packages("tidyverse")  # コードを明快に
 install.packages("vegan")      # 植生解析の定番
@@ -71,7 +71,7 @@ tidyr::table2
   ##  5 Brazil       1999 cases           37737
   ## (省略)
 
-
+
   # Appendix 5：tidy dataの例
 tidyr::table2 |>
   tidyr::pivot_wider(
@@ -106,7 +106,7 @@ readr::write_tsv(df_sp, path_species)
   # Excel形式での保存
 openxlsx::write.xlsx(df_data, path_data)
 
-
+
   # Appendix 7：地点データ(dune.env)の整理
 data(dune.env, package = "vegan") # 地点データ
 dune_env_df <- 
@@ -153,7 +153,7 @@ dune_df <-
   ##  5 1     Poatriv      2
   ## (省略)
 
-
+
   # Appendix 9：種データ(架空)の生成
 sp_dummy <- tibble::tibble(
   "species" = colnames(dune), 
@@ -189,7 +189,7 @@ df <-
   ##  5 1     Poatriv      2   2.8 1        SF         Haypastu ...
   ## (省略)
 
-
+
   # Appendix 11：データ変換の例
 bb_scale <- c("5", "4", "3", "2", "1", "+", "0")
 percen_med <- c(87.5, 62.5, 37.5, 17.5, 5.5, 0.55, 0)
@@ -236,7 +236,7 @@ d_2 <- sum(pi_2 ^ 2)
 c(d_2, 1 - d_2, 1 / d_2)
   ## [1] 0.4 0.6 2.5
 
-
+
   # Appendix 14：Shannonの情報量指数の計算
 -sum(pi_1 * log(pi_1))
   ## [1] 1.609438
@@ -275,7 +275,7 @@ dune_env_df |>
   ## 3 NM          6.1   8     2.00 0.854  6.92
   ## 4 SF          4.8   9.17  2.04 0.846  7.14
 
-
+
   # Appendix 17：グループ別でのα多様性の図示
 dune_env_df |>
   ggplot2::ggplot(
@@ -319,7 +319,7 @@ df_cls |>
   ) 
   ## (図2参照)
 
-
+
   # Appendix 20：架空データでの距離の算出
 dist_euc <- 
   df_cls |>
@@ -358,7 +358,7 @@ df_euc |>
   ggplot2::theme(legend.position = "none")
   ## (図4参照)
 
-
+
   # Appendix 23：クラスター分析の結合方法の比較
  # 最近隣法
 gg_sing <- 
@@ -394,7 +394,7 @@ cls # 結果の表示
   ## Distance         : bray 
   ## Number of objects: 20 
 
-
+
   # Appendix 25：クラスター分析結果の構造の表示
 str(cls)
   ## List of 9
@@ -428,7 +428,7 @@ ggdendro::ggdendrogram(cls_group) +
   ggplot2::theme(text = element_text(family = "mono")) # 等幅フォント
   ## (図5参照)
 
-
+
   # Appendix 28：クラスター分析結果へのグループの着色
 col <- 
   ecan::cls_color(
@@ -450,7 +450,7 @@ par(new = TRUE)
 plot(cls_colored)
   ## (省略)
 
-
+
   # Appendix 29：PCAの考え方
 set.seed(4)
 x <- round(1:10 + rnorm(10, sd = 1), 0)
@@ -505,7 +505,7 @@ df_pca |>
   ggplot2::theme_bw()
   # (図6参照)
 
-
+
   # Appendix 30：環境傾度上に並んだデータ
 val <- rep(c(1, 2, 3, 2, 1), 10)
 sp <- paste0("sp", stringr::str_pad(unlist(purrr::map2(1:10, 5:14, `:`)), 
@@ -530,7 +530,7 @@ t(tbl_arch)
   ## sp13    0    0    0    0    0    0    0    0    1    2
   ## sp14    0    0    0    0    0    0    0    0    0    1
 
-
+
   # Appendix 31：馬蹄効果の例
 pca_arch <- 
   tbl_arch |>
@@ -569,7 +569,7 @@ ord_nmds_st <-
   ##  5 -0.301  -0.0312 5      
   ## (省略)
 
-
+
   # Appendix 34：nMDSの結果の図示(地点)
 ord_nmds_st |>
   ggplot2::ggplot(
@@ -599,7 +599,7 @@ ord_nmds_sp <-
   ## Poatriv  -0.135961231  0.352651500  Poatriv       P       i
   ## (省略)
 
-
+
   # Appendix 36：nMDSの結果の色付きの図示(種)
 ord_nmds_sp |>
   ggplot2::ggplot(
@@ -614,7 +614,7 @@ ord_nmds_sp |>
   ggplot2::theme_bw()
   ## (省略)
 
-
+
   # Appendix 37：Indicator Species Analysisでもとの結果の出力
 isa_res_raw <- 
   ecan::ind_val(df, 
@@ -658,7 +658,7 @@ tibble(
   ##  5     3   0.365 0.235
   ## (省略)
 
-
+
   # Appendix 38：Indicator Species Analysisでの整理した結果
 group <- "Management"
 (isa_res <- ecan::ind_val(df, group = group))
