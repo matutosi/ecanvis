@@ -15,6 +15,29 @@
 
 ### 現在の状態
 
+- 2026-09-04 04:28 更新 (このセッション，x280-home)．
+  **全体を点検してバグを直し，リファクタリングとテスト追加をした** (テスト95件 -> 225件)．
+  - **直したバグ4件**
+    1. **ordination の軸番号**．`pcoa` は成分が2つしか返らないのに軸は4まで選べ，
+       `names()[4]` が `NA` になって落ちていた．さらに軸3は `ord_extract_score()` が
+       付ける**文字列の行名列**を拾っていた．`score_axes()`・`pick_axis()` で
+       **得点列だけ**から選び，範囲を外れたら丸めて `msg_axis_clamped()` で知らせる．
+    2. **群の列が無いデータで ISA が赤いエラー**になっていた
+       (`ecan::ind_val()` が `Needs "group" input` で停止)．`has_group()` で判定し，
+       `msg_no_group()` を出す．cluster と ordination は**群なしの図に落とす**
+       (以前は空白のままだった)．
+    3. **単位と項目に同じ列を選ぶと，列が入れ替わった表を下流に返していた**
+       (`relocate()` が重複を落とすため `stand, cover, species` になる)．
+       警告は出ていたが表は流れていた．`req()` で止め，直前の表を保つ．
+    4. **`reactable::` の付け忘れ** (diversity・ind_val・load_data)．
+       アプリは動くが，`testServer()` で組んだ時点で落ちるためテストが書けなかった．
+  - **リファクタリング**: `round_numeric()`・`has_group()` に共通処理を集約．
+    論理入力の `if(input$x)` を `isTRUE()` にした (未設定時に落ちる)．
+    使われていない `dots2list()` を削除．
+  - **テスト**: `test-ui.R` (UI が組めるか・名前空間・fspa 不在) と
+    `test-no_group.R` (群が無いときの4パネル) を新設．軸まわりの回帰も追加．
+  - この PC に `shinycssloaders` を入れた．これで UI 関数もテストできる．
+
 - 2026-09-04 03:41 更新 (このセッション，x280-home)．
   **TWINSPAN の群を Show group に出し，二元表を Cluster パネルに載せた** (ユーザ指示)．
   - `add_tw_group()` で TWINSPAN の群を data_in に1列足し，Show group の
@@ -71,11 +94,6 @@
 
 ### 次にやること
 
-- **`R/diversity.R` と `R/ind_val.R` の `renderReactable`・`reactableOutput` にも
-  名前空間を付ける**．いまは付いていない．アプリは `R/global.R` が reactable を
-  attach するので動くが，`testServer()` で module を組んだ時点で落ちるため，
-  この2つのパネルはモジュールのテストが書けない
-  (2026-09-04 に cluster.R で実際に踏んだ)．`reactable::` を付けるだけ．
 - **【判断待ち】ordination パネルからも TWINSPAN の群を使えるようにするか**．
   Cluster パネルでは選べるようになったが，ordination は自分でクラスタを作らないので，
   パネルをまたいで群を受け渡す仕組みが要る (いまは各パネルが独立している)．
@@ -104,6 +122,7 @@
 - パッケージとしての体裁は未整備 (NAMESPACE と man/ が無く，
   DESCRIPTION の Imports も実態と合っていない)．
   shiny アプリとして shinyapps.io へ配置する運用のため，当面は問題にならない．
-- `shinycssloaders` が未導入のため，アプリを起動しての UI 動作確認はできていない
-  (2026-09-04，x280-home で確認．`reactable` は導入済みになっていた)．
-  `R/global.R` は起動時に自分で入れるので，アプリを走らせれば解消する．
+- **ブラウザでアプリを起動しての目視確認はしていない**．
+  `reactable`・`shinycssloaders` は 2026-09-04 に x280-home へ導入したので，
+  UI 関数が組めることは `test-ui.R` で機械的に確かめられる．
+  ただし `conditionalPanel` の表示切り替えや図の見た目は，実際に走らせないと分からない．
