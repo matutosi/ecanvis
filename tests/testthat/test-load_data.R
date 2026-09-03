@@ -11,6 +11,8 @@ test_that("gen_example_data builds a long format table", {
   expect_true(is.numeric(df[["cover"]]))
     # zero abundances are dropped by table2df, so every row is a record
   expect_true(all(df[["cover"]] > 0))
+    # which makes it a usable input for every panel
+  expect_true(has_valid_cols(df, "stand", "species", "cover"))
 })
 
 test_that("gen_example_data does not depend on attached packages", {
@@ -20,14 +22,6 @@ test_that("gen_example_data does not depend on attached packages", {
     # global.R had attached vegan beforehand
   expect_false("package:vegan" %in% search())
   expect_no_error(gen_example_data())
-})
-
-test_that("the example data is a valid input for the analyses", {
-  skip_if_not_installed("vegan")
-  skip_if_not_installed("ecan")
-
-  df <- gen_example_data()
-  expect_true(has_valid_cols(df, "stand", "species", "cover"))
 })
 
 test_that("the panel holds the table back while the columns are duplicated", {

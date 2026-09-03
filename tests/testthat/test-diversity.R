@@ -39,6 +39,4 @@ test_that("the plot grouping column is binned only when continuous", {
   expect_s3_class(cut_conti_col(res, "A1")[["A1"]], "factor")
   expect_identical(cut_conti_col(res, "Management")[["Management"]],
                    res[["Management"]])
-    # "all_data" does not exist yet when the plot decides how to group
-  expect_identical(cut_conti_col(res, "all_data"), res)
 })

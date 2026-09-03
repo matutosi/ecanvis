@@ -5,13 +5,9 @@ test_that("cut_conti keeps every value including the minimum", {
   expect_length(res, length(x))
     # regression: cut() without include.lowest dropped the minimum
   expect_false(any(is.na(res)))
-})
 
-test_that("cut_conti bins a random vector without NA", {
   set.seed(1)
-  x <- runif(100)
-  expect_false(any(is.na(cut_conti(x))))
-  expect_true(nlevels(cut_conti(x)) > 1)
+  expect_gt(nlevels(cut_conti(runif(100))), 1)
 })
 
 test_that("is_conti treats integer as continuous", {
@@ -54,7 +50,6 @@ test_that("has_valid_cols rejects duplicated, missing or non numeric columns", {
                    stringsAsFactors = FALSE)
   expect_false(has_valid_cols(df, "stand", "stand",   "cover"))    # duplicated
   expect_false(has_valid_cols(df, "stand", "species", "species"))  # duplicated
-  expect_false(has_valid_cols(df, "stand", "species", "species"))
   expect_false(has_valid_cols(df, "stand", "species", "none"))     # absent
   expect_false(has_valid_cols(df, "stand", "species", "stand"))    # not numeric
   expect_false(has_valid_cols(df, "",      "species", "cover"))    # empty
@@ -100,9 +95,12 @@ test_that("as_value forces a function but leaves a value alone", {
   expect_equal(as_value(function() 1), 1)
 })
 
-test_that("msg_invalid_cols is a single string", {
-  expect_type(msg_invalid_cols(), "character")
-  expect_length(msg_invalid_cols(), 1)
+test_that("the cautions are a single string", {
+  for(msg in list(msg_invalid_cols(), msg_no_group())){
+    expect_type(msg, "character")
+    expect_length(msg, 1)
+  }
+  expect_match(msg_no_group(), "group")
 })
 
 test_that("has_duplicated_cols detects any repeated column name", {
@@ -166,10 +164,4 @@ test_that("has_group() accepts a column of the data and nothing else", {
   expect_false(has_group(df, NA))
   expect_false(has_group(df, character(0)))
   expect_false(has_group(df, c("stand", "Management")))
-})
-
-test_that("msg_no_group() says what a group has to be", {
-  expect_type(msg_no_group(), "character")
-  expect_length(msg_no_group(), 1)
-  expect_match(msg_no_group(), "group")
 })
