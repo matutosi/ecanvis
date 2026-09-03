@@ -87,15 +87,6 @@ test_that("filter_ind_val drops NA rows", {
   expect_equal(nrow(filter_ind_val(df, 0.05, c(0, 1))), 1)
 })
 
-test_that("dots2list drops NULL and unwraps a single element", {
-  expect_null(dots2list())
-  expect_null(dots2list(NULL))
-  expect_null(dots2list(NULL, NULL))
-  expect_equal(dots2list(1), 1)
-  expect_equal(dots2list(1, NULL), 1)
-  expect_equal(dots2list(1, NULL, 2), list(1, 2))
-})
-
 test_that("t_if_true transposes only when TRUE", {
   m <- matrix(1:6, nrow = 2)
   expect_equal(t_if_true(m, TRUE), t(m))
@@ -121,4 +112,64 @@ test_that("has_duplicated_cols detects any repeated column name", {
   expect_true(has_duplicated_cols("stand", "species", "species"))
     # an input is NULL before the UI is drawn; c() drops it
   expect_false(has_duplicated_cols(NULL, "species", "cover"))
+})
+
+test_that("score_axes() keeps the numeric columns only", {
+    # ord_extract_score() adds the name of each row, which is not an axis
+  expect_equal(score_axes(data.frame(V1 = 1, V2 = 2, stand = "a")),
+               c("V1", "V2"))
+  expect_equal(score_axes(data.frame(stand = "a")), character(0))
+  expect_equal(score_axes(NULL),          character(0))
+  expect_equal(score_axes(data.frame()),  character(0))
+})
+
+test_that("pick_axis() brings an out of range number back", {
+  axes <- c("V1", "V2")
+  expect_equal(pick_axis(axes, 1), "V1")
+  expect_equal(pick_axis(axes, 2), "V2")
+    # regression: "pcoa" returns two components while the box goes up to four,
+    # and names(df)[4] was NA, which stopped the panel
+  expect_equal(pick_axis(axes, 4), "V2")
+  expect_equal(pick_axis(axes, 0), "V1")
+  expect_equal(pick_axis(axes, NA), "V1")
+  expect_equal(pick_axis(axes, NULL), "V1")
+  expect_null(pick_axis(character(0), 1))
+})
+
+test_that("msg_axis_clamped() speaks up only when a number was too large", {
+  axes <- c("V1", "V2")
+  expect_null(msg_axis_clamped(axes, 1, 2))
+  expect_null(msg_axis_clamped(character(0), 1, 4))
+  expect_match(msg_axis_clamped(axes, 1, 4), "2 components")
+  expect_match(msg_axis_clamped("V1", 1, 2),  "1 component,")
+})
+
+test_that("round_numeric() rounds the numbers and leaves the rest", {
+  df  <- data.frame(stand = "a", x = 1.23456789, n = 3L,
+                    stringsAsFactors = FALSE)
+  out <- round_numeric(df, digits = 3)
+
+  expect_equal(out$x, 1.235)
+  expect_equal(out$stand, "a")
+  expect_equal(out$n, 3L)
+  expect_equal(round_numeric(df)$x, round(1.23456789, 6))
+})
+
+test_that("has_group() accepts a column of the data and nothing else", {
+  df <- data.frame(stand = "a", Management = "BF", stringsAsFactors = FALSE)
+
+  expect_true(has_group(df, "Management"))
+  expect_false(has_group(df, "no_such_col"))
+    # the select input is empty when the data holds no group column
+  expect_false(has_group(df, NULL))
+  expect_false(has_group(df, ""))
+  expect_false(has_group(df, NA))
+  expect_false(has_group(df, character(0)))
+  expect_false(has_group(df, c("stand", "Management")))
+})
+
+test_that("msg_no_group() says what a group has to be", {
+  expect_type(msg_no_group(), "character")
+  expect_length(msg_no_group(), 1)
+  expect_match(msg_no_group(), "group")
 })
