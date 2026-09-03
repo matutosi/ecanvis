@@ -52,7 +52,7 @@ load_dataUI <- function(id) {
         ),
 
       mainPanel(
-        reactableOutput(ns("table")),
+        reactable::reactableOutput(ns("table")),
       )
 
     )
@@ -70,10 +70,10 @@ load_dataServer <- function(id, example_data){
     })
 
     data_in <- reactive({
-      locale <- if(input$file_s_jis) readr::locale(encoding = "CP932")
-        else                         readr::default_locale()
+      locale <- if(isTRUE(input$file_s_jis)) readr::locale(encoding = "CP932")
+        else                                 readr::default_locale()
       data_in <- 
-        if(input$use_example){
+        if(isTRUE(input$use_example)){
           example_data
         } else {
           req(input$file)
@@ -123,7 +123,7 @@ load_dataServer <- function(id, example_data){
     )
 
     # Show table
-    output$table <- renderReactable({
+    output$table <- reactable::renderReactable({
       req(data_in(), cols())
       reactable::reactable(dplyr::relocate(data_in(), cols()), resizable = TRUE, filterable = TRUE, searchable = TRUE)
     })
@@ -131,6 +131,12 @@ load_dataServer <- function(id, example_data){
     # Return data
     reactive({
       req(data_in(), cols())
+        # Every panel reads the first three columns as unit, item and
+        # abundance.  A duplicated choice drops one of them from relocate(),
+        # so the abundance would slide into the item slot and the panels would
+        # analyse the wrong columns.  Hold the last good table instead: the
+        # caution above already tells the user what to fix.
+      req(!has_duplicated_cols(input$st, input$sp, input$ab))
       dplyr::relocate(data_in(), cols())
     })
 

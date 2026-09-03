@@ -46,6 +46,9 @@ ordinationUI <- function(id){
 
       mainPanel(
 
+        # Caution
+        htmlOutput(ns("ord_caution")),
+
         # Plot
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
           plotOutput(ns("ordination"))
@@ -79,21 +82,32 @@ ordinationSever <- function(id, data_in, com_table){
       if(isTRUE(input$ord_use_species_scores)) "sp_scores" else "st_scores"
     })
 
-    ord_scores <- reactive({
-        ord <-
-          com_table %>%
-          ecan::ordination(o_method = input$ord_o_method, d_method = input$ord_d_method)
+    ord <- reactive({
+      req(com_table)
+      com_table %>%
+        ecan::ordination(o_method = input$ord_o_method, d_method = input$ord_d_method)
+    })
 
-        if(input$ord_show_group){
+      # The scores on their own.  The axes are taken from here rather than from
+      # ord_scores(), because ord_add_group() adds columns that are numeric too
+      # (A1 of dune.env, say) and those are not axes.
+    ord_raw_scores <- reactive({
+      row_name <- pick_indiv(input$ord_use_species_scores, st(), sp())
+      ecan::ord_extract_score(ord(), score(), row_name)
+    })
+
+    axes <- reactive({ score_axes(ord_raw_scores()) })
+
+    ord_scores <- reactive({
+        if(isTRUE(input$ord_show_group) && has_group(data_in, input$ord_group)){
           ecan::ord_add_group(
-            ord    = ord, 
+            ord    = ord(), 
             score  = score(),
             df     = data_in,
             indiv = indiv(),    # need "()": indiv is reactive
             group  = input$ord_group)
         } else {
-          row_name <- pick_indiv(input$ord_use_species_scores, st(), sp())
-          ecan::ord_extract_score(ord, score(), row_name)
+          ord_raw_scores()
         }
     })
 
@@ -104,14 +118,21 @@ ordinationSever <- function(id, data_in, com_table){
         paste("ord", score(), st(), sp(), ab(),
               input$ord_o_method, input$ord_d_method, sep = "_")))
 
+    # Caution when an axis was out of range
+    output$ord_caution <- renderUI({
+      msg <- msg_axis_clamped(axes(), input$ord_x, input$ord_y)
+      if(is.null(msg)) character(0) else tags$p(msg)
+    })
+
     # Plot
     gg <- reactive({
-      # settings
-      x   <- names(ord_scores())[input$ord_x]
-      y   <- names(ord_scores())[input$ord_y]
+      # settings.  A method does not always return four components, so the
+      # axis numbers are brought back into range instead of stopping the panel.
+      x <- pick_axis(axes(), input$ord_x)
+      y <- pick_axis(axes(), input$ord_y)
+      req(x, y)
 
-      if(input$ord_show_group){
-        req(input$ord_group)
+      if(isTRUE(input$ord_show_group) && has_group(ord_scores(), input$ord_group)){
         alpha <- input$ggplot_alpha
         size  <- input$ggplot_point_size
 

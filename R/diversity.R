@@ -5,7 +5,7 @@ calculate_diversity <- function(df, st, sp, ab){
       ecan::shdi(stand     = st,
            species   = sp,
            abundance = ab) %>%
-      dplyr::mutate_if(is.numeric, round, digit = 6)
+      round_numeric()
     extra_data <- 
       df %>%
       ecan::select_one2multi(st, include_self = TRUE)
@@ -53,7 +53,7 @@ diversityUI <- function(id){
       )
     ),
      # Table
-    reactableOutput(ns("diversity_table"))
+    reactable::reactableOutput(ns("diversity_table"))
   )
 }
 
@@ -93,7 +93,7 @@ diversitySever <- function(id, data_in){
 
       # group setting
       all_data <- "all_data"
-      selected_group <- if(input$div_show_st_group) { input$div_st_group } else { all_data }
+      selected_group <- if(isTRUE(input$div_show_st_group)) input$div_st_group else all_data
 
       div <- cut_conti_col(diversity(), selected_group)
       div %>%
@@ -105,7 +105,7 @@ diversitySever <- function(id, data_in){
     })
 
     # Table
-    output$diversity_table <- renderReactable({
+    output$diversity_table <- reactable::renderReactable({
       req(diversity())
       reactable::reactable(diversity(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
     })

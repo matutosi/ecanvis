@@ -110,9 +110,10 @@ clusterSever <- function(id, data_in, tbl){
     output$cluster <- renderPlot(res = 96, {
       cls <- cls_raw()
 
-      if(input$cls_show_group){
-        df  <- group_df()
-        req(input$cls_group %in% colnames(df))
+        # without a group column the panel draws the plain dendrogram
+        # rather than going blank
+      df <- group_df()
+      if(isTRUE(input$cls_show_group) && has_group(df, input$cls_group)){
         col <- ecan::cls_color(cls, df, indiv = indiv(), group = input$cls_group)  # need BEFORE add group
         cls <- ecan::cls_add_group(cls, df, indiv = indiv(), group = input$cls_group)
         cls <- stats::as.dendrogram(cls)

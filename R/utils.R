@@ -119,24 +119,6 @@ filter_ind_val <- function(df, p_max, range = c(0, 1)){
   df[!is.na(keep) & keep, , drop = FALSE]
 }
 
-#' Convert inputs into a list.
-#'
-#' `NULL` elements are dropped.  A single remaining element is unwrapped.
-#'
-#' @param ... Vectors or a list.
-#' @return    A list, a single element, or `NULL` when nothing is left.
-#' @examples
-#' dots2list(1, NULL, 2)
-#'
-#' @export
-dots2list <- function(...){
-  res <- list(...)
-  res <- res[!vapply(res, is.null, logical(1))] # remove NULL
-  if(length(res) == 0) return(NULL)
-  if(length(res) == 1) res <- res[[1]]
-  return(res)
-}
-
 #' Transfer when true
 #'
 #' @param x        A community data matrix.
@@ -365,4 +347,113 @@ tw_two_way_df <- function(tw, cells = c("level", "abundance"),
     df <- rbind(df, row)
   }
   df
+}
+
+#' Names of the columns that can be used as an ordination axis
+#'
+#' [ecan::ord_extract_score()] returns the scores together with the name of
+#' each row, and [ecan::ord_add_group()] adds the grouping columns, some of
+#' which are numeric.  Only the score columns may be plotted as an axis, so
+#' this is meant to be given the scores before any group is added.
+#'
+#' @param df       A data frame of ordination scores.
+#' @return         A character vector, possibly empty.
+#' @examples
+#' score_axes(data.frame(V1 = 1, V2 = 2, stand = "a"))
+#'
+#' @export
+score_axes <- function(df){
+  if(is.null(df) || length(df) == 0) return(character(0))
+  names(df)[vapply(df, is.numeric, logical(1))]
+}
+
+#' Pick an ordination axis by its number
+#'
+#' The number comes from a `numericInput`, so it can be empty, out of range,
+#' or larger than the number of components the method returned: "pcoa" gives
+#' two on some data, while the box goes up to four.  An out of range number is
+#' brought back to the nearest axis instead of stopping the panel, and
+#' [msg_axis_clamped()] tells the user what was drawn.
+#'
+#' @param axes     A character vector of axis names, from [score_axes()].
+#' @param i        A number: the axis asked for.
+#' @return         A string, or `NULL` when there is no axis at all.
+#' @examples
+#' pick_axis(c("V1", "V2"), 1)
+#' pick_axis(c("V1", "V2"), 4)
+#'
+#' @export
+pick_axis <- function(axes, i){
+  if(length(axes) == 0) return(NULL)
+  i <- suppressWarnings(as.integer(i))
+  if(length(i) != 1 || is.na(i) || i < 1) i <- 1L
+  if(i > length(axes))                    i <- length(axes)
+  axes[i]
+}
+
+#' Caution shown when an axis was out of range
+#'
+#' @param axes     A character vector of axis names, from [score_axes()].
+#' @param ...      The axis numbers asked for.
+#' @return         A string, or `NULL` when every number was in range.
+#' @examples
+#' msg_axis_clamped(c("V1", "V2"), 1, 4)
+#'
+#' @export
+msg_axis_clamped <- function(axes, ...){
+  asked <- suppressWarnings(as.integer(unlist(list(...))))
+  asked <- asked[!is.na(asked)]
+  if(length(axes) == 0 || !any(asked > length(axes))) return(NULL)
+  paste0("This ordination returned ", length(axes), " component",
+         if(length(axes) == 1) "" else "s",
+         ", so the highest one was drawn instead.")
+}
+
+#' Round every numeric column
+#'
+#' The tables of the app are shown and downloaded with a fixed number of
+#' digits, so that a score does not fill a cell with noise.
+#'
+#' @param df       A data frame.
+#' @param digits   An integer.
+#' @return         A data frame.
+#' @examples
+#' round_numeric(data.frame(x = 1.23456789))
+#'
+#' @export
+round_numeric <- function(df, digits = 6){
+  dplyr::mutate_if(df, is.numeric, round, digits = digits)
+}
+
+#' Is a group column usable?
+#'
+#' The group is chosen from a `selectInput` whose choices come from
+#' [ecan::cols_one2multi()].  Data with nothing but the unit, the item and the
+#' abundance has no such column, so the box is empty and the group is `NULL`.
+#'
+#' @param df       A data frame.
+#' @param group    A string: the chosen column name, possibly `NULL` or "".
+#' @return         A logical of length 1.
+#' @examples
+#' has_group(data.frame(stand = "a", group = "g"), "group")
+#' has_group(data.frame(stand = "a"), NULL)
+#'
+#' @export
+has_group <- function(df, group){
+  if(is.null(group) || length(group) != 1) return(FALSE)
+  if(is.na(group) || !nzchar(group))       return(FALSE)
+  group %in% colnames(df)
+}
+
+#' Caution shown when the data holds no column that can be a group
+#'
+#' @return         A string.
+#' @examples
+#' msg_no_group()
+#'
+#' @export
+msg_no_group <- function(){
+  paste("No column of the data can be used as a group.",
+        "A group must have one value for each unit (stand),",
+        "such as the management or the moisture of the site.")
 }

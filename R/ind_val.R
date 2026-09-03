@@ -31,7 +31,7 @@ ind_valUI <- function(id){
 
         # Table
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
-          reactableOutput(ns("ind_val_table"))
+          reactable::reactableOutput(ns("ind_val_table"))
         ),
       )
 
@@ -56,17 +56,22 @@ ind_valSever <- function(id, data_in){
     # Compute
     ind_val_res <- reactive({
       req(data_in)
-      if(has_valid_cols(data_in, st(), sp(), ab())){
+      if(!has_valid_cols(data_in, st(), sp(), ab())){
+        output$caution <- renderUI(msg_invalid_cols())
+        NULL
+      } else if(!has_group(data_in, input$ind_val_st_group)){
+          # data with nothing but unit, item and abundance has no group,
+          # and ecan::ind_val() stops with 'Needs "group" input'
+        output$caution <- renderUI(msg_no_group())
+        NULL
+      } else {
         output$caution <- renderUI(character(0)) # No caution
         ecan::ind_val(df        = data_in, 
                 stand     = st(), 
                 species   = sp(), 
                 abundance = ab(),
                 group     = input$ind_val_st_group) %>%
-        dplyr::mutate_if(is.numeric, round, digit = 6)
-      } else {
-        output$caution <- renderUI(msg_invalid_cols())
-        NULL
+        round_numeric()
       }
     })
 
@@ -97,7 +102,7 @@ ind_valSever <- function(id, data_in){
       filename = reactive(paste("ind_val", st(), sp(), ab(), input$ind_val_st_group, sep = "_")))
 
     # Table
-    output$ind_val_table <- renderReactable({
+    output$ind_val_table <- reactable::renderReactable({
       req(ind_val_res())
       reactable::reactable(ind_val_res(), resizable = TRUE, filterable = TRUE, searchable = TRUE,)
     })
