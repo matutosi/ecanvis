@@ -103,3 +103,113 @@ test_that("no caution is shown while the axes are in range", {
     expect_null(output$ord_caution)
   })
 })
+
+test_that("the panel offers the TWINSPAN groups beside those of the data", {
+  skip_if_not_installed("shiny")
+  skip_if_not_installed("ecan")
+  skip_if_not_installed("vegan")
+
+  data(dune,     package = "vegan")
+  data(dune.env, package = "vegan")
+  df <- dplyr::left_join(ecan::table2df(dune),
+                         tibble::rownames_to_column(dune.env, "stand"),
+                         by = "stand")
+
+  shiny::testServer(ordinationSever,
+                    args = list(data_in = df, com_table = dune), {
+    session$setInputs(ord_o_method = "dca", ord_d_method = "bray",
+                      ord_use_species_scores = FALSE, ord_show_group = TRUE,
+                      ord_use_twinspan = TRUE,
+                      ord_tw_cut_levels = "0, 2, 5, 10, 20",
+                      ord_tw_modified = FALSE, ord_tw_n_clusters = 0,
+                      ord_x = 1, ord_y = 2,
+                      ggplot_alpha = 0.3, ggplot_point_size = 7)
+
+    choices <- ecan::cols_one2multi(group_df(), indiv(), include_self = FALSE)
+    expect_true("Management" %in% choices)
+    expect_true("twinspan"   %in% choices)
+
+      # the group is carried into the scores and the plot draws
+    session$setInputs(ord_group = "twinspan")
+    expect_true("twinspan" %in% colnames(ord_scores()))
+      # and it is not mistaken for an axis
+    expect_false("twinspan" %in% axes())
+    expect_no_error(output$ordination)
+  })
+})
+
+test_that("no TWINSPAN group is added until it is asked for", {
+  skip_if_not_installed("shiny")
+  skip_if_not_installed("ecan")
+  skip_if_not_installed("vegan")
+
+  data(dune, package = "vegan")
+
+  shiny::testServer(ordinationSever,
+                    args = list(data_in = ecan::table2df(dune),
+                                com_table = dune), {
+    session$setInputs(ord_o_method = "dca", ord_d_method = "bray",
+                      ord_use_species_scores = FALSE, ord_show_group = TRUE,
+                      ord_use_twinspan = FALSE,
+                      ord_tw_cut_levels = "0, 2, 5, 10, 20",
+                      ord_tw_modified = FALSE, ord_tw_n_clusters = 0,
+                      ord_x = 1, ord_y = 2,
+                      ggplot_alpha = 0.3, ggplot_point_size = 7)
+    expect_null(tw())
+    expect_false("twinspan" %in% colnames(group_df()))
+  })
+})
+
+test_that("the TWINSPAN group follows the species scores checkbox", {
+  skip_if_not_installed("shiny")
+  skip_if_not_installed("ecan")
+  skip_if_not_installed("vegan")
+
+  data(dune, package = "vegan")
+
+  shiny::testServer(ordinationSever,
+                    args = list(data_in = ecan::table2df(dune),
+                                com_table = dune), {
+      # with species scores the units are the species, so the table has to be
+      # turned round before TWINSPAN is run on it
+    session$setInputs(ord_o_method = "dca", ord_d_method = "bray",
+                      ord_use_species_scores = TRUE, ord_show_group = TRUE,
+                      ord_use_twinspan = TRUE,
+                      ord_tw_cut_levels = "0, 2, 5, 10, 20",
+                      ord_tw_modified = FALSE, ord_tw_n_clusters = 0,
+                      ord_x = 1, ord_y = 2,
+                      ggplot_alpha = 0.3, ggplot_point_size = 7)
+
+    expect_equal(indiv(), "species")
+    expect_setequal(tw()$classification$stand, colnames(dune))
+    expect_true("twinspan" %in% colnames(group_df()))
+    expect_false(any(is.na(group_df()$twinspan)))
+
+    session$setInputs(ord_group = "twinspan")
+    expect_no_error(output$ordination)
+  })
+})
+
+test_that("the TWINSPAN settings of the panel are used", {
+  skip_if_not_installed("shiny")
+  skip_if_not_installed("ecan")
+  skip_if_not_installed("vegan")
+
+  data(dune, package = "vegan")
+
+  shiny::testServer(ordinationSever,
+                    args = list(data_in = ecan::table2df(dune),
+                                com_table = dune), {
+    session$setInputs(ord_o_method = "dca", ord_d_method = "bray",
+                      ord_use_species_scores = FALSE, ord_show_group = TRUE,
+                      ord_use_twinspan = TRUE,
+                      ord_tw_cut_levels = "0, 2, 5",
+                      ord_tw_modified = TRUE, ord_tw_n_clusters = 4,
+                      ord_x = 1, ord_y = 2,
+                      ggplot_alpha = 0.3, ggplot_point_size = 7)
+
+    expect_equal(tw()$cut_levels, c(0, 2, 5))
+    expect_true(tw()$modified)
+    expect_length(unique(group_df()$twinspan), 4)
+  })
+})

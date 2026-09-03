@@ -56,3 +56,15 @@ test_that("the ordination panel no longer offers fspa", {
   expect_true(grepl(">pcoa<", html, fixed = TRUE))
   expect_true(grepl("ord_1-ord_caution", html, fixed = TRUE))
 })
+
+test_that("the ordination panel hides the TWINSPAN settings until they apply", {
+  skip_if_not_installed("shiny")
+  skip_if_not_installed("reactable")
+  skip_if_not_installed("shinycssloaders")
+
+  html <- ui_html(ordinationUI("ord_1"))
+  expect_true(grepl("ord_1-ord_use_twinspan", html, fixed = TRUE))
+    # the settings are behind Show group, and then behind the checkbox itself
+  expect_true(grepl('data-display-if="input.ord_show_group"', html, fixed = TRUE))
+  expect_true(grepl('data-display-if="input.ord_use_twinspan"', html, fixed = TRUE))
+})
