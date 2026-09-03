@@ -15,6 +15,23 @@
 
 ### 現在の状態
 
+- 2026-09-04 07:38 更新 (このセッション，x280-home)．
+  **`render-rmarkdown.yaml` の使われていない `GITHUB_PAT` を外した** (ユーザ指示)．
+  - `secrets.MY_GITHUB_TOKEN` は **repo・organization・environment のどこにも無い**
+    (owner は User なので org secret はありえず，environment は `github-pages` の
+    1つだけで secret は0件，しかも workflow は `environment:` を宣言していない)．
+    Actions は未定義の secret を**空文字に展開してエラーにしない**ので，
+    毎回 `GITHUB_PAT=""` で走っていた (実行ログにもそのまま出ている)．
+  - **実害は無かった**．入れるのは `rmarkdown`・`knitr`・`revealjs` で全部 CRAN，
+    `analysis.Rmd` の setup チャンクも `install.packages()` で，
+    ログでも `ecan_0.2.2.tar.gz` を CRAN ミラーから取っていた．
+    `git push` は `actions/checkout` が保存する既定の `GITHUB_TOKEN` を使う
+    (`permissions: contents: write` はそのため)．
+  - **覚えておくこと**: 公開中の `analysis.html` は **CRAN 版 ecan 0.2.2** で組まれる．
+    GitHub 版 (0.2.2.9000) ではないので，**この文書に TWINSPAN は入らない**．
+    載せたくなったら setup を `install_github` に変えることになり，
+    そのときは `GITHUB_PAT` が本当に要る (deploy 側と同じく `secrets.GITHUB_TOKEN`)．
+
 - 2026-09-04 07:12 更新 (このセッション，x280-home)．
   **自動デプロイが通り，公開版が最新になった** (2022-05-30 版から入れ替わり)．
   - **最初の2回は失敗した**．`remotes::install_github()` にトークンを渡しておらず，
@@ -173,11 +190,6 @@
   data manipulation, and analysis examples
 
 ### 次にやること
-
-- **`render-rmarkdown.yaml` の `secrets.MY_GITHUB_TOKEN` は未登録**のまま
-  (2026-09-04 に気づいた)．`GITHUB_PAT` が空で走っているが，あの workflow は
-  CRAN からしか入れず push も checkout の既定トークンで通るので**実害はない**．
-  整理するなら `env:` の2行ごと消す．**【保留】**
 
 - **【判断待ち】cluster と ordination で同じ TWINSPAN の群を使いたくなったら，
   パネルをまたぐ受け渡しを考える**．2026-09-04 は各パネルが自分で回す形にした
