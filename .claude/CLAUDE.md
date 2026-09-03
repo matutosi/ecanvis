@@ -15,6 +15,21 @@
 
 ### 現在の状態
 
+- 2026-09-04 03:41 更新 (このセッション，x280-home)．
+  **TWINSPAN の群を Show group に出し，二元表を Cluster パネルに載せた** (ユーザ指示)．
+  - `add_tw_group()` で TWINSPAN の群を data_in に1列足し，Show group の
+    選択肢に出す (`cols_one2multi()` が拾う)．列名の衝突は `unique_col_name()` で避ける．
+    `$classification` は**表を転置しても列名が `stand` のまま**なので，
+    Cluster with item のときはそこに種名が入る．`indiv` と突き合わせれば両方に効く．
+  - 二元表は `tw_two_way_df()` で reactable 用の data.frame にする．
+    行の path を列にし，**標本の二分の桁を下の行に置く** (原典の印刷出力と同じ並び)．
+    cells は level / abundance を選べ，tsv で download もできる．
+  - サーバを組み替えた: クラスタ結果を `cls_raw()` に切り出し，
+    選択肢の更新は `indiv()` の副作用をやめて `observeEvent` に分けた．
+  - **`reactable::renderReactable` と `reactable::reactableOutput` は名前空間付きで呼ぶ**．
+    テストは reactable を attach しないので，付けないと `output$` への代入の時点で落ちる．
+  - テスト157件すべてパス (追加前128件)．
+
 - 2026-09-04 03:12 更新 (このセッション，x280-home)．
   **Cluster パネルに TWINSPAN を追加した** (ecan 0.2.2.9000 の `twinspan()`)．
   - cluster method の選択肢に `twinspan` を足した．
@@ -56,13 +71,14 @@
 
 ### 次にやること
 
-- **【判断待ち】TWINSPAN が作った群を「Show group」の選択肢に出すか**．
-  いまの Show group は，読み込んだデータの列 (`cols_one2multi()` が返すもの) しか選べない．
-  TWINSPAN は `$classification` に群を持っているので，これを選べると
-  「TWINSPAN の群で色を塗る」ができる．ordination パネルからも使えると便利．
-- **【判断待ち】`ecan::tw_two_way()` の二元表を出すか**．
-  TWINSPAN の本来の出力である並べ替え済みの二元表．reactable で出せそうだが，
-  Cluster パネルに載せるか，新しいパネルを立てるかを決める必要がある．
+- **`R/diversity.R` と `R/ind_val.R` の `renderReactable`・`reactableOutput` にも
+  名前空間を付ける**．いまは付いていない．アプリは `R/global.R` が reactable を
+  attach するので動くが，`testServer()` で module を組んだ時点で落ちるため，
+  この2つのパネルはモジュールのテストが書けない
+  (2026-09-04 に cluster.R で実際に踏んだ)．`reactable::` を付けるだけ．
+- **【判断待ち】ordination パネルからも TWINSPAN の群を使えるようにするか**．
+  Cluster パネルでは選べるようになったが，ordination は自分でクラスタを作らないので，
+  パネルをまたいで群を受け渡す仕組みが要る (いまは各パネルが独立している)．
 
 ## テスト
 
