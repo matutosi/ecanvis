@@ -195,3 +195,79 @@ has_duplicated_cols <- function(st, sp, ab){
   if(length(cols) != 3) return(FALSE)
   anyDuplicated(cols) != 0
 }
+
+#' Read the pseudospecies cut levels typed by the user
+#'
+#' The text box takes the levels as free text ("0, 2, 5, 10, 20").  Anything
+#' that is not a number is dropped, and `default` is used when nothing is left,
+#' so a half typed entry never stops the app.
+#'
+#' @param txt      A string, or `NULL`.
+#' @param default  A numeric vector used when `txt` holds no number.
+#' @return         A sorted numeric vector without duplicates.
+#' @examples
+#' parse_cut_levels("0, 2, 5, 10, 20")
+#' parse_cut_levels("")
+#'
+#' @export
+parse_cut_levels <- function(txt, default = c(0, 2, 5, 10, 20)){
+  if(is.null(txt)) return(default)
+  levels <- suppressWarnings(as.numeric(strsplit(txt, "[,[:space:]]+")[[1]]))
+  levels <- levels[!is.na(levels)]
+  if(length(levels) == 0) return(default)
+  sort(unique(levels))
+}
+
+#' Read the number of groups typed by the user
+#'
+#' `ecan::twinspan()` takes `NULL` for "no limit" and needs at least 1.
+#' The numeric input cannot hold `NULL`, so 0 (and an empty box) mean no limit.
+#'
+#' @param x        A number, or `NULL`.
+#' @return         An integer, or `NULL` for no limit.
+#' @examples
+#' as_n_clusters(4)
+#' as_n_clusters(0)
+#'
+#' @export
+as_n_clusters <- function(x){
+  if(is.null(x) || length(x) != 1 || is.na(x)) return(NULL)
+  if(x < 1) return(NULL)
+  as.integer(x)
+}
+
+#' Cluster a community table
+#'
+#' Wraps the two ways of clustering the app offers.  TWINSPAN is not one of the
+#' `c_method` of [ecan::cluster()]: it divides the stands itself and uses no
+#' distance, so it is run through [ecan::twinspan()] and converted with
+#' [stats::as.hclust()].  The result carries `$clustering_method` and
+#' `$distance_method` in either case, as the rest of the app expects.
+#'
+#' @param tbl        A community data matrix.
+#'                   rownames: stands, colnames: species.
+#' @param c_method   A string of clustering method, or "twinspan".
+#' @param d_method   A string of distance method.  Unused by TWINSPAN.
+#' @param modified   A logical: modified TWINSPAN (Roleček et al. 2009).
+#' @param n_clusters An integer of the number of groups, or `NULL` for no limit.
+#' @param cut_levels A numeric vector of pseudospecies cut levels.
+#' @return           An "hclust" object.
+#'
+#' @export
+compute_cluster <- function(tbl, c_method, d_method,
+                            modified   = FALSE,
+                            n_clusters = NULL,
+                            cut_levels = c(0, 2, 5, 10, 20)){
+  if(!identical(c_method, "twinspan")){
+    return(ecan::cluster(tbl, c_method = c_method, d_method = d_method))
+  }
+  tw <- ecan::twinspan(tbl,
+                       cut_levels = cut_levels,
+                       modified   = isTRUE(modified),
+                       n_clusters = n_clusters)
+  cls <- stats::as.hclust(tw)
+  cls$clustering_method <- "twinspan"
+  cls$distance_method   <- NULL  # TWINSPAN uses no distance
+  cls$twinspan          <- tw
+  cls
+}

@@ -36,3 +36,31 @@ test_that("indiv() follows the item checkbox when the group is shown", {
     expect_equal(indiv(), "species")
   })
 })
+
+test_that("the panel draws with twinspan selected", {
+  skip_if_not_installed("shiny")
+  skip_if_not_installed("ecan")
+  skip_if_not_installed("vegan")
+
+  data(dune, package = "vegan")
+
+  shiny::testServer(clusterSever,
+                    args = list(data_in = ecan::table2df(dune), tbl = dune), {
+      # the distance method is hidden for twinspan, but the input keeps its
+      # value, so the panel has to draw whatever it holds
+    session$setInputs(cl_c_method = "twinspan", cl_d_method = "bray",
+                      cls_with_sp = FALSE, cls_show_group = FALSE,
+                      cls_label_gray = 0.3,
+                      cls_tw_cut_levels = "0, 2, 5, 10, 20",
+                      cls_tw_modified = FALSE, cls_tw_n_clusters = 0)
+    expect_no_error(output$cluster)
+
+      # a half typed cut level must not stop the panel
+    session$setInputs(cls_tw_cut_levels = "0, ")
+    expect_no_error(output$cluster)
+
+      # and the ordinary methods still draw
+    session$setInputs(cl_c_method = "average", cls_tw_cut_levels = "0, 2, 5, 10, 20")
+    expect_no_error(output$cluster)
+  })
+})

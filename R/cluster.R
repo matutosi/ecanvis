@@ -8,16 +8,36 @@ clusterUI <- function(id){
         # method
         selectInput(ns("cl_c_method"), "cluster method",
           choices = c("average", "ward.D", "ward.D2", "single",
-                      "complete", "mcquitty", "median", "centroid", "diana")
+                      "complete", "mcquitty", "median", "centroid", "diana",
+                      "twinspan")
         ),
-        selectInput(ns("cl_d_method"), "distance method",
-          choices = c("bray", "euclidean", "correlation", "manhattan",
-                      "canberra", "clark", "kulczynski", "jaccard",
-                      "gower", "altGower", "morisita", "horn",
-                      "mountford", "raup", "binomial", "chao", "cao",
-                      "mahalanobis", "chisq", "chord", "aitchison",
-                      "robust.aitchison")
+
+        # TWINSPAN divides the stands itself and uses no distance,
+        # so the distance method is hidden and its own settings are shown.
+        conditionalPanel(ns = ns,
+          condition = "input.cl_c_method != 'twinspan'",
+          selectInput(ns("cl_d_method"), "distance method",
+            choices = c("bray", "euclidean", "correlation", "manhattan",
+                        "canberra", "clark", "kulczynski", "jaccard",
+                        "gower", "altGower", "morisita", "horn",
+                        "mountford", "raup", "binomial", "chao", "cao",
+                        "mahalanobis", "chisq", "chord", "aitchison",
+                        "robust.aitchison")
+          )
         ),
+
+        conditionalPanel(ns = ns,
+          condition = "input.cl_c_method == 'twinspan'",
+          textInput(ns("cls_tw_cut_levels"), "Pseudospecies cut levels",
+            value = "0, 2, 5, 10, 20"),
+          checkboxInput(ns("cls_tw_modified"),
+            "Modified TWINSPAN (divide the most heterogeneous group first)",
+            value = FALSE),
+          numericInput(ns("cls_tw_n_clusters"),
+            "Number of groups (0: no limit)",
+            value = 0, min = 0, max = 64, step = 1)
+        ),
+
         # stand or species
         checkboxInput(ns("cls_with_sp"), "Cluster with item (species)", value = FALSE),
 
@@ -62,7 +82,11 @@ clusterSever <- function(id, data_in, tbl){
       cls <- 
         tbl %>%
         t_if_true(input$cls_with_sp) %>% # t() when chekcbox selected
-        ecan::cluster(c_method = input$cl_c_method, d_method = input$cl_d_method)
+        compute_cluster(c_method   = input$cl_c_method,
+                        d_method   = input$cl_d_method,
+                        modified   = input$cls_tw_modified,
+                        n_clusters = as_n_clusters(input$cls_tw_n_clusters),
+                        cut_levels = parse_cut_levels(input$cls_tw_cut_levels))
 
       if(input$cls_show_group){
         col <- ecan::cls_color(cls, data_in, indiv = indiv(), group = input$cls_group)  # need BEFORE add group
