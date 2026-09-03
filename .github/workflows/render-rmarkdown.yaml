@@ -10,8 +10,10 @@ on:
 jobs:
   render:
     runs-on: ubuntu-latest # Run on an Ubuntu virtual machine
-    env:
-      GITHUB_PAT: ${{ secrets.MY_GITHUB_TOKEN }}
+      # GITHUB_PAT was set from a secret that was never registered, so it was
+      # always empty.  Nothing here reads it: the packages all come from CRAN
+      # (analysis.Rmd installs ecan from CRAN too), and the push below uses the
+      # credentials actions/checkout keeps, which is what contents: write is for.
     permissions:
       contents: write
 
