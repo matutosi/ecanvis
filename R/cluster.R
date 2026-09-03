@@ -96,9 +96,18 @@ clusterSever <- function(id, data_in, tbl, tw_store = NULL){
                         cut_levels = parse_cut_levels(input$cls_tw_cut_levels))
     })
 
-    # The data, plus the groups TWINSPAN found so that they can be chosen too
+    # The data, plus the groups TWINSPAN found so that they can be chosen too:
+    # the one this panel made, and the ones the other cluster panels published.
+    # Colouring one dendrogram by the groups of another is how two ways of
+    # classifying the same stands are compared.
     group_df <- reactive({
-      add_tw_group(data_in, cls_raw()$twinspan, indiv())
+      df <- add_tw_group(data_in, cls_raw()$twinspan, indiv())
+      if(is.null(tw_store)) return(df)
+      shared <- reactiveValuesToList(tw_store)
+        # not this panel's own: it is the plain "twinspan" column added above
+      for(nm in setdiff(sort(names(shared)), id))
+        df <- add_tw_group(df, shared[[nm]], indiv(), col = paste0("twinspan_", nm))
+      df
     })
 
     # Publish for the other panels.  NULL when the method is not twinspan,
