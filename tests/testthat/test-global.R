@@ -34,3 +34,40 @@ test_that("global.R installs ecan only when it is missing", {
   expect_false(any(grepl("force = TRUE", src, fixed = TRUE)))
   expect_true(any(grepl('requireNamespace("ecan"', src, fixed = TRUE)))
 })
+
+test_that("global.R attaches shiny and magrittr by name", {
+  src <- as.character(parse(file.path("..", "..", "R", "global.R")))
+
+    # regression: the packages were held in a variable and attached in a loop
+    # (library(pkg, character.only = TRUE)).  rsconnect reads the code to
+    # decide what to bundle for shinyapps.io, so none of them was visible and
+    # the deployed app would start without them.
+  expect_true(any(grepl("library(shiny)",    src, fixed = TRUE)))
+  expect_true(any(grepl("library(magrittr)", src, fixed = TRUE)))
+  expect_false(any(grepl("character.only",   src, fixed = TRUE)))
+})
+
+test_that("global.R does not install anything into a read only library", {
+  src <- as.character(parse(file.path("..", "..", "R", "global.R")))
+    # on shinyapps.io the library is built at deploy time and is not writable
+  expect_true(any(grepl("file.access(.libPaths()[1], mode = 2)", src,
+                        fixed = TRUE)))
+})
+
+test_that("rsconnect can see every package the app needs", {
+  skip_if_not_installed("renv")
+
+    # what rsconnect bundles for shinyapps.io is decided by scanning the code,
+    # so a package it cannot see is a package the deployed app will not have
+  found <- unique(renv::dependencies(file.path("..", "..", "R"),
+                                     quiet = TRUE)$Package)
+
+    # attached without a namespace
+  expect_true(all(c("shiny", "magrittr") %in% found))
+    # called as pkg::fun
+  expect_true(all(c("ecan", "dplyr", "ggplot2", "ggrepel", "dendextend",
+                    "reactable", "readr", "stringr", "tibble",
+                    "shinycssloaders") %in% found))
+    # named only in data(package = "vegan"), for the example data
+  expect_true("vegan" %in% found)
+})
