@@ -35,7 +35,10 @@ clusterUI <- function(id){
             value = FALSE),
           numericInput(ns("cls_tw_n_clusters"),
             "Number of groups (0: no limit)",
-            value = 0, min = 0, max = 64, step = 1)
+            value = 0, min = 0, max = 64, step = 1),
+          selectInput(ns("cls_tw_cells"), "Two-way table cells",
+            choices = c("level", "abundance")),
+          data_download_tsvUI(ns("download_two_way"))
         ),
 
         # stand or species
@@ -51,6 +54,14 @@ clusterUI <- function(id){
       mainPanel(
         shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
           plotOutput(ns("cluster"))
+        ),
+
+        # The two-way table is what TWINSPAN is for, so it is shown with it.
+        conditionalPanel(ns = ns,
+          condition = "input.cl_c_method == 'twinspan'",
+          shinycssloaders::withSpinner(type = sample(1:8, 1), color.background = "white",
+            reactable::reactableOutput(ns("cls_two_way"))
+          )
         )
       )
 
@@ -66,31 +77,44 @@ clusterSever <- function(id, data_in, tbl){
     sp <- reactive({ colnames(data_in)[2] })
     ab <- reactive({ colnames(data_in)[3] })
 
-    # Update group select
     indiv <- eventReactive(c(input$cls_show_group, input$cls_with_sp), {
-      indiv <- pick_indiv(input$cls_with_sp, st(), sp())
-      if(isTRUE(input$cls_show_group)){
-        choices <- ecan::cols_one2multi(data_in, indiv, include_self = FALSE)
-        updateSelectInput(session, "cls_group", choices = choices)
-      }
-      indiv
+      pick_indiv(input$cls_with_sp, st(), sp())
     })
 
-    # Compute and Plot
-    output$cluster <- renderPlot(res = 96, {
+    # Compute
+    cls_raw <- reactive({
       req(tbl)
-      cls <- 
-        tbl %>%
+      tbl %>%
         t_if_true(input$cls_with_sp) %>% # t() when chekcbox selected
         compute_cluster(c_method   = input$cl_c_method,
                         d_method   = input$cl_d_method,
                         modified   = input$cls_tw_modified,
                         n_clusters = as_n_clusters(input$cls_tw_n_clusters),
                         cut_levels = parse_cut_levels(input$cls_tw_cut_levels))
+    })
+
+    # The data, plus the groups TWINSPAN found so that they can be chosen too
+    group_df <- reactive({
+      add_tw_group(data_in, cls_raw()$twinspan, indiv())
+    })
+
+    # Update group select
+    observeEvent(c(input$cls_show_group, indiv(), group_df()), {
+      if(isTRUE(input$cls_show_group)){
+        choices <- ecan::cols_one2multi(group_df(), indiv(), include_self = FALSE)
+        updateSelectInput(session, "cls_group", choices = choices)
+      }
+    })
+
+    # Plot
+    output$cluster <- renderPlot(res = 96, {
+      cls <- cls_raw()
 
       if(input$cls_show_group){
-        col <- ecan::cls_color(cls, data_in, indiv = indiv(), group = input$cls_group)  # need BEFORE add group
-        cls <- ecan::cls_add_group(cls, data_in, indiv = indiv(), group = input$cls_group)
+        df  <- group_df()
+        req(input$cls_group %in% colnames(df))
+        col <- ecan::cls_color(cls, df, indiv = indiv(), group = input$cls_group)  # need BEFORE add group
+        cls <- ecan::cls_add_group(cls, df, indiv = indiv(), group = input$cls_group)
         cls <- stats::as.dendrogram(cls)
         cls <- dendextend::`labels_colors<-`(cls, value = grDevices::gray(input$cls_label_gray))
         plot(cls)
@@ -102,6 +126,26 @@ clusterSever <- function(id, data_in, tbl){
         plot(cls)
       }
     })
+
+    # Two-way table (TWINSPAN only)
+    two_way <- reactive({
+      tw <- cls_raw()$twinspan
+      req(tw)
+        # the rows of the two-way table are the other side of the table
+      row_name <- pick_indiv(!isTRUE(input$cls_with_sp), st(), sp())
+      tw_two_way_df(tw, cells = input$cls_tw_cells, row_name = row_name)
+    })
+
+    output$cls_two_way <- reactable::renderReactable({
+      req(two_way())
+      reactable::reactable(two_way(), resizable = TRUE, filterable = TRUE,
+                           searchable = TRUE, defaultPageSize = 25)
+    })
+
+    # Download the two-way table
+    data_download_tsvServer("download_two_way",
+      data = two_way,
+      filename = reactive(paste("twinspan_two_way", st(), sp(), ab(), sep = "_")))
 
   })
 }

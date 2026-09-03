@@ -271,3 +271,98 @@ compute_cluster <- function(tbl, c_method, d_method,
   cls$twinspan          <- tw
   cls
 }
+
+#' Find a column name that is not taken yet
+#'
+#' Used before a helper column is added to the user's data, so that a column
+#' of the same name is never overwritten.
+#'
+#' @param name     A string: the wanted name.
+#' @param taken    A character vector of the names already in use.
+#' @return         `name`, or `name` with a number appended.
+#' @examples
+#' unique_col_name("twinspan", c("stand", "species"))
+#' unique_col_name("twinspan", c("twinspan", "twinspan_2"))
+#'
+#' @export
+unique_col_name <- function(name, taken){
+  if(!(name %in% taken)) return(name)
+  i <- 2
+  while(paste0(name, "_", i) %in% taken) i <- i + 1
+  paste0(name, "_", i)
+}
+
+#' Add the groups found by TWINSPAN as a column
+#'
+#' The panel lets a group be chosen from the columns of the data.  TWINSPAN
+#' makes groups of its own, so they are joined onto the data as one more
+#' column and become selectable in the same way.
+#'
+#' `tw$classification` names its units `stand` whichever way round the table
+#' was clustered: when items (species) are clustered the table is transposed
+#' first, so those names are the items.  They are matched against `indiv`.
+#'
+#' @param df       A data frame.
+#' @param tw       A "twinspan" object, or `NULL` for the other methods.
+#' @param indiv    A string: the column of `df` holding the units.
+#' @param col      A string: the wanted name of the new column.
+#' @return         `df`, with one column added when `tw` is a TWINSPAN result.
+#'
+#' @export
+add_tw_group <- function(df, tw, indiv, col = "twinspan"){
+  if(is.null(tw) || !inherits(tw, "twinspan"))     return(df)
+  if(is.null(indiv) || !(indiv %in% colnames(df))) return(df)
+
+  cls <- tw$classification
+  if(is.null(cls) || !all(c("stand", "group") %in% colnames(cls))) return(df)
+
+  col <- unique_col_name(col, colnames(df))
+  group <- stats::setNames(as.character(cls$group), as.character(cls$stand))
+  df[[col]] <- unname(group[as.character(df[[indiv]])])
+  df
+}
+
+#' Ordered two-way table of TWINSPAN as a data frame
+#'
+#' [ecan::tw_two_way()] returns a character matrix with the division paths in
+#' its attributes, which `print()` lays out as the two-way table of the
+#' original TWINSPAN.  `reactable()` needs a data frame, so the path of each
+#' row is put in a column of its own, and the dichotomy of each column is put
+#' in the rows at the bottom, as the digits printed below the original table.
+#'
+#' @param tw       A "twinspan" object made with `species = TRUE`.
+#' @param cells    A string: "level" (pseudospecies cut level) or "abundance".
+#' @param row_name A string: name of the first column.
+#' @return         A data frame.
+#'
+#' @export
+tw_two_way_df <- function(tw, cells = c("level", "abundance"),
+                          row_name = "species"){
+  if(is.null(cells) || is.na(cells[1])) cells <- "level"
+  cells <- match.arg(cells[1], c("level", "abundance"))
+  tab   <- ecan::tw_two_way(tw, cells = cells)
+
+  path_col <- unique_col_name("path", c(row_name, colnames(tab)))
+  head_cols <- c(row_name, path_col)
+
+  df <- data.frame(rownames(tab), attr(tab, "species_path"),
+                   stringsAsFactors = FALSE, check.names = FALSE)
+  colnames(df) <- head_cols
+  df <- cbind(df, as.data.frame(unclass(tab),
+                                stringsAsFactors = FALSE, check.names = FALSE))
+  colnames(df) <- c(head_cols, colnames(tab))
+  rownames(df) <- NULL
+
+    # the dichotomy of each column, one row per digit
+  st_path <- attr(tab, "stand_path")
+  depth   <- if(length(st_path) == 0) 0 else max(nchar(st_path))
+  for(i in seq_len(depth)){
+    digit <- substr(st_path, i, i)
+    digit[digit == ""] <- " "
+    row <- as.data.frame(as.list(c("", "", digit)),
+                         stringsAsFactors = FALSE, check.names = FALSE)
+    colnames(row) <- colnames(df)
+    df <- rbind(df, row)
+  }
+  df
+}
