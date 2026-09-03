@@ -22,20 +22,26 @@ function(input, output, session){
     ind_valSever("ind_val", data_in())
   })
 
+  # # # Groups shared between the panels # # #
+  # The cluster panels put the TWINSPAN they made in here, and the ordination
+  # panels offer them as a group, so that the same grouping can be seen on a
+  # dendrogram and on an ordination without running TWINSPAN twice.
+  tw_store <- reactiveValues()
+
   # # # Clusters # # #
   observeEvent(c(data_in()), {
-    clusterSever("cls_1", data_in(), com_table())
-    clusterSever("cls_2", data_in(), com_table())
-    clusterSever("cls_3", data_in(), com_table())
-    clusterSever("cls_4", data_in(), com_table())
+    clusterSever("cls_1", data_in(), com_table(), tw_store)
+    clusterSever("cls_2", data_in(), com_table(), tw_store)
+    clusterSever("cls_3", data_in(), com_table(), tw_store)
+    clusterSever("cls_4", data_in(), com_table(), tw_store)
   })
 
   # # # Ordinations # # #
   observeEvent(c(data_in()), {
-    ordinationSever("ord_1", data_in(), com_table())
-    ordinationSever("ord_2", data_in(), com_table())
-    ordinationSever("ord_3", data_in(), com_table())
-    ordinationSever("ord_4", data_in(), com_table())
+    ordinationSever("ord_1", data_in(), com_table(), tw_store)
+    ordinationSever("ord_2", data_in(), com_table(), tw_store)
+    ordinationSever("ord_3", data_in(), com_table(), tw_store)
+    ordinationSever("ord_4", data_in(), com_table(), tw_store)
   })
 
 }

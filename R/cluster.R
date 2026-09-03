@@ -70,7 +70,10 @@ clusterUI <- function(id){
 }
 
 ## Sever module
-clusterSever <- function(id, data_in, tbl){
+##   tw_store is a shared reactiveValues.  The panel puts the TWINSPAN it made
+##   there under its own id, so that the ordination panels can colour by the
+##   same groups instead of running TWINSPAN again with the same settings.
+clusterSever <- function(id, data_in, tbl, tw_store = NULL){
   moduleServer(id, function(input, output, session){
 
     st <- reactive({ colnames(data_in)[1] })
@@ -97,6 +100,12 @@ clusterSever <- function(id, data_in, tbl){
     group_df <- reactive({
       add_tw_group(data_in, cls_raw()$twinspan, indiv())
     })
+
+    # Publish for the other panels.  NULL when the method is not twinspan,
+    # which is how a panel takes its groups back off the list.
+    if(!is.null(tw_store)){
+      observe({ tw_store[[id]] <- cls_raw()$twinspan })
+    }
 
     # Update group select
     observeEvent(c(input$cls_show_group, indiv(), group_df()), {

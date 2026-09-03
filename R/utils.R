@@ -299,9 +299,16 @@ add_tw_group <- function(df, tw, indiv, col = "twinspan"){
   cls <- tw$classification
   if(is.null(cls) || !all(c("stand", "group") %in% colnames(cls))) return(df)
 
+  group  <- stats::setNames(as.character(cls$group), as.character(cls$stand))
+  values <- unname(group[as.character(df[[indiv]])])
+
+    # The units of the TWINSPAN need not be the units of `indiv`: a group made
+    # of stands says nothing about species.  Adding a column of NA would put a
+    # choice in the select box that colours nothing, so nothing is added.
+  if(all(is.na(values))) return(df)
+
   col <- unique_col_name(col, colnames(df))
-  group <- stats::setNames(as.character(cls$group), as.character(cls$stand))
-  df[[col]] <- unname(group[as.character(df[[indiv]])])
+  df[[col]] <- values
   df
 }
 

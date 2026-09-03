@@ -79,7 +79,10 @@ ordinationUI <- function(id){
 }
 
 ## Server module
-ordinationSever <- function(id, data_in, com_table){
+##   tw_store is the shared reactiveValues the cluster panels write to.  Every
+##   TWINSPAN they made is offered here as one more group column, so that the
+##   same grouping can be seen on a dendrogram and on an ordination.
+ordinationSever <- function(id, data_in, com_table, tw_store = NULL){
   moduleServer(id, function(input, output, session){
 
     st <- reactive({ colnames(data_in)[1] })
@@ -107,8 +110,18 @@ ordinationSever <- function(id, data_in, com_table){
       cls$twinspan
     })
 
-    # The data, plus the groups TWINSPAN found so that they can be chosen too
-    group_df <- reactive({ add_tw_group(data_in, tw(), indiv()) })
+    # The data, plus the groups TWINSPAN found so that they can be chosen too:
+    # the one this panel made, and the ones the cluster panels published.
+    group_df <- reactive({
+      df <- add_tw_group(data_in, tw(), indiv())
+      if(is.null(tw_store)) return(df)
+      shared <- reactiveValuesToList(tw_store)
+      for(nm in sort(names(shared)))
+          # a TWINSPAN of stands says nothing about species, and add_tw_group()
+          # leaves the data alone when the units do not match
+        df <- add_tw_group(df, shared[[nm]], indiv(), col = paste0("twinspan_", nm))
+      df
+    })
 
     # Update group select
     observeEvent(c(input$ord_show_group, indiv(), group_df()), {
