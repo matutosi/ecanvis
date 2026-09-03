@@ -15,6 +15,18 @@
 
 ### 現在の状態
 
+- 2026-09-04 02:56 更新 (このセッション，x280-home)．
+  **ecan 0.2.2.9000 (GitHub 版) の更新を反映した**．
+  - 引数名 `inculde_self` を `include_self` に直した (4ファイル)．旧綴りも当面は通るが，
+    ecan 側が正しい綴りへ移ったので追随する．
+  - ordination の選択肢から **`"fspa"` を外した**．ecan 0.2.1 で削除済みで
+    (パッケージ dave が CRAN からアーカイブされたため)，選ぶとエラーになっていた．
+  - 同じ理由で **`dave` をインストール対象から外した** (`R/global.R`・README)．
+  - README の `install_github(..., force = TRUE)` を `force` なしにした
+    (`R/global.R` は 2026-08-20 に対処済みで，README だけ残っていた)．
+  - この PC の ecan を 0.2.1 → 0.2.2.9000 に更新．テスト95件すべてパス．
+    pcoa が `$st_scores` に標本の座標を返すようになった修正も，これで効くようになった．
+
 - 2026-08-20 07:23 更新．
 - `R/global.R` を整理 (ecan の毎回再インストールを解消，相対パス依存を緩和)．
 - `R/` のバグ修正・リファクタリングとテスト整備 (テスト95件，すべてパス)．
@@ -27,6 +39,15 @@
 
 - `3e04278` Add comprehensive appendices for R environment setup, package installation,
   data manipulation, and analysis examples
+
+### 次にやること
+
+- **【判断待ち】ecan の `twinspan()` を Cluster パネルに載せるか**．
+  ecan 0.2.2.9000 で TWINSPAN (Hill 1979 / Roleček et al. 2009) が入り，
+  `stats::as.hclust()` で `cls_color()`・`cls_add_group()` にもつなげられる．
+  ただし `ecan::cluster()` の `c_method` には無いので，ecanvis 側で分岐が要る．
+  TWINSPAN は距離を使わないため，**距離の選択肢を伏せる**などの UI の作り込みも要る．
+  やるなら別コミットにする．
 
 ## テスト
 
@@ -52,5 +73,6 @@
 - パッケージとしての体裁は未整備 (NAMESPACE と man/ が無く，
   DESCRIPTION の Imports も実態と合っていない)．
   shiny アプリとして shinyapps.io へ配置する運用のため，当面は問題にならない．
-- `reactable` と `shinycssloaders` が開発機に未導入のため，
-  アプリを起動しての UI 動作確認はできていない．
+- `shinycssloaders` が未導入のため，アプリを起動しての UI 動作確認はできていない
+  (2026-09-04，x280-home で確認．`reactable` は導入済みになっていた)．
+  `R/global.R` は起動時に自分で入れるので，アプリを走らせれば解消する．
