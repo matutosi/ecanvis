@@ -15,6 +15,20 @@
 
 ### 現在の状態
 
+- 2026-09-04 07:12 更新 (このセッション，x280-home)．
+  **自動デプロイが通り，公開版が最新になった** (2022-05-30 版から入れ替わり)．
+  - **最初の2回は失敗した**．`remotes::install_github()` にトークンを渡しておらず，
+    `Using bundled GitHub PAT` → **`HTTP 401 Bad credentials`** で止まっていた．
+    remotes はトークンが無いとパッケージ同梱の PAT に落ちるが，それが無効になっている．
+    install の段に **`GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}`** を足して直した．
+    `GITHUB_TOKEN` は実行ごとに自動発行されるので，Secrets への登録は要らない．
+  - 修正後の実行 (`33796373486`) が全段グリーンで完了 (6分5秒)．
+    ログに `Building package: ecan` と `Successfully deployed` が出て，
+    `Starting instances` → `Stopping old instances` と入れ替わった．
+  - **公開ページを取得して確かめた**: cluster に `twinspan` があり，
+    ordination から `fspa` が消え，「Add TWINSPAN group」も出ている．
+  - 以後は `R/**` への push で自動デプロイされる (bot の push では走らない)．
+
 - 2026-09-04 06:24 更新 (このセッション，x280-home)．
   **shinyapps.io への自動デプロイの下ごしらえをした** (ユーザ指示の1〜4を順次)．
   - **公開中のアプリは 2022-05-30 の版**だった．実際に取得して確かめたところ，
@@ -160,21 +174,10 @@
 
 ### 次にやること
 
-- **shinyapps.io へ手動で1回デプロイする** (2026-09-04．**ユーザの操作が要る**)．
-  下ごしらえは済んでいる．token は Claude のセッションからは扱わない．
-  1. shinyapps.io の Account -> Tokens で token と secret を発行する．
-  2. 手元で1回流して通ることを確かめる:
-
-     ```
-     Rscript -e "rsconnect::setAccountInfo('matutosi', '<token>', '<secret>'); rsconnect::deployApp('R', appName = 'ecanvis', account = 'matutosi', forceUpdate = TRUE)"
-     ```
-
-  3. 通ったら，GitHub の Settings -> Secrets and variables -> Actions に
-     `SHINYAPPS_TOKEN` と `SHINYAPPS_SECRET` を登録する．
-  4. Actions タブから `deploy-shinyapps.yaml` を手動実行して確かめる
-     (`workflow_dispatch` を入れてある)．以後は `R/**` の push で自動．
-  - **注意**: `remotes::install_github("matutosi/ecan")` で ecan を入れた環境から
-    デプロイすること．ローカルパスから入れた ecan だと `appDependencies()` が止まる．
+- **`render-rmarkdown.yaml` の `secrets.MY_GITHUB_TOKEN` は未登録**のまま
+  (2026-09-04 に気づいた)．`GITHUB_PAT` が空で走っているが，あの workflow は
+  CRAN からしか入れず push も checkout の既定トークンで通るので**実害はない**．
+  整理するなら `env:` の2行ごと消す．**【保留】**
 
 - **【判断待ち】cluster と ordination で同じ TWINSPAN の群を使いたくなったら，
   パネルをまたぐ受け渡しを考える**．2026-09-04 は各パネルが自分で回す形にした
