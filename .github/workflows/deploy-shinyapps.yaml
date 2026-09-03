@@ -48,6 +48,11 @@ jobs:
 
       - name: Install the packages the app needs
         shell: Rscript {0}
+        env:
+          # remotes falls back to a PAT bundled in the package when none is
+          # given, and that one is answered with "HTTP 401 Bad credentials".
+          # GITHUB_TOKEN is issued for every run, so nothing has to be set up.
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # The list is read out of the code rather than written here, so that
           # it cannot drift from R/global.R.  It is the same scan that
