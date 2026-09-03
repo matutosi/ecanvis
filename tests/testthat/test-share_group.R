@@ -155,3 +155,82 @@ test_that("the panels still work without a store", {
     expect_no_error(output$ordination)
   })
 })
+
+test_that("a cluster panel offers the groups another one published", {
+  skip_if_not_installed("shiny")
+
+  data(dune, package = "vegan")
+  df    <- shared_df()
+  store <- shiny::reactiveValues()
+  store[["cls_1"]] <- compute_cluster(dune, c_method = "twinspan")$twinspan
+
+  shiny::testServer(clusterSever,
+                    args = list(data_in = df, tbl = dune, tw_store = store), {
+      # this panel clusters some other way, and colours by the TWINSPAN of
+      # cls_1: that is how two ways of classifying the stands are compared
+    session$setInputs(cl_c_method = "ward.D2", cl_d_method = "bray",
+                      cls_with_sp = FALSE, cls_show_group = TRUE,
+                      cls_label_gray = 0.3,
+                      cls_tw_cut_levels = "0, 2, 5, 10, 20",
+                      cls_tw_modified = FALSE, cls_tw_n_clusters = 0)
+
+    expect_null(cls_raw()$twinspan)
+    expect_true("twinspan_cls_1" %in% colnames(group_df()))
+    expect_true("twinspan_cls_1" %in%
+                ecan::cols_one2multi(group_df(), indiv(), include_self = FALSE))
+
+    session$setInputs(cls_group = "twinspan_cls_1")
+    expect_no_error(output$cluster)
+  })
+})
+
+test_that("a cluster panel does not offer its own group twice", {
+  skip_if_not_installed("shiny")
+
+  data(dune, package = "vegan")
+  store <- shiny::reactiveValues()
+
+  shiny::testServer(clusterSever,
+                    args = list(data_in = shared_df(), tbl = dune,
+                                tw_store = store), {
+    session$setInputs(cl_c_method = "twinspan", cl_d_method = "bray",
+                      cls_with_sp = FALSE, cls_show_group = TRUE,
+                      cls_label_gray = 0.3,
+                      cls_tw_cut_levels = "0, 2, 5, 10, 20",
+                      cls_tw_modified = FALSE, cls_tw_n_clusters = 0)
+
+      # it published under its own id, and reads that id back out again
+    expect_s3_class(shiny::isolate(store[[id]]), "twinspan")
+    expect_true("twinspan" %in% colnames(group_df()))
+    expect_false(paste0("twinspan_", id) %in% colnames(group_df()))
+      # regression: without setdiff(names, id) the same groups appeared twice
+    expect_equal(sum(grepl("^twinspan", colnames(group_df()))), 1)
+  })
+})
+
+test_that("the groups of two cluster panels can be told apart", {
+  skip_if_not_installed("shiny")
+
+  data(dune, package = "vegan")
+  store <- shiny::reactiveValues()
+  store[["cls_1"]] <- compute_cluster(dune, c_method = "twinspan",
+                                      n_clusters = 2)$twinspan
+  store[["cls_3"]] <- compute_cluster(dune, c_method = "twinspan",
+                                      n_clusters = 5)$twinspan
+
+  shiny::testServer(clusterSever,
+                    args = list(data_in = shared_df(), tbl = dune,
+                                tw_store = store), {
+    session$setInputs(cl_c_method = "average", cl_d_method = "bray",
+                      cls_with_sp = FALSE, cls_show_group = TRUE,
+                      cls_label_gray = 0.3,
+                      cls_tw_cut_levels = "0, 2, 5, 10, 20",
+                      cls_tw_modified = FALSE, cls_tw_n_clusters = 0)
+
+    df <- group_df()
+    expect_true(all(c("twinspan_cls_1", "twinspan_cls_3") %in% colnames(df)))
+      # each column carries the number of groups its own panel was set to
+    expect_length(unique(df$twinspan_cls_1), 2)
+    expect_length(unique(df$twinspan_cls_3), 5)
+  })
+})
