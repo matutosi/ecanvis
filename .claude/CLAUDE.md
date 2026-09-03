@@ -15,6 +15,38 @@
 
 ### 現在の状態
 
+- 2026-09-04 06:24 更新 (このセッション，x280-home)．
+  **shinyapps.io への自動デプロイの下ごしらえをした** (ユーザ指示の1〜4を順次)．
+  - **公開中のアプリは 2022-05-30 の版**だった．実際に取得して確かめたところ，
+    ordination に `fspa` が残り，cluster に `twinspan` が無い．
+    ローカルの記録 `R/rsconnect/.../ecanvis.dcf` も同じ日付で，かつ **git 管理外**
+    (`.gitignore` の `rsconnect/`) なので，他の PC からのデプロイは記録に残らない．
+  - **1. `R/global.R` の依存を静的に書き直した**．2026-08-20 の整理で
+    パッケージ名を変数に入れて `library(pkg, character.only = TRUE)` で回す形に
+    したため，**rsconnect からパッケージ名が見えなくなっていた**
+    (`renv::dependencies()` で確認．`shiny`・`magrittr`・`tidyverse` などが漏れる)．
+    そのまま自動デプロイすると起動に失敗するところだった．
+    調べると**名前空間なしで使うのは `shiny` と `magrittr` (`%>%`) だけ**なので，
+    この2つを `library()` で直接書き，残りは `pkg::` のままにした．
+    **未使用だった `ggdendro`・`pkgload`・`rmarkdown`・`tidyverse` は外した**
+    (`cluster`・`labdsv`・`rlang` は ecan の Imports 経由で入る)．
+    実行時インストールは**書き込めるライブラリのときだけ**に絞った
+    (`file.access(.libPaths()[1], mode = 2)`)．shinyapps.io では書けない．
+  - **2. ecan は GitHub から入れる**．ローカルパスから入れた ecan だと
+    `rsconnect::appDependencies()` が「unknown source」で止まる．
+    `remotes::install_github()` で入れ直すと `Source: github` として記録された．
+  - **3. `.github/workflows/deploy-shinyapps.yaml` を新設**．render の workflow とは
+    分け，`paths: R/**` に絞り，**bot の push では走らせない**
+    (`github.actor != 'github-actions[bot]'`)．依存はコードから
+    `renv::dependencies()` で読むので，`global.R` と二重管理にならない．
+    公開の前に `appDependencies()` で bundle が解けるかを検査する段を入れた．
+  - **4. 事前検査までは通した**．`writeManifest()` を複製した R/ で回し，
+    **89 パッケージ・ecan は github 由来・不足なし**を確認．
+    `R/.rscignore` を置き，旧記録が除外していたフォント用スクリプトを外した
+    (bundle は `.R` 10ファイルちょうど)．
+    **実際のデプロイは token が要り，公開物を差し替えるので実行していない**．
+  - テスト 255件 -> 262件 (`global.R` が静的に書かれていることの回帰を追加)．
+
 - 2026-09-04 05:31 更新 (このセッション，x280-home)．
   **ordination パネルから TWINSPAN の群を使えるようにした** (ユーザ指示．テスト255件)．
   - **パネルをまたぐ受け渡しはしない**方針にした．cluster パネルが4つあるので
@@ -127,6 +159,22 @@
   data manipulation, and analysis examples
 
 ### 次にやること
+
+- **shinyapps.io へ手動で1回デプロイする** (2026-09-04．**ユーザの操作が要る**)．
+  下ごしらえは済んでいる．token は Claude のセッションからは扱わない．
+  1. shinyapps.io の Account -> Tokens で token と secret を発行する．
+  2. 手元で1回流して通ることを確かめる:
+
+     ```
+     Rscript -e "rsconnect::setAccountInfo('matutosi', '<token>', '<secret>'); rsconnect::deployApp('R', appName = 'ecanvis', account = 'matutosi', forceUpdate = TRUE)"
+     ```
+
+  3. 通ったら，GitHub の Settings -> Secrets and variables -> Actions に
+     `SHINYAPPS_TOKEN` と `SHINYAPPS_SECRET` を登録する．
+  4. Actions タブから `deploy-shinyapps.yaml` を手動実行して確かめる
+     (`workflow_dispatch` を入れてある)．以後は `R/**` の push で自動．
+  - **注意**: `remotes::install_github("matutosi/ecan")` で ecan を入れた環境から
+    デプロイすること．ローカルパスから入れた ecan だと `appDependencies()` が止まる．
 
 - **【判断待ち】cluster と ordination で同じ TWINSPAN の群を使いたくなったら，
   パネルをまたぐ受け渡しを考える**．2026-09-04 は各パネルが自分で回す形にした
