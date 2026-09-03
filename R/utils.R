@@ -229,14 +229,15 @@ as_n_clusters <- function(x){
 #' @param tbl        A community data matrix.
 #'                   rownames: stands, colnames: species.
 #' @param c_method   A string of clustering method, or "twinspan".
-#' @param d_method   A string of distance method.  Unused by TWINSPAN.
+#' @param d_method   A string of distance method.  Unused by TWINSPAN, which
+#'                   is why it may be left out.
 #' @param modified   A logical: modified TWINSPAN (Roleček et al. 2009).
 #' @param n_clusters An integer of the number of groups, or `NULL` for no limit.
 #' @param cut_levels A numeric vector of pseudospecies cut levels.
 #' @return           An "hclust" object.
 #'
 #' @export
-compute_cluster <- function(tbl, c_method, d_method,
+compute_cluster <- function(tbl, c_method, d_method = NULL,
                             modified   = FALSE,
                             n_clusters = NULL,
                             cut_levels = c(0, 2, 5, 10, 20)){

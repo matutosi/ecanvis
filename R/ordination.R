@@ -31,6 +31,25 @@ ordinationUI <- function(id){
 
         # Show and select group
         checkboxInput(ns("ord_show_group"), "Show group"),
+
+        # TWINSPAN makes groups of its own, which are put beside the columns
+        # of the data so that they can be chosen in the same way.
+        conditionalPanel(ns = ns,
+          condition = "input.ord_show_group",
+          checkboxInput(ns("ord_use_twinspan"), "Add TWINSPAN group",
+            value = FALSE),
+          conditionalPanel(ns = ns,
+            condition = "input.ord_use_twinspan",
+            textInput(ns("ord_tw_cut_levels"), "Pseudospecies cut levels",
+              value = "0, 2, 5, 10, 20"),
+            checkboxInput(ns("ord_tw_modified"),
+              "Modified TWINSPAN (divide the most heterogeneous group first)",
+              value = FALSE),
+            numericInput(ns("ord_tw_n_clusters"),
+              "Number of groups (0: no limit)",
+              value = 0, min = 0, max = 64, step = 1)
+          )
+        ),
         selectInput(ns("ord_group"), "Select group", choices = character(0)),
 
         # ggplot controll
@@ -67,14 +86,36 @@ ordinationSever <- function(id, data_in, com_table){
     sp <- reactive({ colnames(data_in)[2] })
     ab <- reactive({ colnames(data_in)[3] })
 
-    # Update group select
     indiv <- eventReactive(c(input$ord_show_group, input$ord_use_species_scores), {
-      indiv <- pick_indiv(input$ord_use_species_scores, st(), sp())
+      pick_indiv(input$ord_use_species_scores, st(), sp())
+    })
+
+      # TWINSPAN on the table the scores belong to: with species scores the
+      # units are the species, so the table is turned round first, as the
+      # cluster panel does for "Cluster with item".
+    tw <- reactive({
+      if(!isTRUE(input$ord_show_group) || !isTRUE(input$ord_use_twinspan))
+        return(NULL)
+      req(com_table)
+      cls <-
+        com_table %>%
+        t_if_true(input$ord_use_species_scores) %>%
+        compute_cluster(c_method   = "twinspan",
+                        modified   = input$ord_tw_modified,
+                        n_clusters = as_n_clusters(input$ord_tw_n_clusters),
+                        cut_levels = parse_cut_levels(input$ord_tw_cut_levels))
+      cls$twinspan
+    })
+
+    # The data, plus the groups TWINSPAN found so that they can be chosen too
+    group_df <- reactive({ add_tw_group(data_in, tw(), indiv()) })
+
+    # Update group select
+    observeEvent(c(input$ord_show_group, indiv(), group_df()), {
       if(isTRUE(input$ord_show_group)){
-        choices <- ecan::cols_one2multi(data_in, indiv, include_self = FALSE)
+        choices <- ecan::cols_one2multi(group_df(), indiv(), include_self = FALSE)
         updateSelectInput(session, "ord_group", choices = choices)
       }
-      indiv
     })
 
     # Compute
@@ -99,11 +140,11 @@ ordinationSever <- function(id, data_in, com_table){
     axes <- reactive({ score_axes(ord_raw_scores()) })
 
     ord_scores <- reactive({
-        if(isTRUE(input$ord_show_group) && has_group(data_in, input$ord_group)){
+        if(isTRUE(input$ord_show_group) && has_group(group_df(), input$ord_group)){
           ecan::ord_add_group(
             ord    = ord(), 
             score  = score(),
-            df     = data_in,
+            df     = group_df(),
             indiv = indiv(),    # need "()": indiv is reactive
             group  = input$ord_group)
         } else {
