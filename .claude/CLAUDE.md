@@ -15,6 +15,20 @@
 
 ### 現在の状態
 
+- 2026-09-04 03:12 更新 (このセッション，x280-home)．
+  **Cluster パネルに TWINSPAN を追加した** (ecan 0.2.2.9000 の `twinspan()`)．
+  - cluster method の選択肢に `twinspan` を足した．
+  - TWINSPAN は距離を使わないので，**選ぶと distance method を伏せる**
+    (`conditionalPanel`)．代わりに TWINSPAN の設定を出す:
+    pseudospecies の切り値・modified TWINSPAN・群の数 (0 は制限なし)．
+  - 分岐は `R/utils.R` の `compute_cluster()` に置いた．
+    `ecan::cluster()` と同じく `$clustering_method` を持たせ，
+    距離を使わないことを示すため `$distance_method` は `NULL` にする．
+    `stats::as.hclust()` を通すので `cls_color()`・`cls_add_group()` も従来どおり効く．
+  - 入力の解釈は `parse_cut_levels()`・`as_n_clusters()` に分けた．
+    入力途中の文字列でアプリが止まらないようにしてある．
+  - テストを `tests/testthat/test-twinspan.R` に追加．**128件すべてパス** (旧95件)．
+
 - 2026-09-04 02:56 更新 (このセッション，x280-home)．
   **ecan 0.2.2.9000 (GitHub 版) の更新を反映した**．
   - 引数名 `inculde_self` を `include_self` に直した (4ファイル)．旧綴りも当面は通るが，
@@ -42,12 +56,13 @@
 
 ### 次にやること
 
-- **【判断待ち】ecan の `twinspan()` を Cluster パネルに載せるか**．
-  ecan 0.2.2.9000 で TWINSPAN (Hill 1979 / Roleček et al. 2009) が入り，
-  `stats::as.hclust()` で `cls_color()`・`cls_add_group()` にもつなげられる．
-  ただし `ecan::cluster()` の `c_method` には無いので，ecanvis 側で分岐が要る．
-  TWINSPAN は距離を使わないため，**距離の選択肢を伏せる**などの UI の作り込みも要る．
-  やるなら別コミットにする．
+- **【判断待ち】TWINSPAN が作った群を「Show group」の選択肢に出すか**．
+  いまの Show group は，読み込んだデータの列 (`cols_one2multi()` が返すもの) しか選べない．
+  TWINSPAN は `$classification` に群を持っているので，これを選べると
+  「TWINSPAN の群で色を塗る」ができる．ordination パネルからも使えると便利．
+- **【判断待ち】`ecan::tw_two_way()` の二元表を出すか**．
+  TWINSPAN の本来の出力である並べ替え済みの二元表．reactable で出せそうだが，
+  Cluster パネルに載せるか，新しいパネルを立てるかを決める必要がある．
 
 ## テスト
 
