@@ -8,7 +8,7 @@ calculate_diversity <- function(df, st, sp, ab){
       dplyr::mutate_if(is.numeric, round, digit = 6)
     extra_data <- 
       df %>%
-      ecan::select_one2multi(st, inculde_self = TRUE)
+      ecan::select_one2multi(st, include_self = TRUE)
 
     dplyr::left_join(diversity, extra_data, by = st)
 }

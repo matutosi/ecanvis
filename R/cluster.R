@@ -50,7 +50,7 @@ clusterSever <- function(id, data_in, tbl){
     indiv <- eventReactive(c(input$cls_show_group, input$cls_with_sp), {
       indiv <- pick_indiv(input$cls_with_sp, st(), sp())
       if(isTRUE(input$cls_show_group)){
-        choices <- ecan::cols_one2multi(data_in, indiv, inculde_self = FALSE)
+        choices <- ecan::cols_one2multi(data_in, indiv, include_self = FALSE)
         updateSelectInput(session, "cls_group", choices = choices)
       }
       indiv

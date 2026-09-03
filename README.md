@@ -15,9 +15,8 @@ Run on your local PC.
 ``` r
   # Install packages (need only once)
 if(!require("devtools"))        install.packages("devtools")
-                                devtools::install_github("matutosi/ecan", force = TRUE)
+                                devtools::install_github("matutosi/ecan")
 if(!require("cluster"))         install.packages("cluster")
-if(!require("dave"))            install.packages("dave")
 if(!require("dendextend"))      install.packages("dendextend")
 if(!require("ggdendro"))        install.packages("ggdendro")
 if(!require("graphics"))        install.packages("graphics")

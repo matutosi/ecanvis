@@ -1,6 +1,8 @@
   # Packages to attach.  The modules call shiny, reactable and magrittr
   # functions without a namespace, so they have to be on the search path.
-pkgs <- c("cluster", "dave", "dendextend", "ggdendro", "ggrepel", "graphics",
+  # dave was dropped: it is archived on CRAN and ecan no longer uses it
+  # ("fspa" was removed from ordination() in ecan 0.2.1).
+pkgs <- c("cluster", "dendextend", "ggdendro", "ggrepel", "graphics",
           "labdsv", "magrittr", "pkgload", "reactable", "rlang", "rmarkdown",
           "shiny", "shinycssloaders", "tidyverse", "vegan")
 

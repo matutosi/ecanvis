@@ -49,7 +49,7 @@ ind_valSever <- function(id, data_in){
 
     # Update group select
     observeEvent(c(data_in, st()), {
-      choices <- ecan::cols_one2multi(data_in, st(), inculde_self = FALSE)
+      choices <- ecan::cols_one2multi(data_in, st(), include_self = FALSE)
       updateSelectInput(session, "ind_val_st_group", choices = choices)
     })
 

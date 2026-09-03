@@ -7,8 +7,8 @@ ordinationUI <- function(id){
 
         # method
         selectInput(ns("ord_o_method"), "Ordination method",
-          choices = c("pca", "ca", "dca",
-                      "pcoa", "fspa", "nmds")
+          # "fspa" was removed from ecan 0.2.1: package dave was archived.
+          choices = c("pca", "ca", "dca", "pcoa", "nmds")
         ),
         selectInput(ns("ord_d_method"), "Distance method",
           choices = c("bray", "euclidean", "correlation", "manhattan",
@@ -68,7 +68,7 @@ ordinationSever <- function(id, data_in, com_table){
     indiv <- eventReactive(c(input$ord_show_group, input$ord_use_species_scores), {
       indiv <- pick_indiv(input$ord_use_species_scores, st(), sp())
       if(isTRUE(input$ord_show_group)){
-        choices <- ecan::cols_one2multi(data_in, indiv, inculde_self = FALSE)
+        choices <- ecan::cols_one2multi(data_in, indiv, include_self = FALSE)
         updateSelectInput(session, "ord_group", choices = choices)
       }
       indiv
